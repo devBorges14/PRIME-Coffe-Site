@@ -819,129 +819,246 @@ Prime Cafés | Experiências Premium em Café
 
         </div>
 
+<!-- =================================================
+            CONTEÚDO
+================================================== -->
 
-        <!-- =================================================
-             CONTEÚDO
-        ================================================== -->
+<div class="contact-grid">
 
-        <div class="contact-grid">
+    <!-- INFORMAÇÕES -->
 
+    <div class="contact-info">
 
-            <!-- INFORMAÇÕES -->
+        <div class="contact-info-item">
 
-            <div class="contact-info">
+            <strong>
+                WhatsApp
+            </strong>
 
-                <div class="contact-info-item">
-
-                    <strong>
-                        WhatsApp
-                    </strong>
-
-                    <span>
-                        +55 (11) 96549-0000
-                    </span>
-
-                </div>
-
-
-                <div class="contact-info-item">
-
-                    <strong>
-                        Instagram
-                    </strong>
-
-                    <span>
-                        @primecafes
-                    </span>
-
-                </div>
-
-
-                <div class="contact-info-item">
-
-                    <strong>
-                        Atuação
-                    </strong>
-
-                    <span>
-                        Brasil, Portugal e Espanha
-                    </span>
-
-                </div>
-
-
-                <p class="contact-description">
-                    Envie os detalhes do seu evento e
-                    retornaremos com uma proposta personalizada,
-                    alinhada ao seu público, objetivo e orçamento.
-                </p>
-
-
-                <a href="https://wa.me/5511965490000" target="_blank" class="btn btn-primary whatsapp-button">
-                    Falar no WhatsApp →
-                </a>
-
-            </div>
-
-
-            <!-- FORMULÁRIO -->
-
-            <form class="contact-form">
-
-                <div class="form-group">
-
-                    <label for="nome">
-                        Nome
-                    </label>
-
-                    <input type="text" id="nome" name="nome" placeholder="Seu nome" required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="email">
-                        E-mail
-                    </label>
-
-                    <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="telefone">
-                        Telefone / WhatsApp
-                    </label>
-
-                    <input type="tel" id="telefone" name="telefone" placeholder="(DDD) 00000-0000" required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="detalhes">
-                        Detalhes do evento
-                    </label>
-
-                    <textarea id="detalhes" name="detalhes"
-                        placeholder="Data, local, tipo de evento, número de pessoas..." required></textarea>
-
-                </div>
-
-
-                <button type="submit" class="btn btn-primary form-submit">
-                    Enviar mensagem
-                </button>
-
-            </form>
+            <span>
+                +55 (11) 96549-0000
+            </span>
 
         </div>
 
+
+        <div class="contact-info-item">
+
+            <strong>
+                Instagram
+            </strong>
+
+            <span>
+                @primecafes
+            </span>
+
+        </div>
+
+
+        <div class="contact-info-item">
+
+            <strong>
+                Atuação
+            </strong>
+
+            <span>
+                Brasil, Portugal e Espanha
+            </span>
+
+        </div>
+
+
+        <p class="contact-description">
+            Envie os detalhes do seu evento e
+            retornaremos com uma proposta personalizada,
+            alinhada ao seu público, objetivo e orçamento.
+        </p>
+
+
+        <a href="https://wa.me/5511965490000" target="_blank" class="btn btn-primary whatsapp-button">
+            Falar no WhatsApp →
+        </a>
+
     </div>
+
+
+    <!-- FORMULÁRIO -->
+
+    <form class="contact-form" id="contactForm">
+
+        <div class="form-group">
+
+            <label for="nome">
+                Nome
+            </label>
+
+            <input
+                type="text"
+                id="nome"
+                name="nome"
+                placeholder="Seu nome"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="email">
+                E-mail
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="seuemail@exemplo.com"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="telefone">
+                Telefone / WhatsApp
+            </label>
+
+            <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                placeholder="(11) 99999-9999"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="tipo_evento">
+                Tipo de evento
+            </label>
+
+            <select
+                id="tipo_evento"
+                name="tipo_evento"
+                required
+            >
+
+                <option value="">
+                    Selecione o tipo de evento
+                </option>
+
+                <option value="Evento Corporativo">
+                    Evento Corporativo
+                </option>
+
+                <option value="Casamento">
+                    Casamento
+                </option>
+
+                <option value="Aniversário">
+                    Aniversário
+                </option>
+
+                <option value="Feira ou Congresso">
+                    Feira ou Congresso
+                </option>
+
+                <option value="Ativação de Marca">
+                    Ativação de Marca
+                </option>
+
+                <option value="Outro">
+                    Outro
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="data_evento">
+                Data do evento
+            </label>
+
+            <input
+                type="date"
+                id="data_evento"
+                name="data_evento"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="local_evento">
+                Local do evento
+            </label>
+
+            <input
+                type="text"
+                id="local_evento"
+                name="local_evento"
+                placeholder="Cidade / Estado"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="convidados">
+                Número de convidados
+            </label>
+
+            <input
+                type="number"
+                id="convidados"
+                name="convidados"
+                min="1"
+                placeholder="Ex.: 150"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="detalhes">
+                Conte mais sobre o evento
+            </label>
+
+            <textarea
+                id="detalhes"
+                name="detalhes"
+                placeholder="Conte um pouco sobre o evento..."
+            ></textarea>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary form-submit"
+        >
+            Enviar solicitação →
+        </button>
+
+
+        <div
+            id="formMessage"
+            class="form-message"
+        ></div>
+
+    </form>
 
 </div>
 

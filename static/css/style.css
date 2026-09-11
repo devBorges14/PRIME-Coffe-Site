@@ -1331,3 +1331,35 @@ footer {
     }
 
 }
+/* =====================================================
+   MENSAGEM DO FORMULÁRIO
+===================================================== */
+
+.form-message {
+    margin-top: 18px;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    text-align: center;
+
+    min-height: 20px;
+}
+
+
+.form-message.success {
+    color: #7fd18b;
+}
+
+
+.form-message.error {
+    color: #e77b7b;
+}
+
+
+.form-submit:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
