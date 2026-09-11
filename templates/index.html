@@ -1,0 +1,1001 @@
+{% extends "base.html" %}
+
+{% block title %}
+Prime Cafés | Experiências Premium em Café
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<header class="navbar">
+
+    <div class="navbar-container">
+
+        <a href="#inicio" class="logo">
+            PRIME CAFÉS
+        </a>
+
+        <nav>
+            <ul class="nav-links">
+
+                <li>
+                    <a href="#inicio">Início</a>
+                </li>
+
+                <li>
+                    <a href="#sobre">Quem Somos</a>
+                </li>
+
+                <li>
+                    <a href="#historia">Nossa História</a>
+                </li>
+
+                <li>
+                    <a href="#servicos">Serviços</a>
+                </li>
+
+                <li>
+                    <a href="#personalizados">Personalizados</a>
+                </li>
+
+                <li>
+                    <a href="#momentos">Momentos</a>
+                </li>
+
+                <li>
+                    <button type="button" class="btn btn-outline contact-trigger">
+                        Fale Conosco
+                    </button>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero" id="inicio">
+
+    <div class="hero-content">
+
+        <div class="hero-text">
+
+            <div class="hero-label">
+                ✦ EXPERIÊNCIAS QUE MARCAM
+            </div>
+
+
+            <h1>
+                Experiências
+                <span>Premium</span>
+                para Eventos
+            </h1>
+
+
+            <p>
+                Criamos experiências únicas para eventos,
+                empresas e celebrações, combinando qualidade,
+                atendimento personalizado e atenção a cada detalhe.
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a href="#contato" class="btn btn-primary">
+                    Solicitar Orçamento →
+                </a>
+
+                <a href="#momentos" class="btn btn-outline">
+                    Ver Momentos
+                </a>
+
+            </div>
+
+
+            <!-- DESTAQUES -->
+
+            <div class="hero-highlights">
+
+                <div class="highlight">
+
+                    <div class="highlight-icon">
+                        ☆
+                    </div>
+
+                    <div>
+                        <strong>Experiência Premium</strong>
+                        <small>Qualidade em cada detalhe</small>
+                    </div>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="highlight-icon">
+                        ◇
+                    </div>
+
+                    <div>
+                        <strong>Atendimento Personalizado</strong>
+                        <small>Soluções para seu evento</small>
+                    </div>
+
+                </div>
+
+
+                <div class="highlight">
+
+                    <div class="highlight-icon">
+                        ◉
+                    </div>
+
+                    <div>
+                        <strong>Eventos Especiais</strong>
+                        <small>Do planejamento à execução</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     QUEM SOMOS
+===================================================== -->
+
+<section class="about" id="sobre">
+
+    <div class="container">
+
+        <div class="section-label">
+            SOBRE NÓS
+        </div>
+
+
+        <div class="about-grid">
+
+            <!-- TEXTO -->
+
+            <div class="about-text">
+
+                <h2 class="section-title">
+                    Quem <span>Somos</span>
+                </h2>
+
+
+                <p>
+                    Somos uma empresa especializada em criar
+                    experiências diferenciadas para eventos,
+                    empresas e ocasiões especiais.
+                </p>
+
+
+                <p>
+                    Nosso trabalho nasceu da vontade de transformar
+                    um serviço comum em uma experiência memorável,
+                    cuidando desde os primeiros detalhes até o
+                    atendimento aos convidados.
+                </p>
+
+
+                <p>
+                    Trabalhamos com profissionalismo, criatividade
+                    e dedicação para entender as necessidades de
+                    cada cliente e entregar uma experiência alinhada
+                    ao propósito de cada evento.
+                </p>
+
+
+                <p>
+                    Cada projeto é pensado individualmente.
+                    Porque acreditamos que grandes eventos são
+                    construídos nos detalhes.
+                </p>
+
+            </div>
+
+
+            <!-- ESTATÍSTICAS -->
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <strong>+2500</strong>
+
+                    <span>
+                        Eventos realizados
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>+15</strong>
+
+                    <span>
+                        Anos de experiência
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>100%</strong>
+
+                    <span>
+                        Dedicação ao cliente
+                    </span>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong>3</strong>
+
+                    <span>
+                        Países em atuação: Brasil, Portugla e Espanha
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CARD VISUAL -->
+
+            <div class="feature-card">
+
+                <!--
+
+                Quando tivermos a foto real, podemos colocar:
+
+                background-image:
+                url("{{ url_for('static',
+                filename='img/equipe.jpg') }}");
+
+                -->
+
+                <h3>
+                    Do primeiro contato
+                    ao último detalhe.
+                </h3>
+
+                <p>
+                    Mais do que oferecer um serviço,
+                    criamos experiências que permanecem
+                    na memória.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     NOSSA HISTÓRIA
+===================================================== -->
+
+<section id="historia">
+
+    <div class="container">
+
+        <div class="section-label">
+            NOSSA HISTÓRIA
+        </div>
+
+
+        <h2 class="section-title">
+            Uma história construída
+            <span>com propósito.</span>
+        </h2>
+
+
+        <div class="about-text">
+
+            <p>
+                Uma trajetória construída xícara a xícara, evento a evento, sempre com o mesmo
+                propósito: entregar experiências inesquecíveis através do café.
+                O que começou como um pequeno serviço de baristas para eventos
+                cresceu e se tornou uma referência em cafés especiais, ativações de marca e experiências premium.
+            </p>
+            <p>
+                A Prime Cafés nasceu em 2009 com a missão de transformar o café em uma experiência sensorial completa.
+                O que começou como um pequeno serviço de baristas para eventos cresceu e se tornou uma referência em
+                cafés especiais,
+                ativações de marca e experiências premium.
+            </p>
+            <p>
+                Ao longo dos anos, expandimos nossa atuação para Portugal e Espanha, levando nossa essência
+                para novos públicos e fortalecendo nossa presença no mercado europeu. Cada evento, cada
+                cliente e cada xícara servida contribuíram para construir a história que contamos hoje.
+            </p>
+            <p>
+                Nossa trajetória é marcada por inovação, excelência e paixão pelo que fazemos. Evoluímos constantemente,
+                ampliando
+                nossos serviços e criando soluções completas para eventos corporativos, ativações, lançamentos, feiras e
+                experiências
+                personalizadas.
+            </p>
+            <p>
+                Acreditamos que o café é mais do que uma bebida
+                é um elo entre pessoas, marcas e momentos. E é essa conexão que nos move desde o primeiro dia.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SERVIÇOS
+===================================================== -->
+
+<section class="services" id="servicos">
+
+    <div class="container">
+
+        <!-- CABEÇALHO -->
+
+        <div class="section-label">
+            O QUE FAZEMOS
+        </div>
+
+        <h2 class="section-title">
+            Nossos <span>Serviços</span>
+        </h2>
+
+
+        <!-- =================================================
+             GRUPO 1
+        ================================================== -->
+
+        <div class="services-group">
+
+            <h3 class="services-group-title">
+                Eventos & Experiências
+            </h3>
+
+            <div class="services-grid">
+
+                <!-- SERVIÇO 1 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        Eventos com Baristas
+                    </h3>
+
+                    <p>
+                        Estrutura completa, atendimento refinado e
+                        cafés especiais preparados ao vivo. Ideal para
+                        convenções, feiras, lançamentos, eventos
+                        corporativos e experiências VIP.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 2 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ◇
+                    </div>
+
+                    <h3>
+                        Cafés Especiais
+                    </h3>
+
+                    <p>
+                        Grãos selecionados, extração perfeita e
+                        apresentação impecável. Cada xícara é pensada
+                        para surpreender e encantar seus convidados.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 3 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ☆
+                    </div>
+
+                    <h3>
+                        Ativações de Marca
+                    </h3>
+
+                    <p>
+                        Criamos experiências completas para marcas:
+                        degustações, ações promocionais, collabs,
+                        ativações sensoriais e experiências que geram
+                        conexão real com o público.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 4 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ◉
+                    </div>
+
+                    <h3>
+                        Food Bikes Personalizadas
+                    </h3>
+
+                    <p>
+                        Estruturas exclusivas e personalizadas para
+                        cafés, doces, mini pizzas e produtos especiais.
+                        Visual premium que atrai, encanta e reforça a
+                        presença da sua marca.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 5 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✧
+                    </div>
+
+                    <h3>
+                        Mini Pizzas Especiais
+                    </h3>
+
+                    <p>
+                        Mini pizzas artesanais preparadas ao vivo,
+                        perfeitas para eventos que exigem sabor,
+                        praticidade e sofisticação.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 6 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        +
+                    </div>
+
+                    <h3>
+                        Doces Especiais
+                    </h3>
+
+                    <p>
+                        Brigadeiros gourmet, sobremesas exclusivas e
+                        doces personalizados para ativações, eventos
+                        corporativos e experiências premium.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GRUPO 2
+        ================================================== -->
+
+        <div class="services-group services-group-secondary">
+
+            <div class="section-label">
+                EXPERIÊNCIAS EXCLUSIVAS
+            </div>
+
+            <h3 class="services-group-title">
+                Cafés & <span>Experiências Personalizadas</span>
+            </h3>
+
+
+            <div class="services-grid">
+
+                <!-- SERVIÇO 1 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        Cafés Personalizados
+                    </h3>
+
+                    <p>
+                        Drinks autorais, copos personalizados, latte art
+                        temática e grãos selecionados. Cada detalhe é
+                        pensado para traduzir a identidade da sua marca
+                        em forma de café.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 2 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        Experiências Temáticas
+                    </h3>
+
+                    <p>
+                        Estações de café temáticas, menus exclusivos,
+                        ativações sazonais e experiências criadas para
+                        campanhas específicas.
+                    </p>
+
+                </article>
+
+
+                <!-- SERVIÇO 3 -->
+
+                <article class="service-card">
+
+                    <div class="service-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        Soluções Completas
+                    </h3>
+
+                    <p>
+                        Do conceito à execução: estrutura, equipe,
+                        cardápio, personalização e operação completa
+                        para o seu evento.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PERSONALIZADOS
+===================================================== -->
+
+<section id="personalizados">
+
+    <div class="container">
+
+        <div class="section-label">
+            PERSONALIZAÇÃO
+        </div>
+
+
+        <h2 class="section-title">
+            Seu evento.
+            <span>Do seu jeito.</span>
+        </h2>
+
+
+        <div class="about-grid">
+
+            <div class="about-text">
+
+                <p>
+                    Cada evento possui uma identidade.
+                    Por isso, nossas soluções podem ser
+                    adaptadas para combinar com a proposta
+                    visual e o objetivo da sua ocasião.
+                </p>
+
+
+                <p>
+                    Personalizamos detalhes, atendimento,
+                    apresentação e experiência para que
+                    tudo faça sentido dentro do seu projeto.
+                </p>
+
+
+                <a href="#contato" class="btn btn-primary">
+                    Criar meu projeto →
+                </a>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    Pensado nos mínimos detalhes.
+                </h3>
+
+                <p>
+                    Da identidade visual à experiência
+                    do convidado.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MOMENTOS / PORTFÓLIO
+===================================================== -->
+
+<section class="moments" id="momentos">
+
+    <div class="container">
+
+        <div class="section-label">
+            PORTFÓLIO
+        </div>
+
+
+        <h2 class="section-title">
+            Alguns <span>Momentos</span>
+        </h2>
+
+
+        <div class="moments-grid">
+
+
+            <div class="moment">
+
+                <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=900&q=80"
+                    alt="Evento corporativo">
+
+            </div>
+
+
+            <div class="moment">
+
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80"
+                    alt="Evento">
+
+            </div>
+
+
+            <div class="moment">
+
+                <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80"
+                    alt="Evento empresarial">
+
+            </div>
+
+
+            <div class="moment">
+
+                <img src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=80"
+                    alt="Celebração">
+
+            </div>
+
+
+            <div class="moment">
+
+                <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=80"
+                    alt="Evento elegante">
+
+            </div>
+
+
+            <div class="moment">
+
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=900&q=80"
+                    alt="Evento corporativo">
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="cta" id="contato">
+
+    <div class="container">
+
+        <div class="section-label">
+            VAMOS CONVERSAR?
+        </div>
+
+
+        <h2>
+            Seu próximo evento
+            merece uma experiência
+            <span>extraordinária.</span>
+        </h2>
+
+
+        <p>
+            Conte para nós sobre seu evento e vamos
+            encontrar a melhor solução para o seu projeto.
+        </p>
+
+
+        <button type="button" class="btn btn-primary contact-trigger">
+            Solicitar Orçamento →
+        </button>
+
+    </div>
+
+</section>
+<!-- =====================================================
+     MODAL DE CONTATO
+===================================================== -->
+
+<div class="contact-modal" id="contactModal">
+
+    <div class="contact-overlay" id="contactOverlay"></div>
+
+    <div class="contact-modal-content">
+
+        <!-- BOTÃO FECHAR -->
+
+        <button class="contact-close" id="closeContact" aria-label="Fechar contato">
+            ×
+        </button>
+
+
+        <!-- =================================================
+             CABEÇALHO
+        ================================================== -->
+
+        <div class="contact-header">
+
+            <div class="section-label">
+                FALE CONOSCO
+            </div>
+
+            <h2>
+                Contato &
+                <span>Orçamentos</span>
+            </h2>
+
+            <p>
+                Vamos criar algo extraordinário
+                para o seu próximo evento?
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             CONTEÚDO
+        ================================================== -->
+
+        <div class="contact-grid">
+
+
+            <!-- INFORMAÇÕES -->
+
+            <div class="contact-info">
+
+                <div class="contact-info-item">
+
+                    <strong>
+                        WhatsApp
+                    </strong>
+
+                    <span>
+                        +55 (11) 96549-0000
+                    </span>
+
+                </div>
+
+
+                <div class="contact-info-item">
+
+                    <strong>
+                        Instagram
+                    </strong>
+
+                    <span>
+                        @primecafes
+                    </span>
+
+                </div>
+
+
+                <div class="contact-info-item">
+
+                    <strong>
+                        Atuação
+                    </strong>
+
+                    <span>
+                        Brasil, Portugal e Espanha
+                    </span>
+
+                </div>
+
+
+                <p class="contact-description">
+                    Envie os detalhes do seu evento e
+                    retornaremos com uma proposta personalizada,
+                    alinhada ao seu público, objetivo e orçamento.
+                </p>
+
+
+                <a href="https://wa.me/5511965490000" target="_blank" class="btn btn-primary whatsapp-button">
+                    Falar no WhatsApp →
+                </a>
+
+            </div>
+
+
+            <!-- FORMULÁRIO -->
+
+            <form class="contact-form">
+
+                <div class="form-group">
+
+                    <label for="nome">
+                        Nome
+                    </label>
+
+                    <input type="text" id="nome" name="nome" placeholder="Seu nome" required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="email">
+                        E-mail
+                    </label>
+
+                    <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="telefone">
+                        Telefone / WhatsApp
+                    </label>
+
+                    <input type="tel" id="telefone" name="telefone" placeholder="(DDD) 00000-0000" required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="detalhes">
+                        Detalhes do evento
+                    </label>
+
+                    <textarea id="detalhes" name="detalhes"
+                        placeholder="Data, local, tipo de evento, número de pessoas..." required></textarea>
+
+                </div>
+
+
+                <button type="submit" class="btn btn-primary form-submit">
+                    Enviar mensagem
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="container">
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                PRIME CAFÉS
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="#inicio">
+                    Início
+                </a>
+
+                <a href="#sobre">
+                    Quem Somos
+                </a>
+
+                <a href="#servicos">
+                    Serviços
+                </a>
+
+                <a href="#momentos">
+                    Momentos
+                </a>
+
+                <a href="#contato">
+                    Contato
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 PRIME café. Todos os direitos reservados.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+{% endblock %}
