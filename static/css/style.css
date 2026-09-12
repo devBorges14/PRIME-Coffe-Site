@@ -1363,3 +1363,530 @@ footer {
 
     cursor: not-allowed;
 }
+.admin-page {
+    min-height: 100vh;
+    padding: 150px 0 100px;
+    background:
+        radial-gradient(
+            circle at 80% 10%,
+            rgba(190, 150, 70, 0.08),
+            transparent 35%
+        ),
+        var(--black);
+}
+
+.admin-container {
+    width: min(92%, 1200px);
+    margin: 0 auto;
+}
+
+.admin-label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+}
+
+.admin-header {
+    margin-bottom: 50px;
+}
+
+.admin-header h1,
+.lead-detail-header h1 {
+    margin: 0;
+    font-size: clamp(38px, 5vw, 64px);
+}
+
+.admin-header h1 span {
+    color: var(--gold);
+}
+
+.admin-header p {
+    margin-top: 15px;
+    color: var(--text-muted);
+}
+
+
+/* =========================
+   ESTATÍSTICAS
+========================= */
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 70px;
+}
+
+.admin-stat {
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-stat span {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.admin-stat strong {
+    font-size: 32px;
+    color: var(--gold);
+}
+
+
+/* =========================
+   SEÇÃO
+========================= */
+
+.admin-section {
+    padding: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-section-header {
+    margin-bottom: 30px;
+}
+
+.admin-section-header h2 {
+    margin: 0;
+    font-size: 28px;
+}
+
+
+/* =========================
+   TABELA
+========================= */
+
+.leads-table-wrapper {
+    overflow-x: auto;
+}
+
+.leads-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leads-table th {
+    padding: 15px;
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.leads-table td {
+    padding: 20px 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.leads-table td strong {
+    display: block;
+}
+
+.leads-table td small {
+    display: block;
+    margin-top: 5px;
+    color: var(--text-muted);
+}
+
+.admin-view-button {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status {
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+
+/* =========================
+   VAZIO
+========================= */
+
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--text-muted);
+}
+
+
+/* =========================
+   DETALHE DO LEAD
+========================= */
+
+.admin-back {
+    display: inline-block;
+    margin-bottom: 45px;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+.lead-detail-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.lead-detail-header p {
+    color: var(--text-muted);
+}
+
+.lead-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.lead-card {
+    padding: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.lead-card-full {
+    grid-column: 1 / -1;
+}
+
+.lead-card h2 {
+    margin-bottom: 30px;
+}
+
+.lead-info {
+    display: grid;
+    gap: 22px;
+}
+
+.lead-info span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.lead-info strong {
+    font-size: 16px;
+}
+
+.lead-description {
+    color: var(--text-muted);
+    line-height: 1.8;
+}
+
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 1000px) {
+
+    .admin-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .admin-page {
+        padding-top: 110px;
+    }
+
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-section {
+        padding: 20px;
+    }
+
+    .lead-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lead-card-full {
+        grid-column: auto;
+    }
+
+    .lead-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+/* =========================
+   GERENCIAMENTO
+========================= */
+
+.admin-select,
+.admin-textarea {
+    width: 100%;
+    padding: 15px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 12px;
+
+    background: rgba(0, 0, 0, 0.25);
+    color: inherit;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+}
+
+.admin-select:focus,
+.admin-textarea:focus {
+    border-color: var(--gold);
+}
+
+.admin-select {
+    cursor: pointer;
+}
+
+.admin-select option {
+    background: #161616;
+    color: white;
+}
+
+.admin-textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.admin-action-button {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.danger-card {
+    border-color: rgba(220, 80, 80, 0.18);
+}
+
+.admin-delete-button {
+    margin-top: 20px;
+
+    padding: 13px 20px;
+
+    border: 1px solid rgba(220, 80, 80, 0.35);
+    border-radius: 10px;
+
+    background: rgba(220, 80, 80, 0.08);
+    color: #e77b7b;
+
+    font-family: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+.admin-delete-button:hover {
+    background: rgba(220, 80, 80, 0.15);
+    border-color: rgba(220, 80, 80, 0.6);
+}
+/* =========================
+   FILTROS
+========================= */
+
+.admin-filters {
+    margin-bottom: 30px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-filters form {
+    display: grid;
+
+    grid-template-columns:
+        1.5fr
+        1fr
+        1fr
+        1fr
+        auto;
+
+    align-items: end;
+
+    gap: 15px;
+}
+
+.filter-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--text-muted);
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 10px;
+
+    background: rgba(0, 0, 0, 0.25);
+
+    color: inherit;
+
+    font-family: inherit;
+
+    outline: none;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--gold);
+}
+
+.filter-group select option {
+    background: #161616;
+    color: white;
+}
+
+.filter-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.filter-actions .btn {
+    min-height: 48px;
+}
+
+.admin-clear-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+
+    padding: 0 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 10px;
+
+    color: var(--text-muted);
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.admin-clear-button:hover {
+    color: white;
+
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+
+/* =========================
+   RESULTADOS
+========================= */
+
+.results-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.results-header .admin-label {
+    margin: 0;
+}
+
+.results-header strong {
+    font-size: 14px;
+
+    color: var(--text-muted);
+}
+
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 1000px) {
+
+    .admin-filters form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .admin-filters form {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        grid-column: auto;
+    }
+
+    .filter-actions .btn,
+    .admin-clear-button {
+        flex: 1;
+    }
+
+}

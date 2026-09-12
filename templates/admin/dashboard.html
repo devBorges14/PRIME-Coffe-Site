@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | Tio Ale{% endblock %}
+
+{% block content %}
+
+<section class="admin-page">
+
+    <div class="admin-container">
+
+        <div class="admin-header">
+            <div>
+                <span class="admin-label">PAINEL ADMINISTRATIVO</span>
+                <h1>Gestão de <span>Leads</span></h1>
+                <p>Acompanhe as solicitações recebidas pelo site.</p>
+            </div>
+        </div>
+
+        <!-- ESTATÍSTICAS -->
+        <div class="admin-stats">
+            <div class="admin-stat">
+                <span>Total</span>
+                <strong>{{ stats["total"] or 0 }}</strong>
+            </div>
+            <div class="admin-stat">
+                <span>Novos</span>
+                <strong>{{ stats["novos"] or 0 }}</strong>
+            </div>
+            <div class="admin-stat">
+                <span>Contato</span>
+                <strong>{{ stats["contato"] or 0 }}</strong>
+            </div>
+            <div class="admin-stat">
+                <span>Orçamento</span>
+                <strong>{{ stats["orcamento"] or 0 }}</strong>
+            </div>
+            <div class="admin-stat">
+                <span>Negociação</span>
+                <strong>{{ stats["negociacao"] or 0 }}</strong>
+            </div>
+            <div class="admin-stat">
+                <span>Fechados</span>
+                <strong>{{ stats["fechados"] or 0 }}</strong>
+            </div>
+        </div>
+
+        <!-- =========================
+             FILTROS
+        ========================= -->
+        <div class="admin-filters">
+            <form method="GET" action="{{ url_for('admin.dashboard') }}">
+                <div class="filter-group">
+                    <label for="search">Pesquisar</label>
+                    <input type="text" id="search" name="search" value="{{ search }}"
+                        placeholder="Nome, e-mail ou telefone">
+                </div>
+
+                <div class="filter-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="">Todos os status</option>
+                        <option value="NOVO" {% if status_filter=="NOVO" %}selected{% endif %}>Novo</option>
+                        <option value="CONTATO REALIZADO" {% if status_filter=="CONTATO REALIZADO" %}selected{% endif
+                            %}>Contato realizado</option>
+                        <option value="ORÇAMENTO ENVIADO" {% if status_filter=="ORÇAMENTO ENVIADO" %}selected{% endif
+                            %}>Orçamento enviado</option>
+                        <option value="NEGOCIAÇÃO" {% if status_filter=="NEGOCIAÇÃO" %}selected{% endif %}>Negociação
+                        </option>
+                        <option value="FECHADO" {% if status_filter=="FECHADO" %}selected{% endif %}>Fechado</option>
+                        <option value="SEM INTERESSE" {% if status_filter=="SEM INTERESSE" %}selected{% endif %}>Sem
+                            interesse</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="event_type">Tipo de evento</label>
+                    <select id="event_type" name="event_type">
+                        <option value="">Todos os eventos</option>
+                        <option value="Evento Corporativo" {% if event_filter=="Evento Corporativo" %}selected{% endif
+                            %}>Evento Corporativo</option>
+                        <option value="Casamento" {% if event_filter=="Casamento" %}selected{% endif %}>Casamento
+                        </option>
+                        <option value="Aniversário" {% if event_filter=="Aniversário" %}selected{% endif %}>Aniversário
+                        </option>
+                        <option value="Feira ou Congresso" {% if event_filter=="Feira ou Congresso" %}selected{% endif
+                            %}>Feira ou Congresso</option>
+                        <option value="Ativação de Marca" {% if event_filter=="Ativação de Marca" %}selected{% endif %}>
+                            Ativação de Marca</option>
+                        <option value="Outro" {% if event_filter=="Outro" %}selected{% endif %}>Outro</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="event_date">Data do evento</label>
+                    <input type="date" id="event_date" name="event_date" value="{{ date_filter }}">
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="admin-clear-button">Limpar</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- LEADS -->
+        <div class="admin-section">
+
+            <div class="admin-section-header">
+                <div>
+                    <span class="admin-label">SOLICITAÇÕES</span>
+                    <h2>Leads recebidos</h2>
+                </div>
+            </div>
+
+            <!-- CONTADOR DE RESULTADOS -->
+            <div class="results-header">
+                <span class="admin-label">RESULTADOS</span>
+                <strong>
+                    {{ leads|length }}
+                    {% if leads|length == 1 %}
+                    lead encontrado
+                    {% else %}
+                    leads encontrados
+                    {% endif %}
+                </strong>
+            </div>
+
+            {% if leads %}
+            <div class="leads-table-wrapper">
+                <table class="leads-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Evento</th>
+                            <th>Data</th>
+                            <th>Convidados</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lead in leads %}
+                        <tr>
+                            <td>
+                                <strong>{{ lead["name"] }}</strong>
+                                <small>{{ lead["email"] }}</small>
+                            </td>
+                            <td>{{ lead["event_type"] }}</td>
+                            <td>{{ lead["event_date"] or "—" }}</td>
+                            <td>{{ lead["guest_count"] or "—" }}</td>
+                            <td>
+                                <span class="status status-{{ lead['status']|lower|replace(' ', '-') }}">
+                                    {{ lead["status"] }}
+                                </span>
+                            </td>
+                            <td>
+                                <!-- Modificado aqui para evitar o erro BuildError -->
+                                <a href="{{ url_for('admin.lead_detail', lead_id=lead['id']) }}"
+                                    class="admin-view-button">
+                                    Ver →
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <h3>Nenhum lead recebido</h3>
+                <p>Quando alguém preencher o formulário, a solicitação aparecerá aqui.</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

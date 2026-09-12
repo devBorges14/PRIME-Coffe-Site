@@ -1,10 +1,10 @@
 from flask import Flask
 
 from config import Config
-from database.database import init_db
 from routes.main import main
 from routes.contact import contact_bp
-
+from routes.admin import admin_bp
+from database.database import init_db, migrate_db
 
 def create_app():
     app = Flask(__name__)
@@ -20,6 +20,7 @@ def create_app():
     # =====================================================
 
     init_db()
+    migrate_db()
 
     # =====================================================
     # BLUEPRINTS
@@ -27,6 +28,7 @@ def create_app():
 
     app.register_blueprint(main)
     app.register_blueprint(contact_bp)
+    app.register_blueprint(admin_bp)
 
     return app
 

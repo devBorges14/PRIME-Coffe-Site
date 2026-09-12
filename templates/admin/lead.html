@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}Lead #{{ lead["id"] }} | Tio Ale{% endblock %}
+
+{% block content %}
+
+<section class="admin-page">
+
+    <div class="admin-container">
+
+        <a
+            href="{{ url_for('admin.dashboard') }}"
+            class="admin-back"
+        >
+            ← Voltar para leads
+        </a>
+
+
+        <!-- CABEÇALHO -->
+
+        <div class="lead-detail-header">
+
+            <div>
+
+                <span class="admin-label">
+                    LEAD #{{ lead["id"] }}
+                </span>
+
+                <h1>
+                    {{ lead["name"] }}
+                </h1>
+
+                <p>
+                    {{ lead["event_type"] }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="lead-detail-grid">
+
+
+            <!-- CLIENTE -->
+
+            <div class="lead-card">
+
+                <span class="admin-label">
+                    CLIENTE
+                </span>
+
+                <h2>
+                    Informações de contato
+                </h2>
+
+                <div class="lead-info">
+
+                    <div>
+                        <span>Nome</span>
+                        <strong>
+                            {{ lead["name"] }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>E-mail</span>
+                        <strong>
+                            {{ lead["email"] }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Telefone</span>
+                        <strong>
+                            {{ lead["phone"] }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EVENTO -->
+
+            <div class="lead-card">
+
+                <span class="admin-label">
+                    EVENTO
+                </span>
+
+                <h2>
+                    Detalhes
+                </h2>
+
+                <div class="lead-info">
+
+                    <div>
+                        <span>Tipo</span>
+                        <strong>
+                            {{ lead["event_type"] }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Data</span>
+                        <strong>
+                            {{ lead["event_date"] or "Não informado" }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Local</span>
+                        <strong>
+                            {{ lead["event_location"] or "Não informado" }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Convidados</span>
+                        <strong>
+                            {{ lead["guest_count"] or "Não informado" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="lead-card">
+
+                <span class="admin-label">
+                    CRM
+                </span>
+
+                <h2>
+                    Status do Lead
+                </h2>
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'admin.update_status',
+                        lead_id=lead['id']
+                    ) }}"
+                >
+
+                    <select
+                        name="status"
+                        class="admin-select"
+                    >
+
+                        <option
+                            value="NOVO"
+                            {% if lead["status"] == "NOVO" %}
+                                selected
+                            {% endif %}
+                        >
+                            NOVO
+                        </option>
+
+                        <option
+                            value="CONTATO REALIZADO"
+                            {% if lead["status"] == "CONTATO REALIZADO" %}
+                                selected
+                            {% endif %}
+                        >
+                            CONTATO REALIZADO
+                        </option>
+
+                        <option
+                            value="ORÇAMENTO ENVIADO"
+                            {% if lead["status"] == "ORÇAMENTO ENVIADO" %}
+                                selected
+                            {% endif %}
+                        >
+                            ORÇAMENTO ENVIADO
+                        </option>
+
+                        <option
+                            value="NEGOCIAÇÃO"
+                            {% if lead["status"] == "NEGOCIAÇÃO" %}
+                                selected
+                            {% endif %}
+                        >
+                            NEGOCIAÇÃO
+                        </option>
+
+                        <option
+                            value="FECHADO"
+                            {% if lead["status"] == "FECHADO" %}
+                                selected
+                            {% endif %}
+                        >
+                            FECHADO
+                        </option>
+
+                        <option
+                            value="SEM INTERESSE"
+                            {% if lead["status"] == "SEM INTERESSE" %}
+                                selected
+                            {% endif %}
+                        >
+                            SEM INTERESSE
+                        </option>
+
+                    </select>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary admin-action-button"
+                    >
+                        Atualizar status
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- OBSERVAÇÕES -->
+
+            <div class="lead-card">
+
+                <span class="admin-label">
+                    INTERNO
+                </span>
+
+                <h2>
+                    Observações
+                </h2>
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'admin.update_notes',
+                        lead_id=lead['id']
+                    ) }}"
+                >
+
+                    <textarea
+                        name="notes"
+                        class="admin-textarea"
+                        placeholder="Ex.: Cliente pediu orçamento para 150 convidados..."
+                    >{{ lead["notes"] or "" }}</textarea>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary admin-action-button"
+                    >
+                        Salvar observação
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- MENSAGEM -->
+
+            <div class="lead-card lead-card-full">
+
+                <span class="admin-label">
+                    MENSAGEM DO CLIENTE
+                </span>
+
+                <h2>
+                    Sobre o evento
+                </h2>
+
+                <p class="lead-description">
+                    {{ lead["details"] or "Nenhum detalhe informado." }}
+                </p>
+
+            </div>
+
+
+            <!-- AÇÕES -->
+
+            <div class="lead-card lead-card-full danger-card">
+
+                <span class="admin-label">
+                    ZONA DE PERIGO
+                </span>
+
+                <h2>
+                    Excluir lead
+                </h2>
+
+                <p class="lead-description">
+                    Essa ação remove permanentemente o lead do banco de dados.
+                </p>
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'admin.delete_lead',
+                        lead_id=lead['id']
+                    ) }}"
+                    onsubmit="return confirm(
+                        'Tem certeza que deseja excluir este lead?'
+                    );"
+                >
+
+                    <button
+                        type="submit"
+                        class="admin-delete-button"
+                    >
+                        Excluir lead
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
