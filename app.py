@@ -5,6 +5,8 @@ from routes.main import main
 from routes.contact import contact_bp
 from routes.admin import admin_bp
 from database.database import init_db, migrate_db
+from routes.agenda import agenda_bp
+from routes.reports import reports_bp
 
 def create_app():
     app = Flask(__name__)
@@ -29,6 +31,8 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(contact_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(agenda_bp)
+    app.register_blueprint(reports_bp)
 
     return app
 

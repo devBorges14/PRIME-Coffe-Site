@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from database.database import get_connection
 
-
 contact_bp = Blueprint("contact", __name__)
 
 
@@ -12,12 +11,19 @@ def create_contact():
     email = request.form.get("email", "").strip()
     phone = request.form.get("telefone", "").strip()
     event_type = request.form.get("tipo_evento", "").strip()
+
     event_date = request.form.get("data_evento", "").strip()
+    event_time = request.form.get("horario_evento", "").strip()
+
     event_location = request.form.get("local_evento", "").strip()
     guest_count = request.form.get("convidados", "").strip()
     details = request.form.get("detalhes", "").strip()
 
     errors = []
+
+    # =========================
+    # VALIDAÇÕES BÁSICAS
+    # =========================
 
     if not name:
         errors.append("Nome é obrigatório.")
@@ -33,7 +39,18 @@ def create_contact():
     if not event_type:
         errors.append("Tipo de evento é obrigatório.")
 
+    if not event_date:
+        errors.append("Data do evento é obrigatória.")
+
+    if not event_time:
+        errors.append("Horário do evento é obrigatório.")
+
+    # =========================
+    # CONVIDADOS
+    # =========================
+
     if guest_count:
+
         try:
             guest_count = int(guest_count)
 
@@ -42,6 +59,7 @@ def create_contact():
 
         except ValueError:
             errors.append("Número de convidados inválido.")
+
     else:
         guest_count = None
 
@@ -51,7 +69,42 @@ def create_contact():
             "errors": errors
         }), 400
 
+    # =========================
+    # VERIFICAR AGENDA
+    # =========================
+
     connection = get_connection()
+
+    slot = connection.execute("""
+        SELECT *
+        FROM availability
+        WHERE date = ?
+        AND start_time <= ?
+        AND end_time > ?
+        AND status = 'AVAILABLE'
+        ORDER BY start_time ASC
+        LIMIT 1
+    """, (
+        event_date,
+        event_time,
+        event_time
+    )).fetchone()
+
+    if not slot:
+
+        connection.close()
+
+        return jsonify({
+            "success": False,
+            "errors": [
+                "O horário selecionado não está disponível."
+            ]
+        }), 409
+
+    # =========================
+    # CRIAR LEAD
+    # =========================
+
     cursor = connection.cursor()
 
     cursor.execute("""
@@ -61,20 +114,24 @@ def create_contact():
             phone,
             event_type,
             event_date,
+            event_time,
             event_location,
             guest_count,
-            details
+            details,
+            availability_id
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         name,
         email,
         phone,
         event_type,
         event_date,
+        event_time,
         event_location,
         guest_count,
-        details
+        details,
+        slot["id"]
     ))
 
     connection.commit()

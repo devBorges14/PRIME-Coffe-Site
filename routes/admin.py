@@ -150,18 +150,109 @@ def lead_detail(lead_id):
 # ATUALIZAR STATUS
 # =====================================================
 
-@admin_bp.route("/lead/<int:lead_id>/status", methods=["POST"])
+@admin_bp.route(
+    "/leads/<int:lead_id>/status",
+    methods=["POST"]
+)
 def update_status(lead_id):
-    new_status = request.form.get("status")
+
+    new_status = request.form.get("status", "").strip()
+
+    allowed_statuses = {
+        "NOVO",
+        "CONTATO REALIZADO",
+        "ORÇAMENTO ENVIADO",
+        "NEGOCIAÇÃO",
+        "FECHADO",
+        "SEM INTERESSE"
+    }
+
+    if new_status not in allowed_statuses:
+        return redirect(
+            url_for(
+                "admin.lead_detail",
+                lead_id=lead_id
+            )
+        )
 
     connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("UPDATE leads SET status = ? WHERE id = ?", (new_status, lead_id))
+
+    lead = connection.execute("""
+        SELECT *
+        FROM leads
+        WHERE id = ?
+    """, (lead_id,)).fetchone()
+
+    if not lead:
+        connection.close()
+
+        return redirect(
+            url_for("admin.dashboard")
+        )
+
+    old_status = lead["status"]
+
+    # =========================
+    # ATUALIZA LEAD
+    # =========================
+
+    connection.execute("""
+        UPDATE leads
+        SET status = ?
+        WHERE id = ?
+    """, (
+        new_status,
+        lead_id
+    ))
+
+    # =========================
+    # FECHADO → BOOKED
+    # =========================
+
+    if (
+        new_status == "FECHADO"
+        and old_status != "FECHADO"
+        and lead["availability_id"]
+    ):
+
+        connection.execute("""
+            UPDATE availability
+            SET status = 'BOOKED',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        """, (
+            lead["availability_id"],
+        ))
+
+    # =========================
+    # DESFECHOU → AVAILABLE
+    # =========================
+
+    elif (
+        old_status == "FECHADO"
+        and new_status != "FECHADO"
+        and lead["availability_id"]
+    ):
+
+        connection.execute("""
+            UPDATE availability
+            SET status = 'AVAILABLE',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            AND status = 'BOOKED'
+        """, (
+            lead["availability_id"],
+        ))
+
     connection.commit()
     connection.close()
 
-    return redirect(url_for("admin.lead_detail", lead_id=lead_id))
-
+    return redirect(
+        url_for(
+            "admin.lead_detail",
+            lead_id=lead_id
+        )
+    )
 
 # =====================================================
 # ATUALIZAR OBSERVAÇÕES
