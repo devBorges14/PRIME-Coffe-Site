@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,24 +11,30 @@
     >
 
     <title>
-        {% block title %}Prime Cafés | Experiências Premium em Café{% endblock %}
+        {% block title %}
+            Tio Ale | Experiências para Eventos
+        {% endblock %}
     </title>
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
-        rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    >
+
+    {% block extra_css %}{% endblock %}
+
 </head>
 
 <body>
 
-    {% block content %}
-    {% endblock %}
+    {% block content %}{% endblock %}
 
     <script
         src="{{ url_for('static', filename='js/script.js') }}"
     ></script>
 
+    {% block extra_js %}{% endblock %}
+
 </body>
+
 </html>

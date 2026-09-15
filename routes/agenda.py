@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from database.database import get_connection
+from functools import wraps
+from flask import session
+from auth_utils import login_required
 
 
 agenda_bp = Blueprint(
@@ -17,6 +20,7 @@ STATUS_LABELS = {
 
 
 @agenda_bp.route("/")
+@login_required
 def agenda():
     connection = get_connection()
 
@@ -36,6 +40,7 @@ def agenda():
 
 
 @agenda_bp.route("/add", methods=["POST"])
+@login_required
 def add_slot():
 
     date = request.form.get("date", "").strip()
@@ -103,6 +108,7 @@ def add_slot():
 
 
 @agenda_bp.route("/<int:slot_id>/status", methods=["POST"])
+@login_required
 def update_status(slot_id):
 
     status = request.form.get("status", "").strip()
@@ -135,6 +141,7 @@ def update_status(slot_id):
 
 
 @agenda_bp.route("/<int:slot_id>/delete", methods=["POST"])
+@login_required
 def delete_slot(slot_id):
 
     connection = get_connection()

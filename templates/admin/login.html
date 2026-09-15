@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Admin</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+</head>
+
+<body class="login-page">
+
+    <main class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-header">
+
+                <span class="login-label">
+                    ÁREA RESTRITA
+                </span>
+
+                <h1>
+                    PRIME
+                </h1>
+
+                <p>
+                    Painel administrativo
+                </p>
+
+            </div>
+
+
+            {% with messages = get_flashed_messages(
+            with_categories=true
+            ) %}
+
+            {% if messages %}
+
+            {% for category, message in messages %}
+
+            <div class="login-message {{ category }}">
+                {{ message }}
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+            {% endwith %}
+
+
+            <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+
+                <label for="username">
+                    Usuário
+                </label>
+
+                <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+
+
+                <label for="password">
+                    Senha
+                </label>
+
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+
+                <button type="submit" class="admin-button">
+                    Entrar
+                </button>
+
+                    <a href="{{ url_for('main.index') }}" class="back-home">
+                        ← Página inicial
+                    </a>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

@@ -3,6 +3,12 @@
 {% block title %}Admin | Dashboard{% endblock %}
 
 {% block content %}
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/admin.css') }}"
+>
+{% endblock %}
 
 <section class="admin-page">
 
@@ -67,17 +73,11 @@
         <!-- NAVEGAÇÃO ADMIN -->
         <div class="admin-navigation">
 
-            <a
-                href="{{ url_for('agenda.agenda') }}"
-                class="admin-button"
-            >
+            <a href="{{ url_for('agenda.agenda') }}" class="admin-button">
                 Agenda & Disponibilidade
             </a>
 
-            <a
-                href="{{ url_for('reports.reports') }}"
-                class="admin-button"
-            >
+            <a href="{{ url_for('reports.reports') }}" class="admin-button">
                 Relatórios
             </a>
 
@@ -90,10 +90,7 @@
 
         <div class="admin-filters">
 
-            <form
-                method="GET"
-                action="{{ url_for('admin.dashboard') }}"
-            >
+            <form method="GET" action="{{ url_for('admin.dashboard') }}">
 
                 <!-- PESQUISA -->
 
@@ -103,13 +100,8 @@
                         Pesquisar
                     </label>
 
-                    <input
-                        type="text"
-                        id="search"
-                        name="search"
-                        value="{{ search }}"
-                        placeholder="Nome, e-mail ou telefone"
-                    >
+                    <input type="text" id="search" name="search" value="{{ search }}"
+                        placeholder="Nome, e-mail ou telefone">
 
                 </div>
 
@@ -122,54 +114,35 @@
                         Status
                     </label>
 
-                    <select
-                        id="status"
-                        name="status"
-                    >
+                    <select id="status" name="status">
 
                         <option value="">
                             Todos os status
                         </option>
 
-                        <option
-                            value="NOVO"
-                            {% if status_filter == "NOVO" %}selected{% endif %}
-                        >
+                        <option value="NOVO" {% if status_filter=="NOVO" %}selected{% endif %}>
                             Novo
                         </option>
 
-                        <option
-                            value="CONTATO REALIZADO"
-                            {% if status_filter == "CONTATO REALIZADO" %}selected{% endif %}
-                        >
+                        <option value="CONTATO REALIZADO" {% if status_filter=="CONTATO REALIZADO" %}selected{% endif
+                            %}>
                             Contato realizado
                         </option>
 
-                        <option
-                            value="ORÇAMENTO ENVIADO"
-                            {% if status_filter == "ORÇAMENTO ENVIADO" %}selected{% endif %}
-                        >
+                        <option value="ORÇAMENTO ENVIADO" {% if status_filter=="ORÇAMENTO ENVIADO" %}selected{% endif
+                            %}>
                             Orçamento enviado
                         </option>
 
-                        <option
-                            value="NEGOCIAÇÃO"
-                            {% if status_filter == "NEGOCIAÇÃO" %}selected{% endif %}
-                        >
+                        <option value="NEGOCIAÇÃO" {% if status_filter=="NEGOCIAÇÃO" %}selected{% endif %}>
                             Negociação
                         </option>
 
-                        <option
-                            value="FECHADO"
-                            {% if status_filter == "FECHADO" %}selected{% endif %}
-                        >
+                        <option value="FECHADO" {% if status_filter=="FECHADO" %}selected{% endif %}>
                             Fechado
                         </option>
 
-                        <option
-                            value="SEM INTERESSE"
-                            {% if status_filter == "SEM INTERESSE" %}selected{% endif %}
-                        >
+                        <option value="SEM INTERESSE" {% if status_filter=="SEM INTERESSE" %}selected{% endif %}>
                             Sem interesse
                         </option>
 
@@ -186,40 +159,27 @@
                         Tipo de evento
                     </label>
 
-                    <select
-                        id="event_type"
-                        name="event_type"
-                    >
+                    <select id="event_type" name="event_type">
 
                         <option value="">
                             Todos os eventos
                         </option>
 
-                        <option
-                            value="Evento Corporativo"
-                            {% if event_filter == "Evento Corporativo" %}selected{% endif %}
-                        >
+                        <option value="Evento Corporativo" {% if event_filter=="Evento Corporativo" %}selected{% endif
+                            %}>
                             Evento Corporativo
                         </option>
 
-                        <option
-                            value="Feira ou Congresso"
-                            {% if event_filter == "Feira ou Congresso" %}selected{% endif %}
-                        >
+                        <option value="Feira ou Congresso" {% if event_filter=="Feira ou Congresso" %}selected{% endif
+                            %}>
                             Feira ou Congresso
                         </option>
 
-                        <option
-                            value="Ativação de Marca"
-                            {% if event_filter == "Ativação de Marca" %}selected{% endif %}
-                        >
+                        <option value="Ativação de Marca" {% if event_filter=="Ativação de Marca" %}selected{% endif %}>
                             Ativação de Marca
                         </option>
 
-                        <option
-                            value="Outro"
-                            {% if event_filter == "Outro" %}selected{% endif %}
-                        >
+                        <option value="Outro" {% if event_filter=="Outro" %}selected{% endif %}>
                             Outro
                         </option>
 
@@ -236,12 +196,7 @@
                         Data do evento
                     </label>
 
-                    <input
-                        type="date"
-                        id="event_date"
-                        name="event_date"
-                        value="{{ date_filter }}"
-                    >
+                    <input type="date" id="event_date" name="event_date" value="{{ date_filter }}">
 
                 </div>
 
@@ -250,17 +205,11 @@
 
                 <div class="filter-actions">
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                    >
+                    <button type="submit" class="btn btn-primary">
                         Filtrar
                     </button>
 
-                    <a
-                        href="{{ url_for('admin.dashboard') }}"
-                        class="admin-clear-button"
-                    >
+                    <a href="{{ url_for('admin.dashboard') }}" class="admin-clear-button">
                         Limpar
                     </a>
 
@@ -308,11 +257,11 @@
 
                     {% if leads|length == 1 %}
 
-                        lead encontrado
+                    lead encontrado
 
                     {% else %}
 
-                        leads encontrados
+                    leads encontrados
 
                     {% endif %}
 
@@ -323,149 +272,150 @@
 
             {% if leads %}
 
-                <!-- TABELA -->
+            <!-- TABELA -->
 
-                <div class="leads-table-wrapper">
+            <div class="leads-table-wrapper">
 
-                    <table class="leads-table">
+                <table class="leads-table">
 
-                        <thead>
+                    <thead>
 
-                            <tr>
+                        <tr>
 
-                                <th>
-                                    Cliente
-                                </th>
+                            <th>
+                                Cliente
+                            </th>
 
-                                <th>
-                                    Evento
-                                </th>
+                            <th>
+                                Evento
+                            </th>
 
-                                <th>
-                                    Data
-                                </th>
+                            <th>
+                                Data
+                            </th>
 
-                                <th>
-                                    Horário
-                                </th>
+                            <th>
+                                Horário
+                            </th>
 
-                                <th>
-                                    Convidados
-                                </th>
+                            <th>
+                                Convidados
+                            </th>
 
-                                <th>
-                                    Status
-                                </th>
+                            <th>
+                                Status
+                            </th>
 
-                                <th>
-                                </th>
+                            <th>
+                            </th>
 
-                            </tr>
+                        </tr>
 
-                        </thead>
-
-
-                        <tbody>
-
-                            {% for lead in leads %}
-
-                                <tr>
-
-                                    <!-- CLIENTE -->
-
-                                    <td>
-
-                                        <strong>
-                                            {{ lead["name"] }}
-                                        </strong>
-
-                                        <small>
-                                            {{ lead["email"] }}
-                                        </small>
-
-                                    </td>
+                    </thead>
 
 
-                                    <!-- EVENTO -->
+                    <tbody>
 
-                                    <td>
-                                        {{ lead["event_type"] }}
-                                    </td>
+                        {% for lead in leads %}
 
+                        <tr>
 
-                                    <!-- DATA -->
+                            <!-- CLIENTE -->
 
-                                    <td>
-                                        {{ lead["event_date"] or "—" }}
-                                    </td>
+                            <td>
 
+                                <strong>
+                                    {{ lead["name"] }}
+                                </strong>
 
-                                    <!-- HORÁRIO -->
+                                <small>
+                                    {{ lead["email"] }}
+                                </small>
 
-                                    <td>
-                                        {{ lead["event_time"] or "—" }}
-                                    </td>
-
-
-                                    <!-- CONVIDADOS -->
-
-                                    <td>
-                                        {{ lead["guest_count"] or "—" }}
-                                    </td>
+                            </td>
 
 
-                                    <!-- STATUS -->
+                            <!-- EVENTO -->
 
-                                    <td>
-
-                                        <span
-                                            class="status status-{{ lead['status']|lower|replace(' ', '-') }}"
-                                        >
-                                            {{ lead["status"] }}
-                                        </span>
-
-                                    </td>
+                            <td>
+                                {{ lead["event_type"] }}
+                            </td>
 
 
-                                    <!-- AÇÃO -->
+                            <!-- DATA -->
 
-                                    <td>
+                            <td>
+                                {{ lead["event_date"] or "—" }}
+                            </td>
 
-                                        <a
-                                            href="{{ url_for('admin.lead_detail', lead_id=lead['id']) }}"
-                                            class="admin-view-button"
-                                        >
-                                            Ver →
-                                        </a>
 
-                                    </td>
+                            <!-- HORÁRIO -->
 
-                                </tr>
+                            <td>
+                                {{ lead["event_time"] or "—" }}
+                            </td>
 
-                            {% endfor %}
 
-                        </tbody>
+                            <!-- CONVIDADOS -->
 
-                    </table>
+                            <td>
+                                {{ lead["guest_count"] or "—" }}
+                            </td>
 
-                </div>
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span class="status status-{{ lead['status']|lower|replace(' ', '-') }}">
+                                    {{ lead["status"] }}
+                                </span>
+
+                            </td>
+
+
+                            <!-- AÇÃO -->
+
+                            <td>
+
+                                <a href="{{ url_for('admin.lead_detail', lead_id=lead['id']) }}"
+                                    class="admin-view-button">
+                                    Ver →
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            <form method="POST" action="{{ url_for('auth.logout') }}">
+                <button type="submit" class="admin-button">
+                    Sair
+                </button>
+            </form>
 
             {% else %}
 
-                <!-- ESTADO VAZIO -->
+            <!-- ESTADO VAZIO -->
 
-                <div class="empty-state">
+            <div class="empty-state">
 
-                    <h3>
-                        Nenhum lead recebido
-                    </h3>
+                <h3>
+                    Nenhum lead recebido
+                </h3>
 
-                    <p>
-                        Quando alguém preencher o formulário,
-                        a solicitação aparecerá aqui.
-                    </p>
+                <p>
+                    Quando alguém preencher o formulário,
+                    a solicitação aparecerá aqui.
+                </p>
 
-                </div>
+            </div>
 
             {% endif %}
 

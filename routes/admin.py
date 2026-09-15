@@ -1,6 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from database.database import get_connection
+from functools import wraps
+from auth_utils import login_required
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session
+)
 
+from database.database import get_connection
 admin_bp = Blueprint(
     "admin",
     __name__,
@@ -12,6 +21,7 @@ admin_bp = Blueprint(
 # =====================================================
 
 @admin_bp.route("/")
+@login_required
 def dashboard():
 
     search = request.args.get("search", "").strip()
@@ -131,7 +141,8 @@ def dashboard():
 # DETALHES DO LEAD
 # =====================================================
 
-@admin_bp.route("/lead/<int:lead_id>")
+@admin_bp.route("/leads/<int:lead_id>")
+@login_required
 def lead_detail(lead_id):
     connection = get_connection()
     cursor = connection.cursor()
@@ -154,6 +165,7 @@ def lead_detail(lead_id):
     "/leads/<int:lead_id>/status",
     methods=["POST"]
 )
+@login_required
 def update_status(lead_id):
 
     new_status = request.form.get("status", "").strip()
@@ -258,7 +270,11 @@ def update_status(lead_id):
 # ATUALIZAR OBSERVAÇÕES
 # =====================================================
 
-@admin_bp.route("/lead/<int:lead_id>/notes", methods=["POST"])
+@admin_bp.route(
+    "/leads/<int:lead_id>/notes",
+    methods=["POST"]
+)
+@login_required
 def update_notes(lead_id):
     notes = request.form.get("notes")
 
@@ -275,7 +291,11 @@ def update_notes(lead_id):
 # EXCLUIR LEAD
 # =====================================================
 
-@admin_bp.route("/lead/<int:lead_id>/delete", methods=["POST"])
+@admin_bp.route(
+    "/leads/<int:lead_id>/delete",
+    methods=["POST"]
+)
+@login_required
 def delete_lead(lead_id):
     connection = get_connection()
     cursor = connection.cursor()

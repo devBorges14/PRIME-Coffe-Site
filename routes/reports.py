@@ -3,6 +3,7 @@ from database.database import get_connection
 import csv
 import io
 import json
+from auth_utils import login_required
 
 
 reports_bp = Blueprint(
@@ -12,6 +13,7 @@ reports_bp = Blueprint(
 )
 
 @reports_bp.route("/")
+@login_required
 def reports():
 
     start_date = request.args.get("start_date", "").strip()
@@ -169,6 +171,7 @@ def reports():
 # =========================================================
 
 @reports_bp.route("/exportar/csv")
+@login_required
 def export_csv():
 
     start_date = request.args.get("start_date", "").strip()
@@ -272,6 +275,7 @@ def export_csv():
 # =========================================================
 
 @reports_bp.route("/exportar/json")
+@login_required
 def export_json():
 
     start_date = request.args.get("start_date", "").strip()

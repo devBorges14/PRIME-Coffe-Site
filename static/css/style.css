@@ -2335,4 +2335,234 @@ footer {
     }
 
 }
+/* =========================
+   MARCAS ATENDIDAS
+========================= */
+
+.brands {
+    padding: 140px 0;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(201, 164, 92, 0.08),
+            transparent 45%
+        ),
+        var(--black);
+}
+
+.brands-description {
+    max-width: 680px;
+    margin: 25px auto 70px;
+
+    color: var(--text-muted);
+    text-align: center;
+
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.brands-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 16px;
+
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.brand-item {
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    background: rgba(255, 255, 255, 0.025);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 16px;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+.brand-item:hover {
+    transform: translateY(-4px);
+
+    color: var(--gold);
+
+    border-color: rgba(201, 164, 92, 0.45);
+
+    background: rgba(201, 164, 92, 0.06);
+}
+
+.brand-more {
+    color: var(--gold);
+
+    border-color: rgba(201, 164, 92, 0.25);
+
+    background: rgba(201, 164, 92, 0.04);
+}
+
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 900px) {
+
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .brands {
+        padding: 100px 0;
+    }
+
+    .brands-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .brands-description {
+        font-size: 15px;
+        margin-bottom: 45px;
+    }
+
+}
+/* =========================
+   MARCAS ATENDIDAS
+========================= */
+
+.brands {
+    padding: 140px 0;
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(201, 164, 92, 0.07),
+            transparent 45%
+        ),
+        var(--black);
+}
+
+.brands-description {
+    max-width: 680px;
+    margin: 25px auto 75px;
+
+    color: var(--text-muted);
+    text-align: center;
+
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+.brands-logos {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    max-width: 1100px;
+    margin: 0 auto;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-logo {
+    min-height: 115px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.48);
+
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+
+    transition:
+        color 0.3s ease,
+        background 0.3s ease,
+        transform 0.3s ease;
+}
+
+.brand-logo:hover {
+    color: var(--gold);
+
+    background: rgba(201, 164, 92, 0.04);
+
+    transform: scale(1.02);
+
+    z-index: 2;
+}
+
+.brands-more {
+    margin-top: 45px;
+
+    text-align: center;
+
+    color: var(--gold);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+
+/* RESPONSIVO */
+
+@media (max-width: 900px) {
+
+    .brands-logos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .brands {
+        padding: 100px 0;
+    }
+
+    .brands-description {
+        font-size: 15px;
+        margin-bottom: 50px;
+    }
+
+    .brands-logos {
+        grid-template-columns: 1fr;
+    }
+
+}
 
