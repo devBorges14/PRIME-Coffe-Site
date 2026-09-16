@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
+
 from database.database import get_connection
+
 
 contact_bp = Blueprint("contact", __name__)
 
@@ -21,9 +23,9 @@ def create_contact():
 
     errors = []
 
-    # =========================
-    # VALIDAÇÕES BÁSICAS
-    # =========================
+    # =====================================================
+    # VALIDAÇÃO
+    # =====================================================
 
     if not name:
         errors.append("Nome é obrigatório.")
@@ -45,20 +47,20 @@ def create_contact():
     if not event_time:
         errors.append("Horário do evento é obrigatório.")
 
-    # =========================
-    # CONVIDADOS
-    # =========================
-
     if guest_count:
 
         try:
             guest_count = int(guest_count)
 
             if guest_count <= 0:
-                errors.append("Número de convidados inválido.")
+                errors.append(
+                    "Número de convidados inválido."
+                )
 
         except ValueError:
-            errors.append("Número de convidados inválido.")
+            errors.append(
+                "Número de convidados inválido."
+            )
 
     else:
         guest_count = None
@@ -69,46 +71,65 @@ def create_contact():
             "errors": errors
         }), 400
 
-    # =========================
-    # VERIFICAR AGENDA
-    # =========================
+    # =====================================================
+    # BANCO
+    # =====================================================
 
     connection = get_connection()
 
-    slot = connection.execute("""
-        SELECT *
-        FROM availability
-        WHERE date = ?
-        AND start_time <= ?
-        AND end_time > ?
-        AND status = 'AVAILABLE'
-        ORDER BY start_time ASC
-        LIMIT 1
-    """, (
-        event_date,
-        event_time,
-        event_time
-    )).fetchone()
+    try:
 
-    if not slot:
+        # =================================================
+        # LOCALIZA O HORÁRIO DISPONÍVEL
+        # =================================================
 
-        connection.close()
+        slot = connection.execute("""
+            SELECT *
+            FROM availability
+            WHERE date = ?
+            AND start_time = ?
+            AND status = 'AVAILABLE'
+            LIMIT 1
+        """, (
+            event_date,
+            event_time
+        )).fetchone()
 
-        return jsonify({
-            "success": False,
-            "errors": [
-                "O horário selecionado não está disponível."
-            ]
-        }), 409
+        # =================================================
+        # HORÁRIO NÃO DISPONÍVEL
+        # =================================================
 
-    # =========================
-    # CRIAR LEAD
-    # =========================
+        if not slot:
 
-    cursor = connection.cursor()
+            return jsonify({
+                "success": False,
+                "errors": [
+                    "O horário selecionado não está mais disponível."
+                ]
+            }), 409
 
-    cursor.execute("""
-        INSERT INTO leads (
+        # =================================================
+        # CRIA O LEAD
+        # =================================================
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            INSERT INTO leads (
+                name,
+                email,
+                phone,
+                event_type,
+                event_date,
+                event_time,
+                event_location,
+                guest_count,
+                details,
+                status,
+                availability_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'NOVO', ?)
+        """, (
             name,
             email,
             phone,
@@ -118,30 +139,56 @@ def create_contact():
             event_location,
             guest_count,
             details,
-            availability_id
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        name,
-        email,
-        phone,
-        event_type,
-        event_date,
-        event_time,
-        event_location,
-        guest_count,
-        details,
-        slot["id"]
-    ))
+            slot["id"]
+        ))
 
-    connection.commit()
+        lead_id = cursor.lastrowid
 
-    lead_id = cursor.lastrowid
+        # =================================================
+        # OCUPA O HORÁRIO
+        # =================================================
 
-    connection.close()
+        cursor.execute("""
+            UPDATE availability
+            SET status = 'BOOKED',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            AND status = 'AVAILABLE'
+        """, (
+            slot["id"],
+        ))
 
-    return jsonify({
-        "success": True,
-        "message": "Solicitação enviada com sucesso!",
-        "lead_id": lead_id
-    }), 201
+        # Verificação de segurança
+        if cursor.rowcount != 1:
+
+            connection.rollback()
+
+            return jsonify({
+                "success": False,
+                "errors": [
+                    "Este horário acabou de ser reservado por outro cliente."
+                ]
+            }), 409
+
+        connection.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Solicitação enviada com sucesso!",
+            "lead_id": lead_id
+        }), 201
+
+    except Exception:
+
+        connection.rollback()
+
+        return jsonify({
+            "success": False,
+            "errors": [
+                "Ocorreu um erro ao registrar a solicitação."
+            ]
+        }), 500
+
+    finally:
+
+        connection.close()

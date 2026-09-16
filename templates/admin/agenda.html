@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 
 {% block title %}Agenda | Admin{% endblock %}
+
 {% block extra_css %}
+
 <link
     rel="stylesheet"
     href="{{ url_for('static', filename='css/admin.css') }}"
 >
+
 {% endblock %}
 
 {% block content %}
@@ -17,29 +20,51 @@
         <div class="admin-header">
 
             <div>
-                <span class="admin-label">GESTÃO</span>
-                <h1>Agenda & Disponibilidade</h1>
+
+                <span class="admin-label">
+                    GESTÃO
+                </span>
+
+                <h1>
+                    Agenda & Disponibilidade
+                </h1>
+
                 <p>
                     Gerencie os dias e horários disponíveis para eventos.
                 </p>
+
             </div>
 
-            <a href="{{ url_for('admin.dashboard') }}" class="admin-back">
+            <a
+                href="{{ url_for('admin.dashboard') }}"
+                class="admin-back"
+            >
                 ← Voltar ao Dashboard
             </a>
 
         </div>
 
 
+        <!-- ========================================= -->
         <!-- ADICIONAR HORÁRIO -->
+        <!-- ========================================= -->
 
         <div class="agenda-card">
 
             <div class="agenda-card-header">
+
                 <div>
-                    <span class="admin-label">NOVO HORÁRIO</span>
-                    <h2>Adicionar disponibilidade</h2>
+
+                    <span class="admin-label">
+                        NOVO HORÁRIO
+                    </span>
+
+                    <h2>
+                        Adicionar disponibilidade
+                    </h2>
+
                 </div>
+
             </div>
 
 
@@ -48,6 +73,15 @@
                 method="POST"
                 class="agenda-form"
             >
+
+                <!-- CSRF -->
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
 
                 <div class="form-group">
 
@@ -103,7 +137,10 @@
                         Status
                     </label>
 
-                    <select id="status" name="status">
+                    <select
+                        id="status"
+                        name="status"
+                    >
 
                         <option value="AVAILABLE">
                             DISPONÍVEL
@@ -154,15 +191,24 @@
         </div>
 
 
+        <!-- ========================================= -->
         <!-- LISTA -->
+        <!-- ========================================= -->
 
         <div class="agenda-card">
 
             <div class="agenda-card-header">
 
                 <div>
-                    <span class="admin-label">AGENDA</span>
-                    <h2>Horários cadastrados</h2>
+
+                    <span class="admin-label">
+                        AGENDA
+                    </span>
+
+                    <h2>
+                        Horários cadastrados
+                    </h2>
+
                 </div>
 
                 <span class="agenda-count">
@@ -180,6 +226,9 @@
 
                         <div class="agenda-slot">
 
+
+                            <!-- DATA -->
+
                             <div class="agenda-date">
 
                                 <strong>
@@ -189,16 +238,24 @@
                             </div>
 
 
+                            <!-- HORÁRIO -->
+
                             <div class="agenda-time">
 
                                 <strong>
+
                                     {{ slot["start_time"] }}
+
                                     —
+
                                     {{ slot["end_time"] }}
+
                                 </strong>
 
                             </div>
 
+
+                            <!-- STATUS -->
 
                             <div class="agenda-status">
 
@@ -225,23 +282,40 @@
                             </div>
 
 
+                            <!-- OBSERVAÇÃO -->
+
                             <div class="agenda-note">
 
                                 {% if slot["notes"] %}
+
                                     {{ slot["notes"] }}
+
                                 {% else %}
+
                                     —
+
                                 {% endif %}
 
                             </div>
 
 
+                            <!-- AÇÕES -->
+
                             <div class="agenda-actions">
+
+
+                                <!-- ALTERAR STATUS -->
 
                                 <form
                                     action="{{ url_for('agenda.update_status', slot_id=slot['id']) }}"
                                     method="POST"
                                 >
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
 
                                     <select
                                         name="status"
@@ -250,21 +324,27 @@
 
                                         <option
                                             value="AVAILABLE"
-                                            {% if slot["status"] == "AVAILABLE" %}selected{% endif %}
+                                            {% if slot["status"] == "AVAILABLE" %}
+                                                selected
+                                            {% endif %}
                                         >
                                             Disponível
                                         </option>
 
                                         <option
                                             value="BOOKED"
-                                            {% if slot["status"] == "BOOKED" %}selected{% endif %}
+                                            {% if slot["status"] == "BOOKED" %}
+                                                selected
+                                            {% endif %}
                                         >
                                             Ocupado
                                         </option>
 
                                         <option
                                             value="BLOCKED"
-                                            {% if slot["status"] == "BLOCKED" %}selected{% endif %}
+                                            {% if slot["status"] == "BLOCKED" %}
+                                                selected
+                                            {% endif %}
                                         >
                                             Bloqueado
                                         </option>
@@ -274,11 +354,19 @@
                                 </form>
 
 
+                                <!-- EXCLUIR -->
+
                                 <form
                                     action="{{ url_for('agenda.delete_slot', slot_id=slot['id']) }}"
                                     method="POST"
                                     onsubmit="return confirm('Excluir este horário?')"
                                 >
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
 
                                     <button
                                         type="submit"
@@ -289,6 +377,7 @@
 
                                 </form>
 
+
                             </div>
 
                         </div>
@@ -296,6 +385,7 @@
                     {% endfor %}
 
                 </div>
+
 
             {% else %}
 
@@ -305,7 +395,9 @@
                         +
                     </div>
 
-                    <h3>Nenhum horário cadastrado</h3>
+                    <h3>
+                        Nenhum horário cadastrado
+                    </h3>
 
                     <p>
                         Adicione os dias e horários em que sua equipe

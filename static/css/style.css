@@ -2565,4 +2565,531 @@ footer {
     }
 
 }
+/* =========================================================
+   CALENDÁRIO DE AGENDAMENTO
+========================================================= */
 
+.booking-group {
+    margin-top: 8px;
+}
+
+
+.booking-group > label {
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: var(--white);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   CONTAINER DO CALENDÁRIO
+========================================================= */
+
+.booking-picker {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+
+    min-height: 390px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(201, 150, 69, 0.25);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 22, 19, 0.96),
+            rgba(10, 10, 10, 0.98)
+        );
+}
+
+
+/* =========================================================
+   PAINEL DO CALENDÁRIO
+========================================================= */
+
+.calendar-panel {
+    padding: 25px;
+
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.calendar-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+
+.calendar-month {
+    color: var(--white);
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    letter-spacing: .02em;
+}
+
+
+.calendar-nav {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(201, 150, 69, 0.2);
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: var(--gold-light);
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+
+.calendar-nav:hover {
+    background: rgba(201, 150, 69, 0.08);
+
+    border-color: var(--gold);
+
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   DIAS DA SEMANA
+========================================================= */
+
+.calendar-weekdays {
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    gap: 6px;
+
+    margin-bottom: 8px;
+}
+
+
+.calendar-weekdays span {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 30px;
+
+    color: #777;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: .08em;
+}
+
+
+/* =========================================================
+   DIAS
+========================================================= */
+
+.calendar-days {
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    gap: 6px;
+}
+
+
+.calendar-day {
+    position: relative;
+
+    aspect-ratio: 1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid transparent;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #d8d5cf;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+
+.calendar-day:hover:not(.disabled):not(.empty) {
+    background: rgba(201, 150, 69, 0.08);
+
+    border-color: rgba(201, 150, 69, 0.35);
+
+    color: var(--gold-light);
+
+    transform: translateY(-1px);
+}
+
+
+.calendar-day.empty {
+    pointer-events: none;
+}
+
+
+.calendar-day.disabled {
+    color: #454545;
+
+    cursor: not-allowed;
+
+    opacity: .45;
+}
+
+
+.calendar-day.today {
+    border-color: rgba(201, 150, 69, 0.45);
+
+    color: var(--gold-light);
+}
+
+
+.calendar-day.selected {
+    background: linear-gradient(
+        135deg,
+        var(--gold),
+        var(--gold-bright)
+    );
+
+    border-color: var(--gold-bright);
+
+    color: #15110b;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 8px 24px rgba(201, 150, 69, .20);
+}
+
+
+.calendar-day.has-slots::after {
+    content: "";
+
+    position: absolute;
+
+    bottom: 5px;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: var(--gold);
+}
+
+
+.calendar-day.selected.has-slots::after {
+    background: #15110b;
+}
+
+
+/* =========================================================
+   PAINEL DE HORÁRIOS
+========================================================= */
+
+.time-panel {
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 28px 24px;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(201, 150, 69, 0.08),
+            transparent 55%
+        );
+}
+
+
+.time-panel-header {
+    margin-bottom: 20px;
+}
+
+
+.booking-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--gold);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: .16em;
+}
+
+
+.time-panel-header h3 {
+    margin: 0;
+
+    color: var(--white);
+
+    font-size: 18px;
+
+    font-weight: 600;
+}
+
+
+.time-panel-header p {
+    margin: 7px 0 0;
+
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   HORÁRIOS
+========================================================= */
+
+.time-slots {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+    max-height: 280px;
+
+    overflow-y: auto;
+
+    padding-right: 5px;
+}
+
+
+.time-slots::-webkit-scrollbar {
+    width: 4px;
+}
+
+
+.time-slots::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.time-slots::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+
+    background: rgba(201, 150, 69, .35);
+}
+
+
+.time-slot {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 0 15px;
+
+    border: 1px solid rgba(201, 150, 69, .22);
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, .025);
+
+    color: #e8e4dc;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+
+.time-slot:hover {
+    border-color: var(--gold);
+
+    background: rgba(201, 150, 69, .08);
+
+    color: var(--gold-light);
+
+    transform: translateY(-1px);
+}
+
+
+.time-slot.selected {
+    border-color: var(--gold);
+
+    background: linear-gradient(
+        135deg,
+        rgba(201, 150, 69, .18),
+        rgba(201, 150, 69, .06)
+    );
+
+    color: var(--gold-light);
+
+    box-shadow:
+        0 8px 24px rgba(201, 150, 69, .08);
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.time-empty {
+    min-height: 180px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    text-align: center;
+}
+
+
+.time-empty span {
+    margin-bottom: 12px;
+
+    color: rgba(201, 150, 69, .55);
+
+    font-size: 30px;
+}
+
+
+.time-empty p {
+    margin: 0;
+
+    color: #666;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   ESTADO DE CARREGAMENTO
+========================================================= */
+
+.time-loading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 150px;
+
+    color: var(--gold-light);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .booking-picker {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-panel {
+        border-right: none;
+
+        border-bottom: 1px solid rgba(255, 255, 255, .07);
+    }
+
+    .time-panel {
+        padding-top: 24px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .calendar-panel {
+        padding: 18px;
+    }
+
+    .time-panel {
+        padding: 22px 18px;
+    }
+
+    .calendar-days,
+    .calendar-weekdays {
+        gap: 3px;
+    }
+
+    .calendar-day {
+        font-size: 12px;
+    }
+
+    .calendar-weekdays span {
+        font-size: 8px;
+    }
+
+}

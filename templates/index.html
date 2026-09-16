@@ -40,7 +40,7 @@ Prime Cafés | Experiências Premium em Café
                 <li>
                     <a href="#servicos">Serviços</a>
                 </li>
-            
+
                 <li>
                     <a href="#personalizados">Personalizados</a>
                 </li>
@@ -1006,20 +1006,108 @@ Prime Cafés | Experiências Premium em Café
 
                 <div class="form-group">
 
-                    <label for="data_evento">
-                        Data do evento
-                    </label>
+                    <!-- =====================================================
+     CALENDÁRIO DE AGENDAMENTO
+===================================================== -->
 
-                    <input type="date" id="data_evento" name="data_evento">
-                    <label for="horario_evento">
-                        Horário do evento
-                    </label>
+                    <div class="form-group booking-group">
 
-                    <select id="horario_evento" name="horario_evento" required>
-                        <option value="">
-                            Selecione primeiro a data
-                        </option>
-                    </select>
+                        <label>
+                            Data e horário do evento
+                        </label>
+
+                        <div class="booking-picker">
+
+                            <!-- CALENDÁRIO -->
+
+                            <div class="calendar-panel">
+
+                                <div class="calendar-header">
+
+                                    <button type="button" class="calendar-nav" id="calendarPrev"
+                                        aria-label="Mês anterior">
+                                        ‹
+                                    </button>
+
+                                    <div class="calendar-month" id="calendarMonth">
+                                        Setembro 2026
+                                    </div>
+
+                                    <button type="button" class="calendar-nav" id="calendarNext"
+                                        aria-label="Próximo mês">
+                                        ›
+                                    </button>
+
+                                </div>
+
+
+                                <div class="calendar-weekdays">
+
+                                    <span>DOM</span>
+                                    <span>SEG</span>
+                                    <span>TER</span>
+                                    <span>QUA</span>
+                                    <span>QUI</span>
+                                    <span>SEX</span>
+                                    <span>SÁB</span>
+
+                                </div>
+
+
+                                <div class="calendar-days" id="calendarDays"></div>
+
+                            </div>
+
+
+                            <!-- HORÁRIOS -->
+
+                            <div class="time-panel">
+
+                                <div class="time-panel-header">
+
+                                    <span class="booking-label">
+                                        HORÁRIOS DISPONÍVEIS
+                                    </span>
+
+                                    <h3 id="selectedDateLabel">
+                                        Selecione uma data
+                                    </h3>
+
+                                    <p id="timePanelMessage">
+                                        Escolha um dia para visualizar os horários.
+                                    </p>
+
+                                </div>
+
+
+                                <div class="time-slots" id="timeSlots">
+
+                                    <div class="time-empty">
+                                        <span>◷</span>
+
+                                        <p>
+                                            Nenhum horário selecionado
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CAMPOS REAIS ENVIADOS AO FLASK -->
+                        <form class="contact-form" id="contactForm" method="POST"
+                            action="{{ url_for('contact.create_contact') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <input type="hidden" id="data_evento" name="data_evento" required>
+
+                            <input type="hidden" id="horario_evento" name="horario_evento" required>
+
+                    </div>
                 </div>
 
 

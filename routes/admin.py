@@ -180,6 +180,7 @@ def update_status(lead_id):
     }
 
     if new_status not in allowed_statuses:
+
         return redirect(
             url_for(
                 "admin.lead_detail",
@@ -189,75 +190,88 @@ def update_status(lead_id):
 
     connection = get_connection()
 
-    lead = connection.execute("""
-        SELECT *
-        FROM leads
-        WHERE id = ?
-    """, (lead_id,)).fetchone()
+    try:
 
-    if not lead:
+        # =================================================
+        # BUSCA O LEAD
+        # =================================================
+
+        lead = connection.execute("""
+            SELECT *
+            FROM leads
+            WHERE id = ?
+        """, (
+            lead_id,
+        )).fetchone()
+
+        if not lead:
+
+            return redirect(
+                url_for("admin.dashboard")
+            )
+
+        old_status = lead["status"]
+
+        # =================================================
+        # ATUALIZA STATUS DO LEAD
+        # =================================================
+
+        connection.execute("""
+            UPDATE leads
+            SET status = ?
+            WHERE id = ?
+        """, (
+            new_status,
+            lead_id
+        ))
+
+        # =================================================
+        # LEAD FECHADO
+        # =================================================
+
+        if (
+            new_status == "FECHADO"
+            and lead["availability_id"]
+        ):
+
+            connection.execute("""
+                UPDATE availability
+                SET status = 'BOOKED',
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            """, (
+                lead["availability_id"],
+            ))
+
+        # =================================================
+        # LEAD CANCELADO / SEM INTERESSE
+        # =================================================
+
+        elif (
+            new_status == "SEM INTERESSE"
+            and lead["availability_id"]
+        ):
+
+            connection.execute("""
+                UPDATE availability
+                SET status = 'AVAILABLE',
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                AND status = 'BOOKED'
+            """, (
+                lead["availability_id"],
+            ))
+
+        connection.commit()
+
+    except Exception:
+
+        connection.rollback()
+        raise
+
+    finally:
+
         connection.close()
-
-        return redirect(
-            url_for("admin.dashboard")
-        )
-
-    old_status = lead["status"]
-
-    # =========================
-    # ATUALIZA LEAD
-    # =========================
-
-    connection.execute("""
-        UPDATE leads
-        SET status = ?
-        WHERE id = ?
-    """, (
-        new_status,
-        lead_id
-    ))
-
-    # =========================
-    # FECHADO → BOOKED
-    # =========================
-
-    if (
-        new_status == "FECHADO"
-        and old_status != "FECHADO"
-        and lead["availability_id"]
-    ):
-
-        connection.execute("""
-            UPDATE availability
-            SET status = 'BOOKED',
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-        """, (
-            lead["availability_id"],
-        ))
-
-    # =========================
-    # DESFECHOU → AVAILABLE
-    # =========================
-
-    elif (
-        old_status == "FECHADO"
-        and new_status != "FECHADO"
-        and lead["availability_id"]
-    ):
-
-        connection.execute("""
-            UPDATE availability
-            SET status = 'AVAILABLE',
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-            AND status = 'BOOKED'
-        """, (
-            lead["availability_id"],
-        ))
-
-    connection.commit()
-    connection.close()
 
     return redirect(
         url_for(
@@ -265,7 +279,6 @@ def update_status(lead_id):
             lead_id=lead_id
         )
     )
-
 # =====================================================
 # ATUALIZAR OBSERVAÇÕES
 # =====================================================
