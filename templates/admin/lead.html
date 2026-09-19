@@ -8,10 +8,7 @@
 
     <div class="admin-container">
 
-        <a
-            href="{{ url_for('admin.dashboard') }}"
-            class="admin-back"
-        >
+        <a href="{{ url_for('admin.dashboard') }}" class="admin-back">
             ← Voltar para leads
         </a>
 
@@ -141,79 +138,43 @@
                     Status do Lead
                 </h2>
 
-                <form
-                    method="POST"
-                    action="{{ url_for(
+                <form method="POST" action="{{ url_for(
                         'admin.update_status',
                         lead_id=lead['id']
-                    ) }}"
-                >
+                    ) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <select
-                        name="status"
-                        class="admin-select"
-                    >
+                    <select name="status" class="admin-select">
 
-                        <option
-                            value="NOVO"
-                            {% if lead["status"] == "NOVO" %}
-                                selected
-                            {% endif %}
-                        >
+                        <option value="NOVO" {% if lead["status"]=="NOVO" %} selected {% endif %}>
                             NOVO
                         </option>
 
-                        <option
-                            value="CONTATO REALIZADO"
-                            {% if lead["status"] == "CONTATO REALIZADO" %}
-                                selected
-                            {% endif %}
-                        >
+                        <option value="CONTATO REALIZADO" {% if lead["status"]=="CONTATO REALIZADO" %} selected {% endif
+                            %}>
                             CONTATO REALIZADO
                         </option>
 
-                        <option
-                            value="ORÇAMENTO ENVIADO"
-                            {% if lead["status"] == "ORÇAMENTO ENVIADO" %}
-                                selected
-                            {% endif %}
-                        >
+                        <option value="ORÇAMENTO ENVIADO" {% if lead["status"]=="ORÇAMENTO ENVIADO" %} selected {% endif
+                            %}>
                             ORÇAMENTO ENVIADO
                         </option>
 
-                        <option
-                            value="NEGOCIAÇÃO"
-                            {% if lead["status"] == "NEGOCIAÇÃO" %}
-                                selected
-                            {% endif %}
-                        >
+                        <option value="NEGOCIAÇÃO" {% if lead["status"]=="NEGOCIAÇÃO" %} selected {% endif %}>
                             NEGOCIAÇÃO
                         </option>
 
-                        <option
-                            value="FECHADO"
-                            {% if lead["status"] == "FECHADO" %}
-                                selected
-                            {% endif %}
-                        >
+                        <option value="FECHADO" {% if lead["status"]=="FECHADO" %} selected {% endif %}>
                             FECHADO
                         </option>
 
-                        <option
-                            value="SEM INTERESSE"
-                            {% if lead["status"] == "SEM INTERESSE" %}
-                                selected
-                            {% endif %}
-                        >
+                        <option value="SEM INTERESSE" {% if lead["status"]=="SEM INTERESSE" %} selected {% endif %}>
                             SEM INTERESSE
                         </option>
 
                     </select>
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary admin-action-button"
-                    >
+                    <button type="submit" class="btn btn-primary admin-action-button">
                         Atualizar status
                     </button>
 
@@ -234,24 +195,15 @@
                     Observações
                 </h2>
 
-                <form
-                    method="POST"
-                    action="{{ url_for(
+                <form method="POST" action="{{ url_for(
                         'admin.update_notes',
                         lead_id=lead['id']
-                    ) }}"
-                >
+                    ) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <textarea name="notes" class="admin-textarea"
+                        placeholder="Ex.: Cliente pediu orçamento para 150 convidados...">{{ lead["notes"] or "" }}</textarea>
 
-                    <textarea
-                        name="notes"
-                        class="admin-textarea"
-                        placeholder="Ex.: Cliente pediu orçamento para 150 convidados..."
-                    >{{ lead["notes"] or "" }}</textarea>
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary admin-action-button"
-                    >
+                    <button type="submit" class="btn btn-primary admin-action-button">
                         Salvar observação
                     </button>
 
@@ -295,21 +247,15 @@
                     Essa ação remove permanentemente o lead do banco de dados.
                 </p>
 
-                <form
-                    method="POST"
-                    action="{{ url_for(
+                <form method="POST" action="{{ url_for(
                         'admin.delete_lead',
                         lead_id=lead['id']
-                    ) }}"
-                    onsubmit="return confirm(
+                    ) }}" onsubmit="return confirm(
                         'Tem certeza que deseja excluir este lead?'
-                    );"
-                >
+                    );">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <button
-                        type="submit"
-                        class="admin-delete-button"
-                    >
+                    <button type="submit" class="admin-delete-button">
                         Excluir lead
                     </button>
 

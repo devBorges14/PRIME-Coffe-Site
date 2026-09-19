@@ -3,66 +3,62 @@
 {% block title %}Agenda | Admin{% endblock %}
 
 {% block extra_css %}
-
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/admin.css') }}"
->
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
+
 
 {% block content %}
 
-<section class="admin-page">
+<section class="agenda-page">
 
     <div class="admin-container">
 
-        <div class="admin-header">
+        <!-- CABEÇALHO -->
+
+        <header class="agenda-header-simple">
 
             <div>
-
-                <span class="admin-label">
-                    GESTÃO
+                <span class="agenda-eyebrow">
+                    GESTÃO DE AGENDA
                 </span>
 
                 <h1>
-                    Agenda & Disponibilidade
+                    Agenda
                 </h1>
 
                 <p>
-                    Gerencie os dias e horários disponíveis para eventos.
+                    Cadastre os horários em que sua equipe pode atender eventos.
                 </p>
-
             </div>
 
             <a
                 href="{{ url_for('admin.dashboard') }}"
-                class="admin-back"
+                class="agenda-back-button"
             >
-                ← Voltar ao Dashboard
+                ← Dashboard
             </a>
 
-        </div>
+        </header>
 
 
-        <!-- ========================================= -->
         <!-- ADICIONAR HORÁRIO -->
-        <!-- ========================================= -->
 
-        <div class="agenda-card">
+        <section class="agenda-add-card">
 
-            <div class="agenda-card-header">
+            <div class="agenda-section-title">
+
+                <div class="agenda-section-icon">
+                    +
+                </div>
 
                 <div>
-
-                    <span class="admin-label">
-                        NOVO HORÁRIO
-                    </span>
-
                     <h2>
-                        Adicionar disponibilidade
+                        Adicionar horário
                     </h2>
 
+                    <p>
+                        Informe quando o atendimento estará disponível.
+                    </p>
                 </div>
 
             </div>
@@ -71,10 +67,8 @@
             <form
                 action="{{ url_for('agenda.add_slot') }}"
                 method="POST"
-                class="agenda-form"
+                class="agenda-add-form"
             >
-
-                <!-- CSRF -->
 
                 <input
                     type="hidden"
@@ -83,7 +77,9 @@
                 >
 
 
-                <div class="form-group">
+                <!-- DATA -->
+
+                <div class="agenda-field">
 
                     <label for="date">
                         Data
@@ -99,10 +95,12 @@
                 </div>
 
 
-                <div class="form-group">
+                <!-- INÍCIO -->
+
+                <div class="agenda-field">
 
                     <label for="start_time">
-                        Início
+                        Começa às
                     </label>
 
                     <input
@@ -115,10 +113,12 @@
                 </div>
 
 
-                <div class="form-group">
+                <!-- FIM -->
+
+                <div class="agenda-field">
 
                     <label for="end_time">
-                        Fim
+                        Termina às
                     </label>
 
                     <input
@@ -131,10 +131,12 @@
                 </div>
 
 
-                <div class="form-group">
+                <!-- STATUS -->
+
+                <div class="agenda-field">
 
                     <label for="status">
-                        Status
+                        Situação inicial
                     </label>
 
                     <select
@@ -143,15 +145,15 @@
                     >
 
                         <option value="AVAILABLE">
-                            DISPONÍVEL
+                            Disponível
                         </option>
 
                         <option value="BLOCKED">
-                            BLOQUEADO
+                            Bloqueado
                         </option>
 
                         <option value="BOOKED">
-                            OCUPADO
+                            Ocupado
                         </option>
 
                     </select>
@@ -159,50 +161,49 @@
                 </div>
 
 
-                <div class="form-group form-group-wide">
+                <!-- OBSERVAÇÃO -->
+
+                <div class="agenda-field agenda-field-note">
 
                     <label for="notes">
                         Observação
+                        <span>(opcional)</span>
                     </label>
 
                     <input
                         type="text"
                         id="notes"
                         name="notes"
-                        placeholder="Ex.: evento corporativo"
+                        placeholder="Ex.: atendimento somente para eventos corporativos"
                     >
 
                 </div>
 
 
-                <div class="form-submit-wrapper">
+                <!-- BOTÃO -->
 
-                    <button
-                        type="submit"
-                        class="admin-button"
-                    >
-                        + Adicionar horário
-                    </button>
-
-                </div>
+                <button
+                    type="submit"
+                    class="agenda-add-button"
+                >
+                    + Adicionar horário
+                </button>
 
             </form>
 
-        </div>
+        </section>
 
 
-        <!-- ========================================= -->
-        <!-- LISTA -->
-        <!-- ========================================= -->
+        <!-- LISTA DE HORÁRIOS -->
 
-        <div class="agenda-card">
+        <section class="agenda-list-section">
 
-            <div class="agenda-card-header">
+            <div class="agenda-list-heading">
 
                 <div>
 
-                    <span class="admin-label">
-                        AGENDA
+                    <span class="agenda-eyebrow">
+                        SUA AGENDA
                     </span>
 
                     <h2>
@@ -211,207 +212,281 @@
 
                 </div>
 
-                <span class="agenda-count">
-                    {{ slots|length }} horários
-                </span>
+
+                <div class="agenda-total">
+
+                    <strong>
+                        {{ slots|length }}
+                    </strong>
+
+                    <span>
+
+                        {% if slots|length == 1 %}
+                            horário
+                        {% else %}
+                            horários
+                        {% endif %}
+
+                    </span>
+
+                </div>
 
             </div>
 
 
             {% if slots %}
 
-                <div class="agenda-list">
+            <div class="agenda-slots">
 
-                    {% for slot in slots %}
+                {% for slot in slots %}
 
-                        <div class="agenda-slot">
+                <article
+                    class="agenda-slot-card"
+                    data-slot-id="{{ slot['id'] }}"
+                >
 
+                    <!-- DATA + HORÁRIO -->
 
-                            <!-- DATA -->
+                    <div class="agenda-slot-main">
 
-                            <div class="agenda-date">
+                        <div class="agenda-slot-date">
 
-                                <strong>
-                                    {{ slot["date"] }}
-                                </strong>
+                            <span class="agenda-slot-label">
+                                DATA
+                            </span>
 
-                            </div>
-
-
-                            <!-- HORÁRIO -->
-
-                            <div class="agenda-time">
-
-                                <strong>
-
-                                    {{ slot["start_time"] }}
-
-                                    —
-
-                                    {{ slot["end_time"] }}
-
-                                </strong>
-
-                            </div>
-
-
-                            <!-- STATUS -->
-
-                            <div class="agenda-status">
-
-                                {% if slot["status"] == "AVAILABLE" %}
-
-                                    <span class="status-badge available">
-                                        DISPONÍVEL
-                                    </span>
-
-                                {% elif slot["status"] == "BOOKED" %}
-
-                                    <span class="status-badge booked">
-                                        OCUPADO
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="status-badge blocked">
-                                        BLOQUEADO
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <!-- OBSERVAÇÃO -->
-
-                            <div class="agenda-note">
-
-                                {% if slot["notes"] %}
-
-                                    {{ slot["notes"] }}
-
-                                {% else %}
-
-                                    —
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <!-- AÇÕES -->
-
-                            <div class="agenda-actions">
-
-
-                                <!-- ALTERAR STATUS -->
-
-                                <form
-                                    action="{{ url_for('agenda.update_status', slot_id=slot['id']) }}"
-                                    method="POST"
-                                >
-
-                                    <input
-                                        type="hidden"
-                                        name="csrf_token"
-                                        value="{{ csrf_token() }}"
-                                    >
-
-                                    <select
-                                        name="status"
-                                        onchange="this.form.submit()"
-                                    >
-
-                                        <option
-                                            value="AVAILABLE"
-                                            {% if slot["status"] == "AVAILABLE" %}
-                                                selected
-                                            {% endif %}
-                                        >
-                                            Disponível
-                                        </option>
-
-                                        <option
-                                            value="BOOKED"
-                                            {% if slot["status"] == "BOOKED" %}
-                                                selected
-                                            {% endif %}
-                                        >
-                                            Ocupado
-                                        </option>
-
-                                        <option
-                                            value="BLOCKED"
-                                            {% if slot["status"] == "BLOCKED" %}
-                                                selected
-                                            {% endif %}
-                                        >
-                                            Bloqueado
-                                        </option>
-
-                                    </select>
-
-                                </form>
-
-
-                                <!-- EXCLUIR -->
-
-                                <form
-                                    action="{{ url_for('agenda.delete_slot', slot_id=slot['id']) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Excluir este horário?')"
-                                >
-
-                                    <input
-                                        type="hidden"
-                                        name="csrf_token"
-                                        value="{{ csrf_token() }}"
-                                    >
-
-                                    <button
-                                        type="submit"
-                                        class="delete-button"
-                                    >
-                                        Excluir
-                                    </button>
-
-                                </form>
-
-
-                            </div>
+                            <strong>
+                                {{ slot["date"] }}
+                            </strong>
 
                         </div>
 
-                    {% endfor %}
 
-                </div>
+                        <div class="agenda-slot-time">
+
+                            <span class="agenda-slot-label">
+                                HORÁRIO
+                            </span>
+
+                            <strong>
+                                {{ slot["start_time"] }}
+                                <span>→</span>
+                                {{ slot["end_time"] }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SITUAÇÃO -->
+
+                    <div class="agenda-slot-status">
+
+                        <span class="agenda-slot-label">
+                            SITUAÇÃO
+                        </span>
+
+
+                        {% if slot["status"] == "AVAILABLE" %}
+
+                        <span class="agenda-status-badge available">
+                            <span class="agenda-status-dot"></span>
+                            Disponível
+                        </span>
+
+
+                        {% elif slot["status"] == "BOOKED" %}
+
+                        <span class="agenda-status-badge booked">
+                            <span class="agenda-status-dot"></span>
+                            Ocupado
+                        </span>
+
+
+                        {% elif slot["status"] == "BLOCKED" %}
+
+                        <span class="agenda-status-badge blocked">
+                            <span class="agenda-status-dot"></span>
+                            Bloqueado
+                        </span>
+
+
+                        {% elif slot["status"] == "DELETED" %}
+
+                        <span class="agenda-status-badge deleted">
+                            <span class="agenda-status-dot"></span>
+                            Excluído
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- OBSERVAÇÃO -->
+
+                    <div class="agenda-slot-note">
+
+                        <span class="agenda-slot-label">
+                            OBSERVAÇÃO
+                        </span>
+
+                        <p>
+
+                            {% if slot["notes"] %}
+                                {{ slot["notes"] }}
+                            {% else %}
+                                Nenhuma observação
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- AÇÕES -->
+
+                    <div class="agenda-slot-actions">
+
+
+                        <!-- ALTERAR SITUAÇÃO -->
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'agenda.update_status',
+                                slot_id=slot['id']
+                            ) }}"
+                            class="agenda-status-form"
+                            data-slot-id="{{ slot['id'] }}"
+                            data-current-status="{{ slot['status'] }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+
+                            <label
+                                for="status-{{ slot['id'] }}"
+                                class="sr-only"
+                            >
+                                Alterar situação
+                            </label>
+
+
+                            <select
+                                id="status-{{ slot['id'] }}"
+                                name="status"
+                                class="agenda-status-select"
+                            >
+
+                                <option
+                                    value="AVAILABLE"
+                                    {% if slot["status"] == "AVAILABLE" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Disponível
+                                </option>
+
+
+                                <option
+                                    value="BOOKED"
+                                    {% if slot["status"] == "BOOKED" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Ocupado
+                                </option>
+
+
+                                <option
+                                    value="BLOCKED"
+                                    {% if slot["status"] == "BLOCKED" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Bloqueado
+                                </option>
+
+                            </select>
+
+                        </form>
+
+
+                        <!-- EXCLUIR -->
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'agenda.delete_slot',
+                                slot_id=slot['id']
+                            ) }}"
+                            class="agenda-delete-form"
+                            data-slot-id="{{ slot['id'] }}"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="agenda-delete-button"
+                            >
+                                Excluir
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
 
 
             {% else %}
 
-                <div class="agenda-empty">
+            <!-- AGENDA VAZIA -->
 
-                    <div class="empty-icon">
-                        +
-                    </div>
+            <div class="agenda-empty-state">
 
-                    <h3>
-                        Nenhum horário cadastrado
-                    </h3>
-
-                    <p>
-                        Adicione os dias e horários em que sua equipe
-                        poderá atender eventos.
-                    </p>
-
+                <div class="agenda-empty-icon">
+                    +
                 </div>
+
+                <h3>
+                    Nenhum horário cadastrado
+                </h3>
+
+                <p>
+                    Comece adicionando o primeiro horário disponível acima.
+                </p>
+
+            </div>
 
             {% endif %}
 
-        </div>
+        </section>
 
     </div>
 
 </section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 
 {% endblock %}

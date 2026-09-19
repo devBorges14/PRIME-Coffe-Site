@@ -56,7 +56,7 @@
 
 
             <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
-
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label for="username">
                     Usuário
                 </label>
@@ -75,9 +75,9 @@
                     Entrar
                 </button>
 
-                    <a href="{{ url_for('main.index') }}" class="back-home">
-                        ← Página inicial
-                    </a>
+                <a href="{{ url_for('main.index') }}" class="back-home">
+                    ← Página inicial
+                </a>
 
             </form>
 

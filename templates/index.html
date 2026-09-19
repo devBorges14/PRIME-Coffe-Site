@@ -936,7 +936,8 @@ Prime Cafés | Experiências Premium em Café
 
             <!-- FORMULÁRIO -->
 
-            <form class="contact-form" id="contactForm">
+            <form class="contact-form" id="contactForm" method="POST" action="{{ url_for('contact.create_contact') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <div class="form-group">
 
@@ -1040,9 +1041,7 @@ Prime Cafés | Experiências Premium em Café
 
                                 </div>
 
-
                                 <div class="calendar-weekdays">
-
                                     <span>DOM</span>
                                     <span>SEG</span>
                                     <span>TER</span>
@@ -1050,9 +1049,7 @@ Prime Cafés | Experiências Premium em Café
                                     <span>QUI</span>
                                     <span>SEX</span>
                                     <span>SÁB</span>
-
                                 </div>
-
 
                                 <div class="calendar-days" id="calendarDays"></div>
 
@@ -1079,7 +1076,6 @@ Prime Cafés | Experiências Premium em Café
 
                                 </div>
 
-
                                 <div class="time-slots" id="timeSlots">
 
                                     <div class="time-empty">
@@ -1088,7 +1084,6 @@ Prime Cafés | Experiências Premium em Café
                                         <p>
                                             Nenhum horário selecionado
                                         </p>
-
                                     </div>
 
                                 </div>
@@ -1099,58 +1094,55 @@ Prime Cafés | Experiências Premium em Café
 
 
                         <!-- CAMPOS REAIS ENVIADOS AO FLASK -->
-                        <form class="contact-form" id="contactForm" method="POST"
-                            action="{{ url_for('contact.create_contact') }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                            <input type="hidden" id="data_evento" name="data_evento" required>
+                        <input type="hidden" id="data_evento" name="data_evento" required>
 
-                            <input type="hidden" id="horario_evento" name="horario_evento" required>
+                        <input type="hidden" id="horario_evento" name="horario_evento" required>
 
                     </div>
-                </div>
 
 
-                <div class="form-group">
+                    <div class="form-group">
 
-                    <label for="local_evento">
-                        Local do evento
-                    </label>
-
-
-                    <input type="text" id="local_evento" name="local_evento" placeholder="Cidade / Estado">
-
-                </div>
+                        <label for="local_evento">
+                            Local do evento
+                        </label>
 
 
-                <div class="form-group">
+                        <input type="text" id="local_evento" name="local_evento" placeholder="Cidade / Estado">
 
-                    <label for="convidados">
-                        Número de convidados
-                    </label>
-
-                    <input type="number" id="convidados" name="convidados" min="1" placeholder="Ex.: 150">
-
-                </div>
+                    </div>
 
 
-                <div class="form-group">
+                    <div class="form-group">
 
-                    <label for="detalhes">
-                        Conte mais sobre o evento
-                    </label>
+                        <label for="convidados">
+                            Número de convidados
+                        </label>
 
-                    <textarea id="detalhes" name="detalhes" placeholder="Conte um pouco sobre o evento..."></textarea>
+                        <input type="number" id="convidados" name="convidados" min="1" placeholder="Ex.: 150">
 
-                </div>
-
-
-                <button type="submit" class="btn btn-primary form-submit">
-                    Enviar solicitação →
-                </button>
+                    </div>
 
 
-                <div id="formMessage" class="form-message"></div>
+                    <div class="form-group">
+
+                        <label for="detalhes">
+                            Conte mais sobre o evento
+                        </label>
+
+                        <textarea id="detalhes" name="detalhes"
+                            placeholder="Conte um pouco sobre o evento..."></textarea>
+
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary form-submit">
+                        Enviar solicitação →
+                    </button>
+
+
+                    <div id="formMessage" class="form-message"></div>
 
             </form>
 

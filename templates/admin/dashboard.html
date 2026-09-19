@@ -4,10 +4,7 @@
 
 {% block content %}
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/admin.css') }}"
->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 
 <section class="admin-page">
@@ -395,6 +392,7 @@
 
             </div>
             <form method="POST" action="{{ url_for('auth.logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="admin-button">
                     Sair
                 </button>

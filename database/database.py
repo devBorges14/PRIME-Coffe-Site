@@ -15,7 +15,7 @@ def init_db():
     connection = get_connection()
     cursor = connection.cursor()
 
-    # LEADS
+       # LEADS
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS leads (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +33,8 @@ def init_db():
         availability_id INTEGER,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-""")
+    """)
+
     # DISPONIBILIDADE / AGENDA
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS availability (
@@ -46,8 +47,9 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-        
     """)
+
+    # USUÁRIOS / ADMINISTRADORES
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,11 +58,38 @@ def init_db():
         is_active INTEGER NOT NULL DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-""")
+    """)
+
+    # HISTÓRICO DE ALTERAÇÕES DA AGENDA
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS availability_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        availability_id INTEGER,
+
+        date TEXT NOT NULL,
+        start_time TEXT NOT NULL,
+        end_time TEXT NOT NULL,
+
+        action TEXT NOT NULL,
+
+        old_status TEXT,
+        new_status TEXT,
+
+        affected_lead_id INTEGER,
+        affected_client_name TEXT,
+        affected_event_type TEXT,
+
+        admin_username TEXT NOT NULL,
+
+        description TEXT,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
 
     connection.commit()
     connection.close()
-
 
 def migrate_db():
     connection = get_connection()
