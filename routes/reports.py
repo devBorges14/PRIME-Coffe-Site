@@ -4,7 +4,10 @@ import csv
 import io
 import json
 from auth_utils import login_required
+import datetime
 
+# IMPORTAR A DATA ATUAL PARA O NOME DO ARQUIVO CSV
+date = datetime.date.today()
 
 reports_bp = Blueprint(
     "reports",
@@ -264,7 +267,7 @@ def export_csv():
     )
 
     response.headers["Content-Disposition"] = (
-        "attachment; filename=relatorio_leads.csv"
+        f"attachment; filename=relatorio_{date}.csv"
     )
 
     return response
@@ -323,7 +326,7 @@ def export_json():
     )
 
     response.headers["Content-Disposition"] = (
-        "attachment; filename=relatorio_leads.json"
+        f"attachment; filename=relatorio_{date}.json"
     )
 
     return response
