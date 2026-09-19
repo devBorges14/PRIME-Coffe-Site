@@ -3,7 +3,9 @@
 {% block title %}Admin | Dashboard{% endblock %}
 
 {% block content %}
+
 {% block extra_css %}
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 
@@ -15,6 +17,7 @@
         <div class="admin-header">
 
             <div>
+
                 <span class="admin-label">
                     PAINEL ADMINISTRATIVO
                 </span>
@@ -26,6 +29,7 @@
                 <p>
                     Acompanhe as solicitações recebidas pelo site.
                 </p>
+
             </div>
 
         </div>
@@ -36,32 +40,22 @@
 
             <div class="admin-stat">
                 <span>Total</span>
-                <strong>{{ stats["total"] or 0 }}</strong>
+                <strong>{{ total_leads or 0 }}</strong>
             </div>
 
             <div class="admin-stat">
                 <span>Novos</span>
-                <strong>{{ stats["novos"] or 0 }}</strong>
-            </div>
-
-            <div class="admin-stat">
-                <span>Contato</span>
-                <strong>{{ stats["contato"] or 0 }}</strong>
-            </div>
-
-            <div class="admin-stat">
-                <span>Orçamento</span>
-                <strong>{{ stats["orcamento"] or 0 }}</strong>
+                <strong>{{ novos or 0 }}</strong>
             </div>
 
             <div class="admin-stat">
                 <span>Negociação</span>
-                <strong>{{ stats["negociacao"] or 0 }}</strong>
+                <strong>{{ negociacoes or 0 }}</strong>
             </div>
 
             <div class="admin-stat">
                 <span>Fechados</span>
-                <strong>{{ stats["fechados"] or 0 }}</strong>
+                <strong>{{ fechados or 0 }}</strong>
             </div>
 
         </div>
@@ -82,15 +76,14 @@
 
 
         <!-- =========================
-             FILTROS
-        ========================== -->
+         FILTROS
+    ========================== -->
 
         <div class="admin-filters">
 
             <form method="GET" action="{{ url_for('admin.dashboard') }}">
 
                 <!-- PESQUISA -->
-
                 <div class="filter-group">
 
                     <label for="search">
@@ -104,7 +97,6 @@
 
 
                 <!-- STATUS -->
-
                 <div class="filter-group">
 
                     <label for="status">
@@ -182,6 +174,8 @@
 
                     </select>
 
+                    </select>
+
                 </div>
 
 
@@ -193,7 +187,7 @@
                         Data do evento
                     </label>
 
-                    <input type="date" id="event_date" name="event_date" value="{{ date_filter }}">
+                    <input type="date" id="event_date" name="event_date">
 
                 </div>
 
@@ -218,8 +212,8 @@
 
 
         <!-- =========================
-             LEADS
-        ========================== -->
+         LEADS
+    ========================== -->
 
         <div class="admin-section">
 
@@ -365,7 +359,9 @@
                             <td>
 
                                 <span class="status status-{{ lead['status']|lower|replace(' ', '-') }}">
+
                                     {{ lead["status"] }}
+
                                 </span>
 
                             </td>
@@ -391,12 +387,20 @@
                 </table>
 
             </div>
+
+
+            <!-- LOGOUT -->
+
             <form method="POST" action="{{ url_for('auth.logout') }}">
+
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                 <button type="submit" class="admin-button">
                     Sair
                 </button>
+
             </form>
+
 
             {% else %}
 
@@ -420,6 +424,7 @@
         </div>
 
     </div>
+    ```
 
 </section>
 

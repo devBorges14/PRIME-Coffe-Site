@@ -1,165 +1,217 @@
-from functools import wraps
-from auth_utils import login_required
 from flask import (
     Blueprint,
     render_template,
     request,
     redirect,
     url_for,
-    session
+    flash
 )
 
 from database.database import get_connection
+from auth_utils import login_required
+from routes.agenda import register_history
+
+
 admin_bp = Blueprint(
     "admin",
     __name__,
     url_prefix="/admin"
 )
 
-# =====================================================
+
+# ============================================================
 # DASHBOARD
-# =====================================================
+# ============================================================
 
 @admin_bp.route("/")
 @login_required
 def dashboard():
 
-    search = request.args.get("search", "").strip()
-    status_filter = request.args.get("status", "").strip()
-    event_filter = request.args.get("event_type", "").strip()
-    date_filter = request.args.get("event_date", "").strip()
-
     connection = get_connection()
-    cursor = connection.cursor()
 
-    # =====================================================
-    # ESTATÍSTICAS
-    # =====================================================
+    try:
+        # ----------------------------------------------------
+        # ESTATÍSTICAS
+        # ----------------------------------------------------
 
-    cursor.execute("""
-        SELECT
-            COUNT(*) AS total,
+        total_leads = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM leads
+        """).fetchone()["total"]
 
-            SUM(
-                CASE
-                    WHEN status = 'NOVO'
-                    THEN 1 ELSE 0
-                END
-            ) AS novos,
+        novos = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM leads
+            WHERE status = 'NOVO'
+        """).fetchone()["total"]
 
-            SUM(
-                CASE
-                    WHEN status = 'CONTATO REALIZADO'
-                    THEN 1 ELSE 0
-                END
-            ) AS contato,
+        negociacoes = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM leads
+            WHERE status = 'NEGOCIAÇÃO'
+        """).fetchone()["total"]
 
-            SUM(
-                CASE
-                    WHEN status = 'ORÇAMENTO ENVIADO'
-                    THEN 1 ELSE 0
-                END
-            ) AS orcamento,
+        fechados = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM leads
+            WHERE status = 'FECHADO'
+        """).fetchone()["total"]
 
-            SUM(
-                CASE
-                    WHEN status = 'NEGOCIAÇÃO'
-                    THEN 1 ELSE 0
-                END
-            ) AS negociacao,
+        # ----------------------------------------------------
+        # FILTROS
+        # ----------------------------------------------------
 
-            SUM(
-                CASE
-                    WHEN status = 'FECHADO'
-                    THEN 1 ELSE 0
-                END
-            ) AS fechados
+        status_filter = request.args.get(
+            "status",
+            ""
+        ).strip()
 
-        FROM leads
-    """)
+        search = request.args.get(
+            "search",
+            ""
+        ).strip()
 
-    stats = cursor.fetchone()
+        event_filter = request.args.get(
+            "event_type",
+            ""
+        ).strip()
 
-    # =====================================================
-    # CONSULTA DOS LEADS
-    # =====================================================
+        date_filter = request.args.get(
+            "event_date",
+            ""
+        ).strip()
 
-    query = """
-        SELECT *
-        FROM leads
-        WHERE 1 = 1
-    """
+        # ----------------------------------------------------
+        # CONSULTA DOS LEADS
+        # ----------------------------------------------------
 
-    params = []
-
-    # PESQUISA
-    if search:
-        query += """
-            AND (
-                name LIKE ?
-                OR email LIKE ?
-                OR phone LIKE ?
-            )
+        query = """
+            SELECT *
+            FROM leads
+            WHERE 1 = 1
         """
-        search_value = f"%{search}%"
-        params.extend([search_value, search_value, search_value])
 
-    # FILTRO DE STATUS
-    if status_filter:
-        query += " AND status = ?"
-        params.append(status_filter)
+        params = []
 
-    # FILTRO DE TIPO DE EVENTO
-    if event_filter:
-        query += " AND event_type = ?"
-        params.append(event_filter)
+        # Filtro por status
+        if status_filter:
 
-    # FILTRO DE DATA
-    if date_filter:
-        query += " AND event_date = ?"
-        params.append(date_filter)
+            query += """
+                AND status = ?
+            """
 
-    # ORDENAÇÃO
-    query += " ORDER BY created_at DESC"
+            params.append(status_filter)
 
-    cursor.execute(query, params)
-    leads = cursor.fetchall()
-    connection.close()
+        # Filtro por tipo de evento
+        if event_filter:
+
+            query += """
+                AND event_type = ?
+            """
+
+            params.append(event_filter)
+
+        # Filtro por data
+        if date_filter:
+
+            query += """
+                AND event_date = ?
+            """
+
+            params.append(date_filter)
+
+        # Pesquisa
+        if search:
+
+            query += """
+                AND (
+                    name LIKE ?
+                    OR email LIKE ?
+                    OR phone LIKE ?
+                    OR event_type LIKE ?
+                )
+            """
+
+            search_value = f"%{search}%"
+
+            params.extend([
+                search_value,
+                search_value,
+                search_value,
+                search_value
+            ])
+
+        # Mais recentes primeiro
+        query += """
+            ORDER BY created_at DESC
+        """
+
+        leads = connection.execute(
+            query,
+            params
+        ).fetchall()
+
+    finally:
+        connection.close()
 
     return render_template(
         "admin/dashboard.html",
-        stats=stats,
+
+        total_leads=total_leads,
+        novos=novos,
+        negociacoes=negociacoes,
+        fechados=fechados,
+
         leads=leads,
-        search=search,
+
         status_filter=status_filter,
+        search=search,
         event_filter=event_filter,
         date_filter=date_filter
     )
 
 
-# =====================================================
+# ============================================================
 # DETALHES DO LEAD
-# =====================================================
+# ============================================================
 
 @admin_bp.route("/leads/<int:lead_id>")
 @login_required
 def lead_detail(lead_id):
-    connection = get_connection()
-    cursor = connection.cursor()
 
-    cursor.execute("SELECT * FROM leads WHERE id = ?", (lead_id,))
-    lead = cursor.fetchone()
-    connection.close()
+    connection = get_connection()
+
+    try:
+
+        lead = connection.execute("""
+            SELECT *
+            FROM leads
+            WHERE id = ?
+        """, (lead_id,)).fetchone()
+
+    finally:
+        connection.close()
 
     if not lead:
-        return redirect(url_for("admin.dashboard"))
 
-    return render_template("admin/lead.html", lead=lead)
+        flash(
+            "Lead não encontrado.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin.dashboard")
+        )
+
+    return render_template(
+        "admin/lead.html",
+        lead=lead
+    )
 
 
-# =====================================================
-# ATUALIZAR STATUS
-# =====================================================
+# ============================================================
+# ALTERAR STATUS
+# ============================================================
 
 @admin_bp.route(
     "/leads/<int:lead_id>/status",
@@ -168,7 +220,10 @@ def lead_detail(lead_id):
 @login_required
 def update_status(lead_id):
 
-    new_status = request.form.get("status", "").strip()
+    new_status = request.form.get(
+        "status",
+        ""
+    ).strip()
 
     allowed_statuses = {
         "NOVO",
@@ -179,7 +234,16 @@ def update_status(lead_id):
         "SEM INTERESSE"
     }
 
+    # --------------------------------------------------------
+    # STATUS INVÁLIDO
+    # --------------------------------------------------------
+
     if new_status not in allowed_statuses:
+
+        flash(
+            "Status inválido.",
+            "error"
+        )
 
         return redirect(
             url_for(
@@ -192,19 +256,22 @@ def update_status(lead_id):
 
     try:
 
-        # =================================================
-        # BUSCA O LEAD
-        # =================================================
+        # ----------------------------------------------------
+        # BUSCAR LEAD
+        # ----------------------------------------------------
 
         lead = connection.execute("""
             SELECT *
             FROM leads
             WHERE id = ?
-        """, (
-            lead_id,
-        )).fetchone()
+        """, (lead_id,)).fetchone()
 
         if not lead:
+
+            flash(
+                "Lead não encontrado.",
+                "error"
+            )
 
             return redirect(
                 url_for("admin.dashboard")
@@ -212,9 +279,161 @@ def update_status(lead_id):
 
         old_status = lead["status"]
 
-        # =================================================
-        # ATUALIZA STATUS DO LEAD
-        # =================================================
+        # ----------------------------------------------------
+        # NADA MUDOU
+        # ----------------------------------------------------
+
+        if old_status == new_status:
+
+            return redirect(
+                url_for(
+                    "admin.lead_detail",
+                    lead_id=lead_id
+                )
+            )
+
+        # ----------------------------------------------------
+        # BUSCAR HORÁRIO ASSOCIADO
+        # ----------------------------------------------------
+
+        availability = None
+
+        if lead["availability_id"]:
+
+            availability = connection.execute("""
+                SELECT *
+                FROM availability
+                WHERE id = ?
+            """, (
+                lead["availability_id"],
+            )).fetchone()
+
+        # ====================================================
+        # FECHANDO CONTRATO
+        # ====================================================
+
+        if new_status == "FECHADO":
+
+            if availability:
+
+                current_status = availability["status"]
+
+                # --------------------------------------------
+                # HORÁRIO EXCLUÍDO
+                # --------------------------------------------
+
+                if current_status == "DELETED":
+
+                    flash(
+                        "Não é possível fechar este contrato "
+                        "porque o horário associado foi excluído.",
+                        "error"
+                    )
+
+                    return redirect(
+                        url_for(
+                            "admin.lead_detail",
+                            lead_id=lead_id
+                        )
+                    )
+
+                # --------------------------------------------
+                # HORÁRIO BLOQUEADO
+                # --------------------------------------------
+
+                if current_status == "BLOCKED":
+
+                    flash(
+                        "Não é possível fechar este contrato "
+                        "porque o horário está bloqueado.",
+                        "error"
+                    )
+
+                    return redirect(
+                        url_for(
+                            "admin.lead_detail",
+                            lead_id=lead_id
+                        )
+                    )
+
+                # --------------------------------------------
+                # HORÁRIO JÁ RESERVADO
+                # --------------------------------------------
+
+                elif current_status == "BOOKED":
+
+                    pass
+
+                # --------------------------------------------
+                # HORÁRIO DISPONÍVEL
+                # --------------------------------------------
+
+                elif current_status == "AVAILABLE":
+
+                    connection.execute("""
+                        UPDATE availability
+                        SET
+                            status = 'BOOKED',
+                            updated_at = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    """, (
+                        lead["availability_id"],
+                    ))
+
+                    register_history(
+                        connection=connection,
+                        slot=availability,
+                        action="RESERVA_AUTOMATICA",
+                        old_status="AVAILABLE",
+                        new_status="BOOKED",
+                        affected_lead=lead,
+                        description=(
+                            "Horário reservado automaticamente "
+                            "porque o lead foi marcado como FECHADO."
+                        )
+                    )
+
+        # ====================================================
+        # CANCELANDO CONTRATO
+        # ====================================================
+
+        elif (
+            new_status == "SEM INTERESSE"
+            and old_status == "FECHADO"
+        ):
+
+            if (
+                availability
+                and availability["status"] == "BOOKED"
+            ):
+
+                connection.execute("""
+                    UPDATE availability
+                    SET
+                        status = 'AVAILABLE',
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                """, (
+                    lead["availability_id"],
+                ))
+
+                register_history(
+                    connection=connection,
+                    slot=availability,
+                    action="LIBERACAO_AUTOMATICA",
+                    old_status="BOOKED",
+                    new_status="AVAILABLE",
+                    affected_lead=lead,
+                    description=(
+                        "Horário liberado automaticamente "
+                        "porque o contrato passou de FECHADO "
+                        "para SEM INTERESSE."
+                    )
+                )
+
+        # ----------------------------------------------------
+        # ATUALIZAR STATUS DO LEAD
+        # ----------------------------------------------------
 
         connection.execute("""
             UPDATE leads
@@ -224,43 +443,6 @@ def update_status(lead_id):
             new_status,
             lead_id
         ))
-
-        # =================================================
-        # LEAD FECHADO
-        # =================================================
-
-        if (
-            new_status == "FECHADO"
-            and lead["availability_id"]
-        ):
-
-            connection.execute("""
-                UPDATE availability
-                SET status = 'BOOKED',
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE id = ?
-            """, (
-                lead["availability_id"],
-            ))
-
-        # =================================================
-        # LEAD CANCELADO / SEM INTERESSE
-        # =================================================
-
-        elif (
-            new_status == "SEM INTERESSE"
-            and lead["availability_id"]
-        ):
-
-            connection.execute("""
-                UPDATE availability
-                SET status = 'AVAILABLE',
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE id = ?
-                AND status = 'BOOKED'
-            """, (
-                lead["availability_id"],
-            ))
 
         connection.commit()
 
@@ -273,15 +455,22 @@ def update_status(lead_id):
 
         connection.close()
 
+    flash(
+        "Status atualizado com sucesso.",
+        "success"
+    )
+
     return redirect(
         url_for(
             "admin.lead_detail",
             lead_id=lead_id
         )
     )
-# =====================================================
+
+
+# ============================================================
 # ATUALIZAR OBSERVAÇÕES
-# =====================================================
+# ============================================================
 
 @admin_bp.route(
     "/leads/<int:lead_id>/notes",
@@ -289,20 +478,70 @@ def update_status(lead_id):
 )
 @login_required
 def update_notes(lead_id):
-    notes = request.form.get("notes")
+
+    notes = request.form.get(
+        "notes",
+        ""
+    ).strip()
 
     connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("UPDATE leads SET notes = ? WHERE id = ?", (notes, lead_id))
-    connection.commit()
-    connection.close()
 
-    return redirect(url_for("admin.lead_detail", lead_id=lead_id))
+    try:
+
+        # Verifica se o lead existe
+        lead = connection.execute("""
+            SELECT id
+            FROM leads
+            WHERE id = ?
+        """, (lead_id,)).fetchone()
+
+        if not lead:
+
+            flash(
+                "Lead não encontrado.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin.dashboard")
+            )
+
+        connection.execute("""
+            UPDATE leads
+            SET notes = ?
+            WHERE id = ?
+        """, (
+            notes,
+            lead_id
+        ))
+
+        connection.commit()
+
+    except Exception:
+
+        connection.rollback()
+        raise
+
+    finally:
+
+        connection.close()
+
+    flash(
+        "Observações atualizadas com sucesso.",
+        "success"
+    )
+
+    return redirect(
+        url_for(
+            "admin.lead_detail",
+            lead_id=lead_id
+        )
+    )
 
 
-# =====================================================
+# ============================================================
 # EXCLUIR LEAD
-# =====================================================
+# ============================================================
 
 @admin_bp.route(
     "/leads/<int:lead_id>/delete",
@@ -310,10 +549,76 @@ def update_notes(lead_id):
 )
 @login_required
 def delete_lead(lead_id):
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute("DELETE FROM leads WHERE id = ?", (lead_id,))
-    connection.commit()
-    connection.close()
 
-    return redirect(url_for("admin.dashboard"))
+    connection = get_connection()
+
+    try:
+
+        # ----------------------------------------------------
+        # BUSCAR LEAD
+        # ----------------------------------------------------
+
+        lead = connection.execute("""
+            SELECT *
+            FROM leads
+            WHERE id = ?
+        """, (lead_id,)).fetchone()
+
+        if not lead:
+
+            flash(
+                "Lead não encontrado.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin.dashboard")
+            )
+
+        # ----------------------------------------------------
+        # PROTEGER CONTRATOS FECHADOS
+        # ----------------------------------------------------
+
+        if lead["status"] == "FECHADO":
+
+            flash(
+                "Clientes com contrato FECHADO não podem "
+                "ser excluídos. Preserve o histórico do contrato.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "admin.lead_detail",
+                    lead_id=lead_id
+                )
+            )
+
+        # ----------------------------------------------------
+        # EXCLUIR
+        # ----------------------------------------------------
+
+        connection.execute("""
+            DELETE FROM leads
+            WHERE id = ?
+        """, (lead_id,))
+
+        connection.commit()
+
+    except Exception:
+
+        connection.rollback()
+        raise
+
+    finally:
+
+        connection.close()
+
+    flash(
+        "Lead excluído com sucesso.",
+        "success"
+    )
+
+    return redirect(
+        url_for("admin.dashboard")
+    )
