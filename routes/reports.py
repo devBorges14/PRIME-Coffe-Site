@@ -3,11 +3,9 @@ from database.database import get_connection
 import csv
 import io
 import json
-from auth_utils import login_required
 import datetime
+from auth_utils import login_required
 
-# IMPORTAR A DATA ATUAL PARA O NOME DO ARQUIVO CSV
-date = datetime.date.today()
 
 reports_bp = Blueprint(
     "reports",
@@ -15,12 +13,97 @@ reports_bp = Blueprint(
     url_prefix="/admin/relatorios"
 )
 
+
+# =========================================================
+# LABELS DE APOIO (usados no template)
+# =========================================================
+
+HISTORY_ACTION_LABELS = {
+    "CRIACAO": "Criação",
+    "ALTERACAO_STATUS": "Alteração manual",
+    "EXCLUSAO": "Exclusão",
+    "RESERVA_AUTOMATICA": "Reserva automática",
+    "LIBERACAO_AUTOMATICA": "Liberação automática"
+}
+
+HISTORY_STATUS_LABELS = {
+    "AVAILABLE": "Disponível",
+    "BOOKED": "Ocupado",
+    "BLOCKED": "Bloqueado",
+    "DELETED": "Excluído"
+}
+
+
+# =========================================================
+# CONSULTA DE HISTÓRICO (reutilizada pela tela e pelos exports)
+# =========================================================
+
+def fetch_history(
+    connection,
+    start_date,
+    end_date,
+    history_client,
+    history_action,
+    history_admin,
+    limit=None
+):
+
+    conditions = []
+    params = []
+
+    if start_date:
+        conditions.append("date >= ?")
+        params.append(start_date)
+
+    if end_date:
+        conditions.append("date <= ?")
+        params.append(end_date)
+
+    if history_client:
+        conditions.append("affected_client_name LIKE ?")
+        params.append(f"%{history_client}%")
+
+    if history_action:
+        conditions.append("action = ?")
+        params.append(history_action)
+
+    if history_admin:
+        conditions.append("admin_username LIKE ?")
+        params.append(f"%{history_admin}%")
+
+    where_clause = ""
+
+    if conditions:
+        where_clause = "WHERE " + " AND ".join(conditions)
+
+    limit_clause = ""
+
+    if limit:
+        limit_clause = f"LIMIT {int(limit)}"
+
+    return connection.execute(
+        f"""
+        SELECT *
+        FROM availability_history
+        {where_clause}
+        ORDER BY created_at DESC
+        {limit_clause}
+        """,
+        params
+    ).fetchall()
+
+
 @reports_bp.route("/")
 @login_required
 def reports():
 
     start_date = request.args.get("start_date", "").strip()
     end_date = request.args.get("end_date", "").strip()
+
+    # Filtros específicos do histórico da agenda
+    history_client = request.args.get("history_client", "").strip()
+    history_action = request.args.get("history_action", "").strip()
+    history_admin = request.args.get("history_admin", "").strip()
 
     stats = {
         "total_leads": 0,
@@ -38,11 +121,12 @@ def reports():
 
     leads = []
     slots = []
+    history = []
 
     connection = get_connection()
 
     # -------------------------
-    # FILTRO DE DATA
+    # FILTRO DE DATA (leads)
     # -------------------------
 
     date_conditions = []
@@ -104,7 +188,7 @@ def reports():
             stats["sem_interesse"] += 1
 
     # -------------------------
-    # AGENDA
+    # AGENDA (disponibilidade atual)
     # -------------------------
 
     availability_conditions = []
@@ -157,15 +241,54 @@ def reports():
         if lead["status"] == "FECHADO"
     )
 
+    # -------------------------
+    # HISTÓRICO DA AGENDA
+    # -------------------------
+    #
+    # Usa o mesmo período (start_date/end_date) da tela,
+    # aplicado sobre a coluna "date" do histórico (a data
+    # do horário afetado, não a data em que a ação ocorreu).
+    # Além disso, filtros próprios: cliente, ação e admin.
+
+    history = fetch_history(
+        connection,
+        start_date,
+        end_date,
+        history_client,
+        history_action,
+        history_admin,
+        limit=200
+    )
+
+    # Lista de admins distintos, para popular o filtro
+    # como um select em vez de texto livre.
+
+    history_admins = connection.execute("""
+        SELECT DISTINCT admin_username
+        FROM availability_history
+        ORDER BY admin_username ASC
+    """).fetchall()
+
     connection.close()
 
     return render_template(
         "admin/reports.html",
+
         stats=stats,
         leads=leads,
         slots=slots,
+
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
+
+        history=history,
+        history_client=history_client,
+        history_action=history_action,
+        history_admin=history_admin,
+        history_admins=history_admins,
+
+        history_action_labels=HISTORY_ACTION_LABELS,
+        history_status_labels=HISTORY_STATUS_LABELS
     )
 
 
@@ -176,6 +299,11 @@ def reports():
 @reports_bp.route("/exportar/csv")
 @login_required
 def export_csv():
+
+    # Calculado a cada requisição (antes ficava fixo na
+    # data em que o processo Flask subiu, porque estava
+    # no escopo do módulo em vez de dentro da função).
+    today = datetime.date.today()
 
     start_date = request.args.get("start_date", "").strip()
     end_date = request.args.get("end_date", "").strip()
@@ -267,7 +395,7 @@ def export_csv():
     )
 
     response.headers["Content-Disposition"] = (
-        f"attachment; filename=relatorio_{date}.csv"
+        f"attachment; filename=relatorio_{today}.csv"
     )
 
     return response
@@ -280,6 +408,8 @@ def export_csv():
 @reports_bp.route("/exportar/json")
 @login_required
 def export_json():
+
+    today = datetime.date.today()
 
     start_date = request.args.get("start_date", "").strip()
     end_date = request.args.get("end_date", "").strip()
@@ -326,7 +456,142 @@ def export_json():
     )
 
     response.headers["Content-Disposition"] = (
-        f"attachment; filename=relatorio_{date}.json"
+        f"attachment; filename=relatorio_{today}.json"
+    )
+
+    return response
+
+
+# =========================================================
+# HISTÓRICO — CSV
+# =========================================================
+
+@reports_bp.route("/exportar/csv/historico")
+@login_required
+def export_history_csv():
+
+    today = datetime.date.today()
+
+    start_date = request.args.get("start_date", "").strip()
+    end_date = request.args.get("end_date", "").strip()
+    history_client = request.args.get("history_client", "").strip()
+    history_action = request.args.get("history_action", "").strip()
+    history_admin = request.args.get("history_admin", "").strip()
+
+    connection = get_connection()
+
+    history = fetch_history(
+        connection,
+        start_date,
+        end_date,
+        history_client,
+        history_action,
+        history_admin
+    )
+
+    connection.close()
+
+    output = io.StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "ID",
+        "Registrado em",
+        "Data do horário",
+        "Início",
+        "Fim",
+        "Ação",
+        "Status anterior",
+        "Status novo",
+        "Lead ID",
+        "Cliente",
+        "Tipo de evento",
+        "Administrador",
+        "Descrição"
+    ])
+
+    for entry in history:
+
+        writer.writerow([
+            entry["id"],
+            entry["created_at"],
+            entry["date"],
+            entry["start_time"],
+            entry["end_time"],
+            HISTORY_ACTION_LABELS.get(
+                entry["action"],
+                entry["action"]
+            ),
+            HISTORY_STATUS_LABELS.get(
+                entry["old_status"],
+                entry["old_status"]
+            ),
+            HISTORY_STATUS_LABELS.get(
+                entry["new_status"],
+                entry["new_status"]
+            ),
+            entry["affected_lead_id"],
+            entry["affected_client_name"],
+            entry["affected_event_type"],
+            entry["admin_username"],
+            entry["description"]
+        ])
+
+    response = Response(
+        output.getvalue(),
+        mimetype="text/csv"
+    )
+
+    response.headers["Content-Disposition"] = (
+        f"attachment; filename=historico_agenda_{today}.csv"
+    )
+
+    return response
+
+
+# =========================================================
+# HISTÓRICO — JSON
+# =========================================================
+
+@reports_bp.route("/exportar/json/historico")
+@login_required
+def export_history_json():
+
+    today = datetime.date.today()
+
+    start_date = request.args.get("start_date", "").strip()
+    end_date = request.args.get("end_date", "").strip()
+    history_client = request.args.get("history_client", "").strip()
+    history_action = request.args.get("history_action", "").strip()
+    history_admin = request.args.get("history_admin", "").strip()
+
+    connection = get_connection()
+
+    history = fetch_history(
+        connection,
+        start_date,
+        end_date,
+        history_client,
+        history_action,
+        history_admin
+    )
+
+    connection.close()
+
+    data = [dict(entry) for entry in history]
+
+    response = Response(
+        json.dumps(
+            data,
+            ensure_ascii=False,
+            indent=2
+        ),
+        mimetype="application/json"
+    )
+
+    response.headers["Content-Disposition"] = (
+        f"attachment; filename=historico_agenda_{today}.json"
     )
 
     return response

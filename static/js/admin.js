@@ -632,6 +632,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
+
+            /*
+            CORREÇÃO: o <select> de status não tem
+            botão de submit próprio no HTML. Sem este
+            listener, trocar a opção no dropdown nunca
+            enviava o formulário — a checagem de impacto
+            e o próprio salvamento do status nunca eram
+            disparados, e por isso a troca "não fazia nada
+            e não avisava nada".
+
+            requestSubmit() (em vez de submit()) dispara o
+            evento "submit" normalmente, passando pelo
+            listener acima que faz a consulta de impacto.
+            */
+
+            select.addEventListener(
+                "change",
+                () => {
+
+                    if (typeof form.requestSubmit === "function") {
+
+                        form.requestSubmit();
+
+                    } else {
+
+                        /*
+                        Fallback para navegadores sem
+                        requestSubmit(). form.submit() nativo
+                        pula os listeners de "submit", então
+                        disparamos o evento manualmente.
+                        */
+
+                        form.dispatchEvent(
+                            new Event(
+                                "submit",
+                                { cancelable: true }
+                            )
+                        );
+
+                    }
+
+                }
+            );
+
         }
 
     });

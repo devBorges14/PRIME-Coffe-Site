@@ -362,7 +362,43 @@ def update_status(lead_id):
 
                 elif current_status == "BOOKED":
 
-                    pass
+                    # Verifica se o BOOKED atual pertence a
+                    # OUTRO lead FECHADO. Se pertencer, isso é
+                    # um conflito real (dois contratos no mesmo
+                    # horário) e o fechamento deve ser barrado.
+
+                    conflicting_lead = connection.execute("""
+                        SELECT id, name, event_type
+                        FROM leads
+                        WHERE availability_id = ?
+                          AND status = 'FECHADO'
+                          AND id != ?
+                        LIMIT 1
+                    """, (
+                        lead["availability_id"],
+                        lead["id"]
+                    )).fetchone()
+
+                    if conflicting_lead:
+
+                        flash(
+                            f"Não é possível fechar este contrato: o horário "
+                            f"já está ocupado pelo cliente "
+                            f"{conflicting_lead['name']} "
+                            f"(lead #{conflicting_lead['id']}).",
+                            "error"
+                        )
+
+                        return redirect(
+                            url_for(
+                                "admin.lead_detail",
+                                lead_id=lead_id
+                            )
+                        )
+
+                    # Se chegou aqui, o BOOKED já pertence a
+                    # este mesmo lead (ex.: reabriu e fechou
+                    # de novo) — pode seguir sem novo histórico.
 
                 # --------------------------------------------
                 # HORÁRIO DISPONÍVEL
@@ -394,12 +430,20 @@ def update_status(lead_id):
                     )
 
         # ====================================================
-        # CANCELANDO CONTRATO
+        # SAINDO DE FECHADO (qualquer status de destino)
         # ====================================================
+        #
+        # Antes, esta liberação só acontecia quando o novo
+        # status era exatamente "SEM INTERESSE". Isso deixava
+        # o horário preso em BOOKED para sempre se o admin
+        # movesse o lead de FECHADO para qualquer outro status
+        # (ex.: voltar para NEGOCIAÇÃO por engano), sem gerar
+        # nenhum registro no histórico. Agora qualquer saída de
+        # FECHADO libera o horário e registra a mudança.
 
         elif (
-            new_status == "SEM INTERESSE"
-            and old_status == "FECHADO"
+            old_status == "FECHADO"
+            and new_status != "FECHADO"
         ):
 
             if (
@@ -413,6 +457,7 @@ def update_status(lead_id):
                         status = 'AVAILABLE',
                         updated_at = CURRENT_TIMESTAMP
                     WHERE id = ?
+                      AND status = 'BOOKED'
                 """, (
                     lead["availability_id"],
                 ))
@@ -425,9 +470,9 @@ def update_status(lead_id):
                     new_status="AVAILABLE",
                     affected_lead=lead,
                     description=(
-                        "Horário liberado automaticamente "
-                        "porque o contrato passou de FECHADO "
-                        "para SEM INTERESSE."
+                        f"Horário liberado automaticamente "
+                        f"porque o contrato deixou de estar FECHADO "
+                        f"(novo status do lead: {new_status})."
                     )
                 )
 

@@ -2,6 +2,10 @@
 
 {% block title %}Relatórios | Admin{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
 {% block content %}
 
 <section class="admin-page">
@@ -11,7 +15,9 @@
         <div class="admin-header">
 
             <div>
-                <span class="admin-label">ANÁLISE</span>
+                <p style="color: var(--admin-gold); font-size: 11px; font-weight: 700; letter-spacing: 2px; margin: 0 0 6px;">
+                    ANÁLISE
+                </p>
 
                 <h1>Relatórios</h1>
 
@@ -20,34 +26,31 @@
                 </p>
             </div>
 
-            <a
-                href="{{ url_for('admin.dashboard') }}"
-                class="admin-back"
-            >
-                ← Voltar ao Dashboard
-            </a>
+            <div class="admin-header-actions">
+
+                <a
+                    href="{{ url_for('admin.dashboard') }}"
+                    class="admin-button secondary"
+                >
+                    ← Voltar ao Dashboard
+                </a>
+
+            </div>
 
         </div>
 
 
-        <!-- FILTRO -->
+        <!-- FILTRO DE PERÍODO -->
 
-        <div class="agenda-card">
+        <div class="admin-card">
 
-            <div class="agenda-card-header">
-
-                <div>
-                    <span class="admin-label">PERÍODO</span>
-                    <h2>Filtrar relatório</h2>
-                </div>
-
-            </div>
-
+            <h2>Filtrar relatório</h2>
 
             <form
                 method="GET"
                 action="{{ url_for('reports.reports') }}"
-                class="agenda-form"
+                class="admin-form"
+                style="grid-template-columns: 1fr 1fr auto; align-items: end;"
             >
 
                 <div class="form-group">
@@ -82,16 +85,12 @@
                 </div>
 
 
-                <div class="form-submit-wrapper">
-
-                    <button
-                        type="submit"
-                        class="admin-button"
-                    >
-                        Gerar relatório
-                    </button>
-
-                </div>
+                <button
+                    type="submit"
+                    class="admin-button"
+                >
+                    Gerar relatório
+                </button>
 
             </form>
 
@@ -100,34 +99,34 @@
 
         <!-- INDICADORES -->
 
-        <div class="report-grid">
+        <div class="stats-grid">
 
-            <div class="report-card">
+            <div class="stat-card">
                 <span>Total de Leads</span>
                 <strong>{{ stats.total_leads }}</strong>
             </div>
 
-            <div class="report-card">
+            <div class="stat-card">
                 <span>Novos</span>
                 <strong>{{ stats.novos }}</strong>
             </div>
 
-            <div class="report-card">
+            <div class="stat-card">
                 <span>Orçamentos</span>
                 <strong>{{ stats.orcamento }}</strong>
             </div>
 
-            <div class="report-card">
+            <div class="stat-card">
                 <span>Negociação</span>
                 <strong>{{ stats.negociacao }}</strong>
             </div>
 
-            <div class="report-card">
+            <div class="stat-card">
                 <span>Fechados</span>
                 <strong>{{ stats.fechados }}</strong>
             </div>
 
-            <div class="report-card">
+            <div class="stat-card">
                 <span>Sem Interesse</span>
                 <strong>{{ stats.sem_interesse }}</strong>
             </div>
@@ -137,46 +136,30 @@
 
         <!-- AGENDA -->
 
-        <div class="agenda-card">
+        <div class="admin-card">
 
-            <div class="agenda-card-header">
+            <h2>Disponibilidade</h2>
 
-                <div>
-                    <span class="admin-label">AGENDA</span>
-                    <h2>Disponibilidade</h2>
-                </div>
+            <div class="report-stats">
 
-            </div>
-
-
-            <div class="report-agenda">
-
-                <div>
+                <div class="report-card">
                     <span>Disponíveis</span>
-                    <strong>
-                        {{ stats.horarios_disponiveis }}
-                    </strong>
+                    <strong>{{ stats.horarios_disponiveis }}</strong>
                 </div>
 
-                <div>
+                <div class="report-card">
                     <span>Ocupados</span>
-                    <strong>
-                        {{ stats.horarios_ocupados }}
-                    </strong>
+                    <strong>{{ stats.horarios_ocupados }}</strong>
                 </div>
 
-                <div>
+                <div class="report-card">
                     <span>Bloqueados</span>
-                    <strong>
-                        {{ stats.horarios_bloqueados }}
-                    </strong>
+                    <strong>{{ stats.horarios_bloqueados }}</strong>
                 </div>
 
-                <div>
+                <div class="report-card">
                     <span>Eventos fechados</span>
-                    <strong>
-                        {{ stats.eventos_confirmados }}
-                    </strong>
+                    <strong>{{ stats.eventos_confirmados }}</strong>
                 </div>
 
             </div>
@@ -186,19 +169,15 @@
 
         <!-- EXPORTAÇÃO -->
 
-        <div class="agenda-card">
+        <div class="admin-card">
 
-            <div class="agenda-card-header">
+            <h2>Gerar arquivo</h2>
 
-                <div>
-                    <span class="admin-label">EXPORTAR</span>
-                    <h2>Gerar arquivo</h2>
-                </div>
+            <p style="color: var(--admin-muted); margin: -8px 0 16px; font-size: 13px;">
+                Leads do período
+            </p>
 
-            </div>
-
-
-            <div class="report-export">
+            <div class="export-buttons">
 
                 <a
                     href="{{ url_for(
@@ -206,7 +185,7 @@
                         start_date=start_date,
                         end_date=end_date
                     ) }}"
-                    class="admin-button"
+                    class="admin-button secondary"
                 >
                     Exportar CSV
                 </a>
@@ -218,9 +197,47 @@
                         start_date=start_date,
                         end_date=end_date
                     ) }}"
-                    class="admin-button"
+                    class="admin-button secondary"
                 >
                     Exportar JSON
+                </a>
+
+            </div>
+
+
+            <p style="color: var(--admin-muted); margin: 24px 0 16px; font-size: 13px;">
+                Histórico da agenda (respeitando os filtros aplicados abaixo)
+            </p>
+
+            <div class="export-buttons">
+
+                <a
+                    href="{{ url_for(
+                        'reports.export_history_csv',
+                        start_date=start_date,
+                        end_date=end_date,
+                        history_client=history_client,
+                        history_action=history_action,
+                        history_admin=history_admin
+                    ) }}"
+                    class="admin-button secondary"
+                >
+                    Exportar histórico (CSV)
+                </a>
+
+
+                <a
+                    href="{{ url_for(
+                        'reports.export_history_json',
+                        start_date=start_date,
+                        end_date=end_date,
+                        history_client=history_client,
+                        history_action=history_action,
+                        history_admin=history_admin
+                    ) }}"
+                    class="admin-button secondary"
+                >
+                    Exportar histórico (JSON)
                 </a>
 
             </div>
@@ -230,16 +247,13 @@
 
         <!-- LEADS -->
 
-        <div class="agenda-card">
+        <div class="admin-card">
 
-            <div class="agenda-card-header">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
 
-                <div>
-                    <span class="admin-label">DADOS</span>
-                    <h2>Leads do período</h2>
-                </div>
+                <h2 style="margin: 0;">Leads do período</h2>
 
-                <span class="agenda-count">
+                <span style="color: var(--admin-muted); font-size: 13px;">
                     {{ leads|length }} registros
                 </span>
 
@@ -248,9 +262,9 @@
 
             {% if leads %}
 
-                <div class="report-table-wrapper">
+                <div class="admin-table-wrapper">
 
-                    <table class="report-table">
+                    <table class="admin-table">
 
                         <thead>
 
@@ -272,9 +286,7 @@
                                 <tr>
 
                                     <td>
-                                        <strong>
-                                            {{ lead["name"] }}
-                                        </strong>
+                                        <strong>{{ lead["name"] }}</strong>
                                     </td>
 
                                     <td>
@@ -305,14 +317,220 @@
 
             {% else %}
 
-                <div class="agenda-empty">
+                <div class="empty-state">
+                    <strong>Nenhum lead encontrado</strong>
+                    <p>Não existem leads para o período selecionado.</p>
+                </div>
 
-                    <h3>Nenhum lead encontrado</h3>
+            {% endif %}
 
-                    <p>
-                        Não existem leads para o período selecionado.
-                    </p>
+        </div>
 
+
+        <!-- ========================================= -->
+        <!-- HISTÓRICO DA AGENDA                        -->
+        <!-- ========================================= -->
+
+        <div class="admin-card">
+
+            <h2>Histórico da agenda</h2>
+
+            <p style="color: var(--admin-muted); margin: -8px 0 20px; font-size: 13px;">
+                Registro de todas as criações, alterações e exclusões de
+                horários, incluindo reservas e liberações automáticas
+                geradas pelo CRM.
+            </p>
+
+
+            <!-- FILTROS DO HISTÓRICO -->
+
+            <form
+                method="GET"
+                action="{{ url_for('reports.reports') }}"
+                class="filters"
+                style="margin-bottom: 25px; grid-template-columns: 2fr 1fr 1fr auto;"
+            >
+
+                <!-- preserva o período já selecionado -->
+
+                <input
+                    type="hidden"
+                    name="start_date"
+                    value="{{ start_date }}"
+                >
+
+                <input
+                    type="hidden"
+                    name="end_date"
+                    value="{{ end_date }}"
+                >
+
+
+                <input
+                    type="text"
+                    name="history_client"
+                    placeholder="Buscar por cliente..."
+                    value="{{ history_client }}"
+                >
+
+
+                <select name="history_action">
+
+                    <option value="">
+                        Todas as ações
+                    </option>
+
+                    {% for action_key, action_label in history_action_labels.items() %}
+
+                        <option
+                            value="{{ action_key }}"
+                            {% if history_action == action_key %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ action_label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <select name="history_admin">
+
+                    <option value="">
+                        Todos os administradores
+                    </option>
+
+                    {% for admin_row in history_admins %}
+
+                        <option
+                            value="{{ admin_row['admin_username'] }}"
+                            {% if history_admin == admin_row['admin_username'] %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ admin_row['admin_username'] }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <button
+                    type="submit"
+                    class="admin-button"
+                >
+                    Filtrar
+                </button>
+
+            </form>
+
+
+            <!-- TABELA DO HISTÓRICO -->
+
+            {% if history %}
+
+                <div class="admin-table-wrapper">
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Quando</th>
+                                <th>Horário afetado</th>
+                                <th>Ação</th>
+                                <th>De → Para</th>
+                                <th>Cliente</th>
+                                <th>Admin</th>
+                                <th>Observação</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for entry in history %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ entry["created_at"] }}
+                                    </td>
+
+                                    <td>
+                                        <strong>{{ entry["date"] }}</strong><br>
+                                        <span style="color: var(--admin-muted); font-size: 12px;">
+                                            {{ entry["start_time"] }} → {{ entry["end_time"] }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{ history_action_labels.get(entry["action"], entry["action"]) }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if entry["old_status"] %}
+                                            {{ history_status_labels.get(entry["old_status"], entry["old_status"]) }}
+                                            →
+                                        {% endif %}
+
+                                        {% if entry["new_status"] %}
+                                            {{ history_status_labels.get(entry["new_status"], entry["new_status"]) }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if entry["affected_client_name"] %}
+                                            {{ entry["affected_client_name"] }}
+                                            <br>
+                                            <span style="color: var(--admin-muted); font-size: 12px;">
+                                                {{ entry["affected_event_type"] or "" }}
+                                                {% if entry["affected_lead_id"] %}
+                                                    · Lead #{{ entry["affected_lead_id"] }}
+                                                {% endif %}
+                                            </span>
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ entry["admin_username"] }}
+                                    </td>
+
+                                    <td style="max-width: 260px; color: var(--admin-muted); font-size: 13px;">
+                                        {{ entry["description"] or "—" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <p style="color: var(--admin-muted); font-size: 12px; margin-top: 14px;">
+                    Exibindo até 200 registros mais recentes que correspondem aos filtros.
+                </p>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <strong>Nenhum registro encontrado</strong>
+                    <p>Não há histórico de agenda para os filtros selecionados.</p>
                 </div>
 
             {% endif %}
