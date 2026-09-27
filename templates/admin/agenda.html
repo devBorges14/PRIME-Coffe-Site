@@ -31,10 +31,7 @@
                 </p>
             </div>
 
-            <a
-                href="{{ url_for('admin.dashboard') }}"
-                class="agenda-back-button"
-            >
+            <a href="{{ url_for('admin.dashboard') }}" class="agenda-back-button">
                 ← Dashboard
             </a>
 
@@ -64,17 +61,9 @@
             </div>
 
 
-            <form
-                action="{{ url_for('agenda.add_slot') }}"
-                method="POST"
-                class="agenda-add-form"
-            >
+            <form action="{{ url_for('agenda.add_slot') }}" method="POST" class="agenda-add-form">
 
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="{{ csrf_token() }}"
-                >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
 
                 <!-- DATA -->
@@ -85,12 +74,7 @@
                         Data
                     </label>
 
-                    <input
-                        type="date"
-                        id="date"
-                        name="date"
-                        required
-                    >
+                    <input type="date" id="date" name="date" required>
 
                 </div>
 
@@ -103,12 +87,7 @@
                         Começa às
                     </label>
 
-                    <input
-                        type="time"
-                        id="start_time"
-                        name="start_time"
-                        required
-                    >
+                    <input type="time" id="start_time" name="start_time" required>
 
                 </div>
 
@@ -121,12 +100,7 @@
                         Termina às
                     </label>
 
-                    <input
-                        type="time"
-                        id="end_time"
-                        name="end_time"
-                        required
-                    >
+                    <input type="time" id="end_time" name="end_time" required>
 
                 </div>
 
@@ -139,10 +113,7 @@
                         Situação inicial
                     </label>
 
-                    <select
-                        id="status"
-                        name="status"
-                    >
+                    <select id="status" name="status">
 
                         <option value="AVAILABLE">
                             Disponível
@@ -170,22 +141,15 @@
                         <span>(opcional)</span>
                     </label>
 
-                    <input
-                        type="text"
-                        id="notes"
-                        name="notes"
-                        placeholder="Ex.: atendimento somente para eventos corporativos"
-                    >
+                    <input type="text" id="notes" name="notes"
+                        placeholder="Ex.: atendimento somente para eventos corporativos">
 
                 </div>
 
 
                 <!-- BOTÃO -->
 
-                <button
-                    type="submit"
-                    class="agenda-add-button"
-                >
+                <button type="submit" class="agenda-add-button">
                     + Adicionar horário
                 </button>
 
@@ -222,9 +186,9 @@
                     <span>
 
                         {% if slots|length == 1 %}
-                            horário
+                        horário
                         {% else %}
-                            horários
+                        horários
                         {% endif %}
 
                     </span>
@@ -240,10 +204,7 @@
 
                 {% for slot in slots %}
 
-                <article
-                    class="agenda-slot-card"
-                    data-slot-id="{{ slot['id'] }}"
-                >
+                <article class="agenda-slot-card" data-slot-id="{{ slot['id'] }}">
 
                     <!-- DATA + HORÁRIO -->
 
@@ -335,9 +296,9 @@
                         <p>
 
                             {% if slot["notes"] %}
-                                {{ slot["notes"] }}
+                            {{ slot["notes"] }}
                             {% else %}
-                                Nenhuma observação
+                            Nenhuma observação
                             {% endif %}
 
                         </p>
@@ -352,64 +313,33 @@
 
                         <!-- ALTERAR SITUAÇÃO -->
 
-                        <form
-                            method="POST"
-                            action="{{ url_for(
+                        <form method="POST" action="{{ url_for(
                                 'agenda.update_status',
                                 slot_id=slot['id']
-                            ) }}"
-                            class="agenda-status-form"
-                            data-slot-id="{{ slot['id'] }}"
-                            data-current-status="{{ slot['status'] }}"
-                        >
+                            ) }}" class="agenda-status-form" data-slot-id="{{ slot['id'] }}"
+                            data-current-status="{{ slot['status'] }}">
 
-                            <input
-                                type="hidden"
-                                name="csrf_token"
-                                value="{{ csrf_token() }}"
-                            >
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
 
-                            <label
-                                for="status-{{ slot['id'] }}"
-                                class="sr-only"
-                            >
+                            <label for="status-{{ slot['id'] }}" class="sr-only">
                                 Alterar situação
                             </label>
 
 
-                            <select
-                                id="status-{{ slot['id'] }}"
-                                name="status"
-                                class="agenda-status-select"
-                            >
+                            <select id="status-{{ slot['id'] }}" name="status" class="agenda-status-select">
 
-                                <option
-                                    value="AVAILABLE"
-                                    {% if slot["status"] == "AVAILABLE" %}
-                                        selected
-                                    {% endif %}
-                                >
+                                <option value="AVAILABLE" {% if slot["status"]=="AVAILABLE" %} selected {% endif %}>
                                     Disponível
                                 </option>
 
 
-                                <option
-                                    value="BOOKED"
-                                    {% if slot["status"] == "BOOKED" %}
-                                        selected
-                                    {% endif %}
-                                >
+                                <option value="BOOKED" {% if slot["status"]=="BOOKED" %} selected {% endif %}>
                                     Ocupado
                                 </option>
 
 
-                                <option
-                                    value="BLOCKED"
-                                    {% if slot["status"] == "BLOCKED" %}
-                                        selected
-                                    {% endif %}
-                                >
+                                <option value="BLOCKED" {% if slot["status"]=="BLOCKED" %} selected {% endif %}>
                                     Bloqueado
                                 </option>
 
@@ -419,30 +349,15 @@
 
 
                         <!-- EXCLUIR -->
+                        <form method="POST" action="{{ url_for(
+        'agenda.delete_slot',
+        slot_id=slot['id']
+    ) }}" class="agenda-delete-form" data-slot-id="{{ slot['id'] }}" data-slot-date="{{ slot['date'] }}"
+                            data-slot-start="{{ slot['start_time'] }}" data-slot-end="{{ slot['end_time'] }}">
 
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'agenda.delete_slot',
-                                slot_id=slot['id']
-                            ) }}"
-                            class="agenda-delete-form"
-                            data-slot-id="{{ slot['id'] }}"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="csrf_token"
-                                value="{{ csrf_token() }}"
-                            >
-
-                            <button
-                                type="submit"
-                                class="agenda-delete-button"
-                            >
+                            <button type="submit" class="agenda-delete-button">
                                 Excluir
                             </button>
-
                         </form>
 
                     </div>
@@ -451,6 +366,51 @@
 
                 {% endfor %}
 
+            </div>
+            <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+            <div class="agenda-impact-modal hidden" id="agendaDeleteModal" aria-hidden="true">
+                <div class="agenda-impact-dialog" role="dialog" aria-modal="true" aria-labelledby="agendaDeleteTitle">
+
+                    <div class="agenda-impact-icon">
+                        ⚠
+                    </div>
+
+                    <h2 id="agendaDeleteTitle">
+                        Excluir horário?
+                    </h2>
+
+                    <p class="agenda-impact-warning">
+                        Tem certeza de que deseja excluir este horário?
+                        Essa ação não poderá ser desfeita.
+                    </p>
+
+                    <div class="agenda-impact-slot">
+
+                        <div class="agenda-impact-slot-item">
+                            <span>Data</span>
+                            <strong id="agendaDeleteDate">—</strong>
+                        </div>
+
+                        <div class="agenda-impact-slot-item">
+                            <span>Horário</span>
+                            <strong id="agendaDeleteTime">—</strong>
+                        </div>
+
+                    </div>
+
+                    <div class="agenda-impact-actions">
+
+                        <button type="button" class="agenda-impact-cancel" id="agendaDeleteCancel">
+                            Cancelar
+                        </button>
+
+                        <button type="button" class="agenda-impact-confirm" id="agendaDeleteConfirm">
+                            Excluir horário
+                        </button>
+
+                    </div>
+
+                </div>
             </div>
 
 

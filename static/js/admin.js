@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentAction = null;
     let originalStatus = null;
 
+
     /*
     =========================================================
     UTILITÁRIOS
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     */
 
     function escapeHtml(value) {
+
         if (value === null || value === undefined) {
             return "";
         }
@@ -208,6 +210,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const confirmButton =
             document.getElementById("agendaImpactConfirm");
 
+        const titleElement =
+            document.getElementById("agendaImpactTitle");
+
 
         const slot = data.slot;
         const leads = data.affected_leads || [];
@@ -216,22 +221,37 @@ document.addEventListener("DOMContentLoaded", () => {
         dateElement.textContent =
             formatDate(slot.date);
 
-
         timeElement.textContent =
             `${slot.start_time} — ${slot.end_time}`;
 
 
         /*
-        Texto diferente dependendo da operação.
+        =====================================================
+        TEXTO DO MODAL
+        =====================================================
         */
 
         if (currentAction === "delete") {
 
-            warningElement.textContent =
-                "Este horário possui uma reserva vinculada. Excluir este horário não apagará o contrato, mas afetará a disponibilidade registrada.";
+            titleElement.textContent =
+                "Excluir horário?";
 
-            confirmButton.textContent =
-                "Excluir mesmo assim";
+            if (leads.length > 0) {
+
+                warningElement.textContent =
+                    "Este horário possui uma reserva vinculada. Excluir este horário não apagará o contrato, mas afetará a disponibilidade registrada.";
+
+                confirmButton.textContent =
+                    "Excluir mesmo assim";
+
+            } else {
+
+                warningElement.textContent =
+                    "Tem certeza de que deseja excluir este horário? Essa ação não poderá ser desfeita.";
+
+                confirmButton.textContent =
+                    "Excluir horário";
+            }
 
         } else {
 
@@ -253,11 +273,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-        Lista de clientes afetados.
+        =====================================================
+        LISTA DE CLIENTES AFETADOS
+        =====================================================
         */
 
         leadsContainer.innerHTML = "";
-
 
         leads.forEach((lead) => {
 
@@ -304,9 +325,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
 
+        /*
+        =====================================================
+        ABRIR MODAL
+        =====================================================
+        */
+
         modal.classList.remove("hidden");
 
         document.body.style.overflow = "hidden";
+
+        confirmButton.disabled = false;
 
         confirmButton.focus();
     }
@@ -366,7 +395,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function confirmImpactAction() {
 
         if (!currentForm) {
+
             closeImpactModal(false);
+
             return;
         }
 
@@ -379,6 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("agendaImpactConfirm");
 
         confirmButton.disabled = true;
+
         confirmButton.textContent = "Processando...";
 
 
@@ -404,7 +436,6 @@ document.addEventListener("DOMContentLoaded", () => {
             currentForm.appendChild(
                 confirmationInput
             );
-
         }
 
 
@@ -433,15 +464,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 `/admin/agenda/${slotId}/impact`,
                 {
                     method: "GET",
+
                     headers: {
                         "Accept": "application/json"
                     },
+
                     credentials: "same-origin"
                 }
             );
 
 
         if (!response.ok) {
+
             throw new Error(
                 `Erro HTTP ${response.status}`
             );
@@ -482,6 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 form.submit();
+
                 return;
             }
 
@@ -523,7 +558,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     select.getAttribute(
                         "data-current-status"
                     );
-
             }
 
 
@@ -533,15 +567,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             /*
             Se não tivermos o estado anterior,
-            não impedimos o funcionamento,
-            mas tentamos registrar o valor atual.
+            usamos o valor atual.
             */
 
             if (!originalStatus) {
 
                 originalStatus =
                     select.value;
-
             }
 
 
@@ -565,6 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
 
                     form.submit();
+
                     return;
                 }
 
@@ -608,7 +641,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-        Guarda o valor inicial do select.
+        =====================================================
+        GUARDA O VALOR INICIAL DO SELECT
+        =====================================================
         */
 
         const select =
@@ -622,6 +657,7 @@ document.addEventListener("DOMContentLoaded", () => {
             select.dataset.previousValue =
                 select.value;
 
+
             select.addEventListener(
                 "focus",
                 () => {
@@ -634,24 +670,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-            CORREÇÃO: o <select> de status não tem
-            botão de submit próprio no HTML. Sem este
-            listener, trocar a opção no dropdown nunca
-            enviava o formulário — a checagem de impacto
-            e o próprio salvamento do status nunca eram
-            disparados, e por isso a troca "não fazia nada
-            e não avisava nada".
+            =================================================
+            CORREÇÃO DO SELECT DE STATUS
+            =================================================
 
-            requestSubmit() (em vez de submit()) dispara o
-            evento "submit" normalmente, passando pelo
-            listener acima que faz a consulta de impacto.
+            O select não possui botão de submit próprio.
+            Ao trocar a opção, enviamos o formulário
+            através de requestSubmit(), fazendo passar
+            pela verificação de impacto.
             */
 
             select.addEventListener(
                 "change",
                 () => {
 
-                    if (typeof form.requestSubmit === "function") {
+                    if (
+                        typeof form.requestSubmit ===
+                        "function"
+                    ) {
 
                         form.requestSubmit();
 
@@ -659,15 +695,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         /*
                         Fallback para navegadores sem
-                        requestSubmit(). form.submit() nativo
-                        pula os listeners de "submit", então
-                        disparamos o evento manualmente.
+                        requestSubmit().
                         */
 
                         form.dispatchEvent(
                             new Event(
                                 "submit",
-                                { cancelable: true }
+                                {
+                                    cancelable: true
+                                }
                             )
                         );
 
@@ -711,6 +747,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 form.submit();
+
                 return;
             }
 
@@ -739,8 +776,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 /*
-                Se não existe contrato fechado,
-                fazemos uma confirmação simples.
+                =================================================
+                SEM CONTRATO
+                =================================================
+
+                Antes era window.confirm().
+                Agora também usamos o modal premium.
                 */
 
                 if (
@@ -748,27 +789,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.affected_leads.length === 0
                 ) {
 
-                    currentForm = null;
-                    currentAction = null;
+                    openImpactModal({
 
+                        slot: {
+                            date:
+                                form.dataset.slotDate || "",
 
-                    const confirmed =
-                        window.confirm(
-                            "Tem certeza que deseja excluir este horário?"
-                        );
+                            start_time:
+                                form.dataset.slotStart || "--",
 
+                            end_time:
+                                form.dataset.slotEnd || "--"
+                        },
 
-                    if (confirmed) {
-                        form.submit();
-                    }
+                        affected_leads: []
+
+                    });
 
                     return;
                 }
 
 
                 /*
-                Existe contrato:
-                modal completo.
+                =================================================
+                COM CONTRATO
+                =================================================
+
+                Abre o mesmo modal, mas mostrando
+                os clientes afetados.
                 */
 
                 openImpactModal(data);

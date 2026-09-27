@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from database.database import get_connection
+from database.history import register_lead_history
 
 
 contact_bp = Blueprint("contact", __name__)
@@ -82,6 +83,17 @@ def create_contact():
         # =================================================
         # LOCALIZA O HORÁRIO DISPONÍVEL
         # =================================================
+        #
+        # Isso é só uma VALIDAÇÃO — confirma que o horário
+        # escolhido existe e está disponível no momento do
+        # envio. O envio do formulário NÃO reserva o horário.
+        # A reserva (BOOKED) só acontece quando o admin marca
+        # o lead como FECHADO (ver routes/admin.py).
+        #
+        # Por isso é normal e esperado que mais de um lead
+        # aponte para o mesmo availability_id enquanto nenhum
+        # deles tiver sido fechado — o admin.py já trata esse
+        # cenário na hora de fechar (ver checagem de conflito).
 
         slot = connection.execute("""
             SELECT *
@@ -145,30 +157,31 @@ def create_contact():
         lead_id = cursor.lastrowid
 
         # =================================================
-        # OCUPA O HORÁRIO
+        # PRIMEIRA ENTRADA DA TIMELINE DO LEAD
         # =================================================
+        #
+        # old_status = None porque não havia status anterior;
+        # changed_by = None porque veio do formulário público.
 
-        cursor.execute("""
-            UPDATE availability
-            SET status = 'BOOKED',
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
-            AND status = 'AVAILABLE'
-        """, (
-            slot["id"],
-        ))
+        register_lead_history(
+            connection=connection,
+            lead_id=lead_id,
+            old_status=None,
+            new_status="NOVO",
+            changed_by=None,
+            description=(
+                "Lead criado a partir do formulário público de orçamento."
+            )
+        )
 
-        # Verificação de segurança
-        if cursor.rowcount != 1:
-
-            connection.rollback()
-
-            return jsonify({
-                "success": False,
-                "errors": [
-                    "Este horário acabou de ser reservado por outro cliente."
-                ]
-            }), 409
+        # =================================================
+        # NÃO OCUPA O HORÁRIO AQUI
+        # =================================================
+        #
+        # (Removido de propósito.) O horário só vira BOOKED
+        # quando o admin muda o status do lead para FECHADO,
+        # em routes/admin.py. Enviar o formulário não reserva
+        # nada — só registra a solicitação.
 
         connection.commit()
 

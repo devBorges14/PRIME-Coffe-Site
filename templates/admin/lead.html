@@ -231,6 +231,79 @@
             </div>
 
 
+            <!-- HISTÓRICO DO LEAD -->
+
+            <div class="lead-card lead-card-full">
+
+                <span class="admin-label">
+                    LINHA DO TEMPO
+                </span>
+
+                <h2>
+                    Histórico do lead
+                </h2>
+
+                {% if lead_history %}
+
+                    <ul class="lead-timeline">
+
+                        {% for entry in lead_history %}
+
+                            <li class="lead-timeline-item">
+
+                                <div class="lead-timeline-dot"></div>
+
+                                <div class="lead-timeline-content">
+
+                                    <div class="lead-timeline-status">
+
+                                        {% if entry["old_status"] %}
+                                            <span class="lead-timeline-old">
+                                                {{ entry["old_status"] }}
+                                            </span>
+                                            <span class="lead-timeline-arrow">→</span>
+                                        {% endif %}
+
+                                        <span class="lead-timeline-new">
+                                            {{ entry["new_status"] }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="lead-timeline-meta">
+                                        {{ entry["created_at"] }}
+                                        {% if entry["changed_by"] %}
+                                            · {{ entry["changed_by"] }}
+                                        {% else %}
+                                            · formulário público
+                                        {% endif %}
+                                    </div>
+
+                                    {% if entry["description"] %}
+                                        <div class="lead-timeline-description">
+                                            {{ entry["description"] }}
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <p class="lead-description">
+                        Nenhum histórico registrado para este lead ainda.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
             <!-- AÇÕES -->
 
             <div class="lead-card lead-card-full danger-card">

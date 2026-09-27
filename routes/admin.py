@@ -4,10 +4,12 @@ from flask import (
     request,
     redirect,
     url_for,
-    flash
+    flash,
+    session
 )
 
 from database.database import get_connection
+from database.history import register_lead_history, get_lead_history
 from auth_utils import login_required
 from routes.agenda import register_history
 
@@ -203,9 +205,12 @@ def lead_detail(lead_id):
             url_for("admin.dashboard")
         )
 
+    lead_history = get_lead_history(lead_id)
+
     return render_template(
         "admin/lead.html",
-        lead=lead
+        lead=lead,
+        lead_history=lead_history
     )
 
 
@@ -475,6 +480,26 @@ def update_status(lead_id):
                         f"(novo status do lead: {new_status})."
                     )
                 )
+
+        # ----------------------------------------------------
+        # REGISTRAR NO HISTÓRICO DO LEAD
+        # ----------------------------------------------------
+        #
+        # Registrado antes do UPDATE, mas dentro da mesma
+        # transação (só é gravado de fato no commit()
+        # abaixo, junto com tudo o mais).
+
+        register_lead_history(
+            connection=connection,
+            lead_id=lead_id,
+            old_status=old_status,
+            new_status=new_status,
+            changed_by=session.get("username", "desconhecido"),
+            description=(
+                f"Status alterado de {old_status} para {new_status} "
+                f"pelo administrador."
+            )
+        )
 
         # ----------------------------------------------------
         # ATUALIZAR STATUS DO LEAD

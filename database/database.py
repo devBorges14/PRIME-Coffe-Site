@@ -88,6 +88,31 @@ def init_db():
     )
     """)
 
+    # HISTÓRICO DE ALTERAÇÕES DO LEAD (FUNIL COMERCIAL)
+    #
+    # Guarda cada mudança de status de um lead, desde a
+    # criação (old_status = NULL, new_status = 'NOVO')
+    # até o fechamento ou perda. "changed_by" fica NULL
+    # quando a mudança vem do formulário público (criação);
+    # nas demais, guarda o username do administrador.
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS leads_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        lead_id INTEGER NOT NULL,
+
+        old_status TEXT,
+        new_status TEXT NOT NULL,
+
+        changed_by TEXT,
+
+        description TEXT,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     connection.commit()
     connection.close()
 

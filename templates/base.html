@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -11,32 +12,65 @@
     >
 
     <title>
+
         {% block title %}
-            Prime Café | Experiências para Eventos
+           PRIME Café | Experiências para Eventos
         {% endblock %}
+
     </title>
+
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}"
     >
- <link
+    <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/admin.css') }}"
     >
+
+
     {% block extra_css %}{% endblock %}
 
 </head>
 
+
 <body>
 
+
+    <!-- MENSAGENS FLASH (avisos de sucesso/erro do backend) -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-messages">
+
+                {% for category, message in messages %}
+
+                    <div class="login-message {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
     {% block content %}{% endblock %}
+
 
     <script
         src="{{ url_for('static', filename='js/script.js') }}"
     ></script>
 
+
     {% block extra_js %}{% endblock %}
+
 
 </body>
 
