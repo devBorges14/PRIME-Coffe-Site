@@ -15,7 +15,8 @@
         <div class="admin-header">
 
             <div>
-                <p style="color: var(--admin-gold); font-size: 11px; font-weight: 700; letter-spacing: 2px; margin: 0 0 6px;">
+                <p
+                    style="color: var(--admin-gold); font-size: 11px; font-weight: 700; letter-spacing: 2px; margin: 0 0 6px;">
                     ANÁLISE
                 </p>
 
@@ -28,10 +29,7 @@
 
             <div class="admin-header-actions">
 
-                <a
-                    href="{{ url_for('admin.dashboard') }}"
-                    class="admin-button secondary"
-                >
+                <a href="{{ url_for('admin.dashboard') }}" class="admin-button secondary">
                     ← Voltar ao Dashboard
                 </a>
 
@@ -46,12 +44,8 @@
 
             <h2>Filtrar relatório</h2>
 
-            <form
-                method="GET"
-                action="{{ url_for('reports.reports') }}"
-                class="admin-form"
-                style="grid-template-columns: 1fr 1fr auto; align-items: end;"
-            >
+            <form method="GET" action="{{ url_for('reports.reports') }}" class="admin-form"
+                style="grid-template-columns: 1fr 1fr auto; align-items: end;">
 
                 <div class="form-group">
 
@@ -59,12 +53,7 @@
                         Data inicial
                     </label>
 
-                    <input
-                        type="date"
-                        id="start_date"
-                        name="start_date"
-                        value="{{ start_date }}"
-                    >
+                    <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
 
                 </div>
 
@@ -75,20 +64,12 @@
                         Data final
                     </label>
 
-                    <input
-                        type="date"
-                        id="end_date"
-                        name="end_date"
-                        value="{{ end_date }}"
-                    >
+                    <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
 
                 </div>
 
 
-                <button
-                    type="submit"
-                    class="admin-button"
-                >
+                <button type="submit" class="admin-button">
                     Gerar relatório
                 </button>
 
@@ -134,6 +115,52 @@
         </div>
 
 
+        <!-- FUNIL DE CONVERSÃO -->
+
+        <div class="admin-card">
+
+            <h2>Funil de conversão</h2>
+
+            <p style="color: var(--admin-muted); margin: -8px 0 20px; font-size: 13px;">
+                Quantos leads já passaram por cada etapa pelo menos uma vez,
+                mesmo que já tenham avançado ou saído do funil.
+            </p>
+
+            <div class="funnel">
+
+                {% for stage in funnel %}
+
+                <div class="funnel-stage">
+
+                    <div class="funnel-stage-label">
+                        <span>{{ stage.label }}</span>
+                        <strong>{{ stage.count }} ({{ stage.percent }}%)</strong>
+                    </div>
+
+                    <div class="funnel-bar-track">
+                        <div class="funnel-bar-fill"
+                            style="--stage-width: {{ stage.percent }}%; width: var(--stage-width);"></div>
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% if stats.cancelamentos %}
+
+            <p style="color: var(--admin-muted); margin: 18px 0 0; font-size: 13px;">
+                Além disso, <strong style="color: var(--admin-text);">{{ stats.cancelamentos }}</strong>
+                contrato(s) chegaram a ser fechados e depois foram cancelados
+                (saíram de FECHADO) neste período.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
         <!-- AGENDA -->
 
         <div class="admin-card">
@@ -167,6 +194,115 @@
         </div>
 
 
+        <!-- EVENTOS (REALIZADOS x A REALIZAR x CANCELADOS) -->
+
+        <div class="admin-card">
+
+            <h2>Eventos</h2>
+
+            <div class="report-stats">
+
+                <div class="report-card">
+                    <span>Realizados</span>
+                    <strong>{{ stats.eventos_realizados }}</strong>
+                </div>
+
+                <div class="report-card">
+                    <span>A realizar</span>
+                    <strong>{{ stats.eventos_a_realizar }}</strong>
+                </div>
+
+                <div class="report-card">
+                    <span>Cancelados</span>
+                    <strong>{{ stats.cancelamentos }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PERDAS -->
+
+        <div class="admin-card">
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+
+                <h2 style="margin: 0;">Perdas</h2>
+
+                <span style="color: var(--admin-muted); font-size: 13px;">
+                    {{ stats.perdas }} de {{ stats.total_leads }} leads
+                    ({{ stats.taxa_perda }}%)
+                </span>
+
+            </div>
+
+            <p style="color: var(--admin-muted); margin: 4px 0 20px; font-size: 13px;">
+                Leads marcados como SEM INTERESSE no período selecionado.
+            </p>
+
+            {% if perdas %}
+
+            <div class="admin-table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Evento</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for lead in perdas %}
+
+                        <tr>
+
+                            <td>
+                                <strong>{{ lead["name"] }}</strong>
+                            </td>
+
+                            <td>
+                                {{ lead["event_type"] }}
+                            </td>
+
+                            <td>
+                                {{ lead["event_date"] or "—" }}
+                            </td>
+
+                            <td>
+                                {{ lead["event_time"] or "—" }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+                <strong>Nenhuma perda no período</strong>
+                <p>Não há leads marcados como SEM INTERESSE para o período selecionado.</p>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
         <!-- EXPORTAÇÃO -->
 
         <div class="admin-card">
@@ -179,26 +315,20 @@
 
             <div class="export-buttons">
 
-                <a
-                    href="{{ url_for(
+                <a href="{{ url_for(
                         'reports.export_csv',
                         start_date=start_date,
                         end_date=end_date
-                    ) }}"
-                    class="admin-button secondary"
-                >
+                    ) }}" class="admin-button secondary">
                     Exportar CSV
                 </a>
 
 
-                <a
-                    href="{{ url_for(
+                <a href="{{ url_for(
                         'reports.export_json',
                         start_date=start_date,
                         end_date=end_date
-                    ) }}"
-                    class="admin-button secondary"
-                >
+                    ) }}" class="admin-button secondary">
                     Exportar JSON
                 </a>
 
@@ -211,32 +341,26 @@
 
             <div class="export-buttons">
 
-                <a
-                    href="{{ url_for(
+                <a href="{{ url_for(
                         'reports.export_history_csv',
                         start_date=start_date,
                         end_date=end_date,
                         history_client=history_client,
                         history_action=history_action,
                         history_admin=history_admin
-                    ) }}"
-                    class="admin-button secondary"
-                >
+                    ) }}" class="admin-button secondary">
                     Exportar histórico (CSV)
                 </a>
 
 
-                <a
-                    href="{{ url_for(
+                <a href="{{ url_for(
                         'reports.export_history_json',
                         start_date=start_date,
                         end_date=end_date,
                         history_client=history_client,
                         history_action=history_action,
                         history_admin=history_admin
-                    ) }}"
-                    class="admin-button secondary"
-                >
+                    ) }}" class="admin-button secondary">
                     Exportar histórico (JSON)
                 </a>
 
@@ -262,65 +386,65 @@
 
             {% if leads %}
 
-                <div class="admin-table-wrapper">
+            <div class="admin-table-wrapper">
 
-                    <table class="admin-table">
+                <table class="admin-table">
 
-                        <thead>
+                    <thead>
 
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Evento</th>
-                                <th>Data</th>
-                                <th>Horário</th>
-                                <th>Status</th>
-                            </tr>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Evento</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Status</th>
+                        </tr>
 
-                        </thead>
+                    </thead>
 
 
-                        <tbody>
+                    <tbody>
 
-                            {% for lead in leads %}
+                        {% for lead in leads %}
 
-                                <tr>
+                        <tr>
 
-                                    <td>
-                                        <strong>{{ lead["name"] }}</strong>
-                                    </td>
+                            <td>
+                                <strong>{{ lead["name"] }}</strong>
+                            </td>
 
-                                    <td>
-                                        {{ lead["event_type"] }}
-                                    </td>
+                            <td>
+                                {{ lead["event_type"] }}
+                            </td>
 
-                                    <td>
-                                        {{ lead["event_date"] or "—" }}
-                                    </td>
+                            <td>
+                                {{ lead["event_date"] or "—" }}
+                            </td>
 
-                                    <td>
-                                        {{ lead["event_time"] or "—" }}
-                                    </td>
+                            <td>
+                                {{ lead["event_time"] or "—" }}
+                            </td>
 
-                                    <td>
-                                        {{ lead["status"] }}
-                                    </td>
+                            <td>
+                                {{ lead["status"] }}
+                            </td>
 
-                                </tr>
+                        </tr>
 
-                            {% endfor %}
+                        {% endfor %}
 
-                        </tbody>
+                    </tbody>
 
-                    </table>
+                </table>
 
-                </div>
+            </div>
 
             {% else %}
 
-                <div class="empty-state">
-                    <strong>Nenhum lead encontrado</strong>
-                    <p>Não existem leads para o período selecionado.</p>
-                </div>
+            <div class="empty-state">
+                <strong>Nenhum lead encontrado</strong>
+                <p>Não existem leads para o período selecionado.</p>
+            </div>
 
             {% endif %}
 
@@ -344,34 +468,18 @@
 
             <!-- FILTROS DO HISTÓRICO -->
 
-            <form
-                method="GET"
-                action="{{ url_for('reports.reports') }}"
-                class="filters"
-                style="margin-bottom: 25px; grid-template-columns: 2fr 1fr 1fr auto;"
-            >
+            <form method="GET" action="{{ url_for('reports.reports') }}" class="filters"
+                style="margin-bottom: 25px; grid-template-columns: 2fr 1fr 1fr auto;">
 
                 <!-- preserva o período já selecionado -->
 
-                <input
-                    type="hidden"
-                    name="start_date"
-                    value="{{ start_date }}"
-                >
+                <input type="hidden" name="start_date" value="{{ start_date }}">
 
-                <input
-                    type="hidden"
-                    name="end_date"
-                    value="{{ end_date }}"
-                >
+                <input type="hidden" name="end_date" value="{{ end_date }}">
 
 
-                <input
-                    type="text"
-                    name="history_client"
-                    placeholder="Buscar por cliente..."
-                    value="{{ history_client }}"
-                >
+                <input type="text" name="history_client" placeholder="Buscar por cliente..."
+                    value="{{ history_client }}">
 
 
                 <select name="history_action">
@@ -382,14 +490,9 @@
 
                     {% for action_key, action_label in history_action_labels.items() %}
 
-                        <option
-                            value="{{ action_key }}"
-                            {% if history_action == action_key %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ action_label }}
-                        </option>
+                    <option value="{{ action_key }}" {% if history_action==action_key %} selected {% endif %}>
+                        {{ action_label }}
+                    </option>
 
                     {% endfor %}
 
@@ -404,24 +507,17 @@
 
                     {% for admin_row in history_admins %}
 
-                        <option
-                            value="{{ admin_row['admin_username'] }}"
-                            {% if history_admin == admin_row['admin_username'] %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ admin_row['admin_username'] }}
-                        </option>
+                    <option value="{{ admin_row['admin_username'] }}" {% if history_admin==admin_row['admin_username']
+                        %} selected {% endif %}>
+                        {{ admin_row['admin_username'] }}
+                    </option>
 
                     {% endfor %}
 
                 </select>
 
 
-                <button
-                    type="submit"
-                    class="admin-button"
-                >
+                <button type="submit" class="admin-button">
                     Filtrar
                 </button>
 
@@ -432,106 +528,106 @@
 
             {% if history %}
 
-                <div class="admin-table-wrapper">
+            <div class="admin-table-wrapper">
 
-                    <table class="admin-table">
+                <table class="admin-table">
 
-                        <thead>
+                    <thead>
 
-                            <tr>
-                                <th>Quando</th>
-                                <th>Horário afetado</th>
-                                <th>Ação</th>
-                                <th>De → Para</th>
-                                <th>Cliente</th>
-                                <th>Admin</th>
-                                <th>Observação</th>
-                            </tr>
+                        <tr>
+                            <th>Quando</th>
+                            <th>Horário afetado</th>
+                            <th>Ação</th>
+                            <th>De → Para</th>
+                            <th>Cliente</th>
+                            <th>Admin</th>
+                            <th>Observação</th>
+                        </tr>
 
-                        </thead>
+                    </thead>
 
 
-                        <tbody>
+                    <tbody>
 
-                            {% for entry in history %}
+                        {% for entry in history %}
 
-                                <tr>
+                        <tr>
 
-                                    <td>
-                                        {{ entry["created_at"] }}
-                                    </td>
+                            <td>
+                                {{ entry["created_at"] }}
+                            </td>
 
-                                    <td>
-                                        <strong>{{ entry["date"] }}</strong><br>
-                                        <span style="color: var(--admin-muted); font-size: 12px;">
-                                            {{ entry["start_time"] }} → {{ entry["end_time"] }}
-                                        </span>
-                                    </td>
+                            <td>
+                                <strong>{{ entry["date"] }}</strong><br>
+                                <span style="color: var(--admin-muted); font-size: 12px;">
+                                    {{ entry["start_time"] }} → {{ entry["end_time"] }}
+                                </span>
+                            </td>
 
-                                    <td>
-                                        {{ history_action_labels.get(entry["action"], entry["action"]) }}
-                                    </td>
+                            <td>
+                                {{ history_action_labels.get(entry["action"], entry["action"]) }}
+                            </td>
 
-                                    <td>
+                            <td>
 
-                                        {% if entry["old_status"] %}
-                                            {{ history_status_labels.get(entry["old_status"], entry["old_status"]) }}
-                                            →
-                                        {% endif %}
+                                {% if entry["old_status"] %}
+                                {{ history_status_labels.get(entry["old_status"], entry["old_status"]) }}
+                                →
+                                {% endif %}
 
-                                        {% if entry["new_status"] %}
-                                            {{ history_status_labels.get(entry["new_status"], entry["new_status"]) }}
-                                        {% else %}
-                                            —
-                                        {% endif %}
+                                {% if entry["new_status"] %}
+                                {{ history_status_labels.get(entry["new_status"], entry["new_status"]) }}
+                                {% else %}
+                                —
+                                {% endif %}
 
-                                    </td>
+                            </td>
 
-                                    <td>
+                            <td>
 
-                                        {% if entry["affected_client_name"] %}
-                                            {{ entry["affected_client_name"] }}
-                                            <br>
-                                            <span style="color: var(--admin-muted); font-size: 12px;">
-                                                {{ entry["affected_event_type"] or "" }}
-                                                {% if entry["affected_lead_id"] %}
-                                                    · Lead #{{ entry["affected_lead_id"] }}
-                                                {% endif %}
-                                            </span>
-                                        {% else %}
-                                            —
-                                        {% endif %}
+                                {% if entry["affected_client_name"] %}
+                                {{ entry["affected_client_name"] }}
+                                <br>
+                                <span style="color: var(--admin-muted); font-size: 12px;">
+                                    {{ entry["affected_event_type"] or "" }}
+                                    {% if entry["affected_lead_id"] %}
+                                    · Lead #{{ entry["affected_lead_id"] }}
+                                    {% endif %}
+                                </span>
+                                {% else %}
+                                —
+                                {% endif %}
 
-                                    </td>
+                            </td>
 
-                                    <td>
-                                        {{ entry["admin_username"] }}
-                                    </td>
+                            <td>
+                                {{ entry["admin_username"] }}
+                            </td>
 
-                                    <td style="max-width: 260px; color: var(--admin-muted); font-size: 13px;">
-                                        {{ entry["description"] or "—" }}
-                                    </td>
+                            <td style="max-width: 260px; color: var(--admin-muted); font-size: 13px;">
+                                {{ entry["description"] or "—" }}
+                            </td>
 
-                                </tr>
+                        </tr>
 
-                            {% endfor %}
+                        {% endfor %}
 
-                        </tbody>
+                    </tbody>
 
-                    </table>
+                </table>
 
-                </div>
+            </div>
 
-                <p style="color: var(--admin-muted); font-size: 12px; margin-top: 14px;">
-                    Exibindo até 200 registros mais recentes que correspondem aos filtros.
-                </p>
+            <p style="color: var(--admin-muted); font-size: 12px; margin-top: 14px;">
+                Exibindo até 200 registros mais recentes que correspondem aos filtros.
+            </p>
 
             {% else %}
 
-                <div class="empty-state">
-                    <strong>Nenhum registro encontrado</strong>
-                    <p>Não há histórico de agenda para os filtros selecionados.</p>
-                </div>
+            <div class="empty-state">
+                <strong>Nenhum registro encontrado</strong>
+                <p>Não há histórico de agenda para os filtros selecionados.</p>
+            </div>
 
             {% endif %}
 

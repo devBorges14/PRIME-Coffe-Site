@@ -2903,3 +2903,1669 @@ a {
 .agenda-impact-dialog {
     transform: translateY(0) scale(1);
 }
+/* =========================================================
+   ADIÇÕES PARA A PÁGINA DE DETALHE DO LEAD (lead.html)
+   ========================================================= */
+
+/* Rótulo dourado em uppercase, usado em vários lugares
+   do lead.html (CLIENTE, EVENTO, CRM, ZONA DE PERIGO...) */
+
+.admin-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--admin-gold);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+
+/* Botão "← Voltar para leads" */
+
+.admin-back {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 24px;
+
+    color: var(--admin-muted);
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+.admin-back:hover {
+    color: var(--admin-gold);
+}
+
+
+/* Cabeçalho com nome do cliente e tipo de evento */
+
+.lead-detail-header {
+    margin-bottom: 30px;
+}
+
+.lead-detail-header h1 {
+    margin: 6px 0 4px;
+
+    font-size: 32px;
+}
+
+.lead-detail-header p {
+    margin: 0;
+
+    color: var(--admin-muted);
+}
+
+
+/* Cards da grade de detalhe (mesmo visual do .admin-card) */
+
+.lead-card {
+    padding: 26px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.lead-card h2 {
+    margin: 6px 0 18px;
+
+    font-size: 18px;
+}
+
+/* Faz o card ocupar as duas colunas do .lead-detail-grid
+   (que já existe no seu admin.css com 2fr 1fr) */
+
+.lead-card-full {
+    grid-column: 1 / -1;
+}
+
+
+/* Select e textarea dentro dos cards do lead */
+
+.admin-select,
+.admin-textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    margin-bottom: 14px;
+
+    color: var(--admin-text);
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: border-color 0.2s ease;
+}
+
+.admin-select:focus,
+.admin-textarea:focus {
+    border-color: var(--admin-gold);
+}
+
+.admin-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+
+/* Botões de ação dentro dos cards (Atualizar status,
+   Salvar observação) */
+
+.btn,
+.admin-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    border: 1px solid var(--admin-gold);
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.btn-primary,
+.admin-action-button {
+    color: #111;
+    background: var(--admin-gold);
+}
+
+.btn-primary:hover,
+.admin-action-button:hover {
+    background: var(--admin-gold-light);
+    border-color: var(--admin-gold-light);
+}
+
+
+/* Card "Zona de perigo" */
+
+.danger-card {
+    border-color: rgba(217, 92, 92, 0.28);
+    background: rgba(217, 92, 92, 0.05);
+}
+
+.danger-card h2 {
+    color: #ffb3b3;
+}
+
+.admin-delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    color: #fff;
+    background: rgba(217, 92, 92, 0.15);
+
+    border: 1px solid rgba(217, 92, 92, 0.4);
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.admin-delete-button:hover {
+    background: rgba(217, 92, 92, 0.28);
+    border-color: var(--admin-danger);
+}
+
+
+/* Texto descritivo (mensagem do cliente, avisos) */
+
+.lead-description {
+    margin: 0;
+
+    color: #dedede;
+
+    font-size: 14px;
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+}
+
+
+/* =========================================================
+   TIMELINE — HISTÓRICO DO LEAD
+   ========================================================= */
+
+.lead-timeline {
+    list-style: none;
+
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.lead-timeline-item {
+    position: relative;
+
+    display: flex;
+
+    gap: 16px;
+
+    padding-bottom: 22px;
+
+    padding-left: 4px;
+}
+
+.lead-timeline-item::before {
+    content: "";
+
+    position: absolute;
+
+    top: 16px;
+    left: 9px;
+
+    width: 1px;
+    height: 100%;
+
+    background: var(--admin-border);
+}
+
+.lead-timeline-item:last-child::before {
+    display: none;
+}
+
+.lead-timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.lead-timeline-dot {
+    flex-shrink: 0;
+
+    width: 9px;
+    height: 9px;
+
+    margin-top: 6px;
+
+    background: var(--admin-gold);
+    border-radius: 50%;
+
+    z-index: 1;
+}
+
+.lead-timeline-content {
+    flex: 1;
+}
+
+.lead-timeline-status {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.lead-timeline-old {
+    color: var(--admin-muted);
+    font-weight: 500;
+}
+
+.lead-timeline-arrow {
+    color: var(--admin-muted);
+}
+
+.lead-timeline-new {
+    color: var(--admin-gold);
+}
+
+.lead-timeline-meta {
+    margin-bottom: 4px;
+
+    color: var(--admin-muted);
+
+    font-size: 12px;
+}
+
+.lead-timeline-description {
+    color: #ccc;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .lead-card {
+        padding: 20px;
+    }
+
+    .lead-detail-header h1 {
+        font-size: 26px;
+    }
+
+}
+
+/* =========================================================
+   MENSAGENS FLASH (avisos globais de sucesso/erro)
+   ========================================================= */
+
+.flash-messages {
+    position: fixed;
+
+    top: 18px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 2000;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+
+    width: min(92%, 480px);
+}
+
+/* .login-message.error/.success já existem no admin.css
+   e definem cor/fundo — aqui só garantimos boa leitura
+   fora do contexto do card de login. */
+
+.flash-messages .login-message {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================================================
+   ADIÇÕES PARA O DASHBOARD (dashboard.html)
+   ========================================================= */
+
+/* "Leads" dourado dentro do <h1>Gestão de <span>Leads</span></h1> */
+
+.admin-header h1 span {
+    color: var(--admin-gold);
+}
+
+
+/* Grade de indicadores — mesma ideia do .stats-grid, mas
+   com auto-fit para acomodar os novos cards da Fase 5
+   sem ficar apertado em telas menores */
+
+.admin-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(150px, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 35px;
+}
+
+.admin-stat {
+    padding: 22px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.admin-stat span {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--admin-muted);
+
+    font-size: 13px;
+}
+
+.admin-stat strong {
+    display: block;
+
+    font-size: 28px;
+
+    color: var(--admin-gold);
+}
+
+
+/* Seções genéricas do dashboard (Próximos eventos, Leads) */
+
+.admin-section {
+    padding: 28px;
+
+    margin-bottom: 25px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.admin-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.admin-section-header h2 {
+    margin: 6px 0 0;
+
+    font-size: 20px;
+}
+
+
+/* Lista de próximos eventos */
+
+.upcoming-events-list {
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.upcoming-events-item {
+    display: grid;
+
+    grid-template-columns: 140px 1fr auto;
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 16px 18px;
+
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+}
+
+.upcoming-events-date {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.upcoming-events-date strong {
+    font-size: 14px;
+}
+
+.upcoming-events-date span {
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+.upcoming-events-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.upcoming-events-info strong {
+    font-size: 14px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upcoming-events-info span {
+    color: var(--admin-muted);
+    font-size: 12.5px;
+}
+
+
+/* Navegação (Agenda / Relatórios) */
+
+.admin-navigation {
+    display: flex;
+
+    gap: 14px;
+    flex-wrap: wrap;
+
+    margin-bottom: 35px;
+}
+
+
+/* Card de filtros */
+
+.admin-filters {
+    padding: 26px;
+
+    margin-bottom: 25px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.admin-filters form {
+    display: grid;
+
+    grid-template-columns:
+        2fr 1fr 1fr 1fr auto;
+
+    gap: 14px;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.filter-group label {
+    color: #d8d8d8;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 13px;
+
+    color: var(--admin-text);
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--admin-gold);
+}
+
+.filter-actions {
+    display: flex;
+
+    gap: 10px;
+}
+
+.admin-clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 16px;
+
+    color: var(--admin-muted);
+    background: transparent;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.admin-clear-button:hover {
+    border-color: var(--admin-gold);
+    color: var(--admin-gold);
+}
+
+
+/* Contador de resultados acima da tabela */
+
+.results-header {
+    display: flex;
+    align-items: baseline;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+}
+
+.results-header strong {
+    color: var(--admin-text);
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* Tabela de leads (mesmo padrão visual do .admin-table) */
+
+.leads-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    margin-bottom: 24px;
+}
+
+.leads-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 900px;
+}
+
+.leads-table th {
+    padding: 15px;
+
+    color: var(--admin-muted);
+    background: #0e0e0e;
+
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+
+    text-align: left;
+}
+
+.leads-table td {
+    padding: 16px 15px;
+
+    border-top: 1px solid var(--admin-border);
+
+    color: #dedede;
+
+    font-size: 14px;
+}
+
+.leads-table td strong {
+    display: block;
+}
+
+.leads-table td small {
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+.leads-table tr:hover td {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+
+/* Botão "Ver →" dentro da tabela / lista de eventos */
+
+.admin-view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 36px;
+
+    padding: 0 14px;
+
+    color: var(--admin-gold);
+    background: rgba(201, 164, 92, 0.08);
+
+    border: 1px solid rgba(201, 164, 92, 0.25);
+    border-radius: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.admin-view-button:hover {
+    background: rgba(201, 164, 92, 0.16);
+    border-color: var(--admin-gold);
+}
+
+
+/* Badges de status que ainda faltavam (já existiam
+   status-novo, status-fechado, status-sem-interesse) */
+
+.status-negociação {
+    color: #e0c27b;
+    background: rgba(201, 164, 92, 0.12);
+}
+
+.status-contato-realizado {
+    color: #9dc9e0;
+    background: rgba(92, 156, 217, 0.12);
+}
+
+.status-orçamento-enviado {
+    color: #c9b25c;
+    background: rgba(201, 178, 92, 0.12);
+}
+
+
+/* =========================================================
+   RESPONSIVO — DASHBOARD
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .admin-filters form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .admin-filters {
+        padding: 18px;
+    }
+
+    .admin-filters form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-section {
+        padding: 18px;
+    }
+
+    .upcoming-events-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .admin-view-button {
+        justify-self: flex-start;
+    }
+
+}
+/* =========================================================
+   ADIÇÕES PARA A PÁGINA DE DETALHE DO LEAD (lead.html)
+   ========================================================= */
+
+/* Rótulo dourado em uppercase, usado em vários lugares
+   do lead.html (CLIENTE, EVENTO, CRM, ZONA DE PERIGO...) */
+
+.admin-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--admin-gold);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+
+/* Botão "← Voltar para leads" */
+
+.admin-back {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-bottom: 24px;
+
+    color: var(--admin-muted);
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+.admin-back:hover {
+    color: var(--admin-gold);
+}
+
+
+/* Cabeçalho com nome do cliente e tipo de evento */
+
+.lead-detail-header {
+    margin-bottom: 30px;
+}
+
+.lead-detail-header h1 {
+    margin: 6px 0 4px;
+
+    font-size: 32px;
+}
+
+.lead-detail-header p {
+    margin: 0;
+
+    color: var(--admin-muted);
+}
+
+
+/* Cards da grade de detalhe (mesmo visual do .admin-card) */
+
+.lead-card {
+    padding: 26px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.lead-card h2 {
+    margin: 6px 0 18px;
+
+    font-size: 18px;
+}
+
+/* Faz o card ocupar as duas colunas do .lead-detail-grid
+   (que já existe no seu admin.css com 2fr 1fr) */
+
+.lead-card-full {
+    grid-column: 1 / -1;
+}
+
+
+/* Select e textarea dentro dos cards do lead */
+
+.admin-select,
+.admin-textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    margin-bottom: 14px;
+
+    color: var(--admin-text);
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: border-color 0.2s ease;
+}
+
+.admin-select:focus,
+.admin-textarea:focus {
+    border-color: var(--admin-gold);
+}
+
+.admin-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+
+/* Botões de ação dentro dos cards (Atualizar status,
+   Salvar observação) */
+
+.btn,
+.admin-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    border: 1px solid var(--admin-gold);
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.btn-primary,
+.admin-action-button {
+    color: #111;
+    background: var(--admin-gold);
+}
+
+.btn-primary:hover,
+.admin-action-button:hover {
+    background: var(--admin-gold-light);
+    border-color: var(--admin-gold-light);
+}
+
+
+/* Card "Zona de perigo" */
+
+.danger-card {
+    border-color: rgba(217, 92, 92, 0.28);
+    background: rgba(217, 92, 92, 0.05);
+}
+
+.danger-card h2 {
+    color: #ffb3b3;
+}
+
+.admin-delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 0 18px;
+
+    color: #fff;
+    background: rgba(217, 92, 92, 0.15);
+
+    border: 1px solid rgba(217, 92, 92, 0.4);
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.admin-delete-button:hover {
+    background: rgba(217, 92, 92, 0.28);
+    border-color: var(--admin-danger);
+}
+
+
+/* Texto descritivo (mensagem do cliente, avisos) */
+
+.lead-description {
+    margin: 0;
+
+    color: #dedede;
+
+    font-size: 14px;
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+}
+
+
+/* =========================================================
+   TIMELINE — HISTÓRICO DO LEAD
+   ========================================================= */
+
+.lead-timeline {
+    list-style: none;
+
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.lead-timeline-item {
+    position: relative;
+
+    display: flex;
+
+    gap: 16px;
+
+    padding-bottom: 22px;
+
+    padding-left: 4px;
+}
+
+.lead-timeline-item::before {
+    content: "";
+
+    position: absolute;
+
+    top: 16px;
+    left: 9px;
+
+    width: 1px;
+    height: 100%;
+
+    background: var(--admin-border);
+}
+
+.lead-timeline-item:last-child::before {
+    display: none;
+}
+
+.lead-timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.lead-timeline-dot {
+    flex-shrink: 0;
+
+    width: 9px;
+    height: 9px;
+
+    margin-top: 6px;
+
+    background: var(--admin-gold);
+    border-radius: 50%;
+
+    z-index: 1;
+}
+
+.lead-timeline-content {
+    flex: 1;
+}
+
+.lead-timeline-status {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.lead-timeline-old {
+    color: var(--admin-muted);
+    font-weight: 500;
+}
+
+.lead-timeline-arrow {
+    color: var(--admin-muted);
+}
+
+.lead-timeline-new {
+    color: var(--admin-gold);
+}
+
+.lead-timeline-meta {
+    margin-bottom: 4px;
+
+    color: var(--admin-muted);
+
+    font-size: 12px;
+}
+
+.lead-timeline-description {
+    color: #ccc;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .lead-card {
+        padding: 20px;
+    }
+
+    .lead-detail-header h1 {
+        font-size: 26px;
+    }
+
+}
+
+/* =========================================================
+   MENSAGENS FLASH (avisos globais de sucesso/erro)
+   ========================================================= */
+
+.flash-messages {
+    position: fixed;
+
+    top: 18px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 2000;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+
+    width: min(92%, 480px);
+}
+
+/* .login-message.error/.success já existem no admin.css
+   e definem cor/fundo — aqui só garantimos boa leitura
+   fora do contexto do card de login. */
+
+.flash-messages .login-message {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================================================
+   ADIÇÕES PARA O DASHBOARD (dashboard.html)
+   ========================================================= */
+
+/* "Leads" dourado dentro do <h1>Gestão de <span>Leads</span></h1> */
+
+.admin-header h1 span {
+    color: var(--admin-gold);
+}
+
+
+/* Grade de indicadores — mesma ideia do .stats-grid, mas
+   com auto-fit para acomodar os novos cards da Fase 5
+   sem ficar apertado em telas menores */
+
+.admin-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(150px, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 35px;
+}
+
+.admin-stat {
+    padding: 22px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.admin-stat span {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: var(--admin-muted);
+
+    font-size: 13px;
+}
+
+.admin-stat strong {
+    display: block;
+
+    font-size: 28px;
+
+    color: var(--admin-gold);
+}
+
+
+/* Seções genéricas do dashboard (Próximos eventos, Leads) */
+
+.admin-section {
+    padding: 28px;
+
+    margin-bottom: 25px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.admin-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.admin-section-header h2 {
+    margin: 6px 0 0;
+
+    font-size: 20px;
+}
+
+
+/* Lista de próximos eventos */
+
+.upcoming-events-list {
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.upcoming-events-item {
+    display: grid;
+
+    grid-template-columns: 140px 1fr auto;
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 16px 18px;
+
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+}
+
+.upcoming-events-date {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.upcoming-events-date strong {
+    font-size: 14px;
+}
+
+.upcoming-events-date span {
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+.upcoming-events-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.upcoming-events-info strong {
+    font-size: 14px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upcoming-events-info span {
+    color: var(--admin-muted);
+    font-size: 12.5px;
+}
+
+
+/* Navegação (Agenda / Relatórios) */
+
+.admin-navigation {
+    display: flex;
+
+    gap: 14px;
+    flex-wrap: wrap;
+
+    margin-bottom: 35px;
+}
+
+
+/* Card de filtros */
+
+.admin-filters {
+    padding: 26px;
+
+    margin-bottom: 25px;
+
+    background: var(--admin-surface);
+
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+}
+
+.admin-filters form {
+    display: grid;
+
+    grid-template-columns:
+        2fr 1fr 1fr 1fr auto;
+
+    gap: 14px;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.filter-group label {
+    color: #d8d8d8;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 10px 13px;
+
+    color: var(--admin-text);
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--admin-gold);
+}
+
+.filter-actions {
+    display: flex;
+
+    gap: 10px;
+}
+
+.admin-clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 16px;
+
+    color: var(--admin-muted);
+    background: transparent;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.admin-clear-button:hover {
+    border-color: var(--admin-gold);
+    color: var(--admin-gold);
+}
+
+
+/* Contador de resultados acima da tabela */
+
+.results-header {
+    display: flex;
+    align-items: baseline;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+}
+
+.results-header strong {
+    color: var(--admin-text);
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* Tabela de leads (mesmo padrão visual do .admin-table) */
+
+.leads-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    margin-bottom: 24px;
+}
+
+.leads-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 900px;
+}
+
+.leads-table th {
+    padding: 15px;
+
+    color: var(--admin-muted);
+    background: #0e0e0e;
+
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+
+    text-align: left;
+}
+
+.leads-table td {
+    padding: 16px 15px;
+
+    border-top: 1px solid var(--admin-border);
+
+    color: #dedede;
+
+    font-size: 14px;
+}
+
+.leads-table td strong {
+    display: block;
+}
+
+.leads-table td small {
+    color: var(--admin-muted);
+    font-size: 12px;
+}
+
+.leads-table tr:hover td {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+
+/* Botão "Ver →" dentro da tabela / lista de eventos */
+
+.admin-view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 36px;
+
+    padding: 0 14px;
+
+    color: var(--admin-gold);
+    background: rgba(201, 164, 92, 0.08);
+
+    border: 1px solid rgba(201, 164, 92, 0.25);
+    border-radius: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.admin-view-button:hover {
+    background: rgba(201, 164, 92, 0.16);
+    border-color: var(--admin-gold);
+}
+
+
+/* Badges de status que ainda faltavam (já existiam
+   status-novo, status-fechado, status-sem-interesse) */
+
+.status-negociação {
+    color: #e0c27b;
+    background: rgba(201, 164, 92, 0.12);
+}
+
+.status-contato-realizado {
+    color: #9dc9e0;
+    background: rgba(92, 156, 217, 0.12);
+}
+
+.status-orçamento-enviado {
+    color: #c9b25c;
+    background: rgba(201, 178, 92, 0.12);
+}
+
+
+/* =========================================================
+   RESPONSIVO — DASHBOARD
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .admin-filters form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .admin-filters {
+        padding: 18px;
+    }
+
+    .admin-filters form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-section {
+        padding: 18px;
+    }
+
+    .upcoming-events-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .admin-view-button {
+        justify-self: flex-start;
+    }
+
+}
+
+/* =========================================================
+   FUNIL DE CONVERSÃO (reports.html)
+   ========================================================= */
+
+.funnel {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+.funnel-stage-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    margin-bottom: 6px;
+
+    font-size: 13px;
+}
+
+.funnel-stage-label span {
+    color: var(--admin-muted);
+}
+
+.funnel-stage-label strong {
+    color: var(--admin-text);
+    font-weight: 700;
+}
+
+.funnel-bar-track {
+    width: 100%;
+    height: 10px;
+
+    background: #0d0d0d;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+.funnel-bar-fill {
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        var(--admin-gold),
+        var(--admin-gold-light)
+    );
+
+    border-radius: 999px;
+
+    transition: width 0.3s ease;
+}

@@ -2,12 +2,11 @@
 
 {% block title %}Admin | Dashboard{% endblock %}
 
-{% block content %}
-
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
+
+{% block content %}
 
 <section class="admin-page">
 
@@ -58,7 +57,84 @@
                 <strong>{{ fechados or 0 }}</strong>
             </div>
 
+            <div class="admin-stat">
+                <span>Taxa de conversão</span>
+                <strong>{{ taxa_conversao or 0 }}%</strong>
+            </div>
+
+            <div class="admin-stat">
+                <span>Eventos próximos</span>
+                <strong>{{ eventos_proximos or 0 }}</strong>
+            </div>
+
+            <div class="admin-stat">
+                <span>Horários disponíveis</span>
+                <strong>{{ horarios_disponiveis or 0 }}</strong>
+            </div>
+
+            <div class="admin-stat">
+                <span>Horários ocupados</span>
+                <strong>{{ horarios_ocupados or 0 }}</strong>
+            </div>
+
         </div>
+
+
+        <!-- PRÓXIMOS EVENTOS -->
+
+        {% if proximos_eventos %}
+
+        <div class="admin-section">
+
+            <div class="admin-section-header">
+
+                <div>
+
+                    <span class="admin-label">
+                        AGENDA
+                    </span>
+
+                    <h2>
+                        Próximos eventos fechados
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <ul class="upcoming-events-list">
+
+                {% for evento in proximos_eventos %}
+
+                    <li class="upcoming-events-item">
+
+                        <div class="upcoming-events-date">
+                            <strong>{{ evento["event_date"] }}</strong>
+                            <span>{{ evento["event_time"] or "—" }}</span>
+                        </div>
+
+                        <div class="upcoming-events-info">
+                            <strong>{{ evento["name"] }}</strong>
+                            <span>{{ evento["event_type"] }}</span>
+                        </div>
+
+                        <a
+                            href="{{ url_for('admin.lead_detail', lead_id=evento['id']) }}"
+                            class="admin-view-button"
+                        >
+                            Ver →
+                        </a>
+
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
 
 
         <!-- NAVEGAÇÃO ADMIN -->
@@ -171,8 +247,6 @@
                         <option value="Outro" {% if event_filter=="Outro" %}selected{% endif %}>
                             Outro
                         </option>
-
-                    </select>
 
                     </select>
 
@@ -424,7 +498,6 @@
         </div>
 
     </div>
-    ```
 
 </section>
 

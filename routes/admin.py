@@ -8,6 +8,8 @@ from flask import (
     session
 )
 
+import datetime
+
 from database.database import get_connection
 from database.history import register_lead_history, get_lead_history
 from auth_utils import login_required
@@ -58,6 +60,63 @@ def dashboard():
             FROM leads
             WHERE status = 'FECHADO'
         """).fetchone()["total"]
+
+        # ----------------------------------------------------
+        # INDICADORES — FASE 5 (DASHBOARD)
+        # ----------------------------------------------------
+
+        today = datetime.date.today().isoformat()
+
+        # Eventos fechados com data a partir de hoje
+
+        eventos_proximos = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM leads
+            WHERE status = 'FECHADO'
+              AND event_date >= ?
+        """, (
+            today,
+        )).fetchone()["total"]
+
+        # Lista curta para exibir no dashboard (não só a contagem)
+
+        proximos_eventos = connection.execute("""
+            SELECT *
+            FROM leads
+            WHERE status = 'FECHADO'
+              AND event_date >= ?
+            ORDER BY event_date ASC, event_time ASC
+            LIMIT 5
+        """, (
+            today,
+        )).fetchall()
+
+        # Disponibilidade da agenda
+
+        horarios_disponiveis = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM availability
+            WHERE status = 'AVAILABLE'
+        """).fetchone()["total"]
+
+        horarios_ocupados = connection.execute("""
+            SELECT COUNT(*) AS total
+            FROM availability
+            WHERE status = 'BOOKED'
+        """).fetchone()["total"]
+
+        # Taxa de conversão (fechados / total de leads)
+
+        if total_leads:
+
+            taxa_conversao = round(
+                (fechados / total_leads) * 100,
+                1
+            )
+
+        else:
+
+            taxa_conversao = 0
 
         # ----------------------------------------------------
         # FILTROS
@@ -163,6 +222,12 @@ def dashboard():
         novos=novos,
         negociacoes=negociacoes,
         fechados=fechados,
+
+        eventos_proximos=eventos_proximos,
+        proximos_eventos=proximos_eventos,
+        horarios_disponiveis=horarios_disponiveis,
+        horarios_ocupados=horarios_ocupados,
+        taxa_conversao=taxa_conversao,
 
         leads=leads,
 

@@ -34,6 +34,17 @@ HISTORY_STATUS_LABELS = {
 }
 
 
+# Ordem oficial do funil comercial
+
+FUNNEL_STAGES = [
+    ("NOVO", "Novo"),
+    ("CONTATO REALIZADO", "Contato realizado"),
+    ("ORÇAMENTO ENVIADO", "Orçamento enviado"),
+    ("NEGOCIAÇÃO", "Negociação"),
+    ("FECHADO", "Fechado")
+]
+
+
 # =========================================================
 # CONSULTA DE HISTÓRICO (reutilizada pela tela e pelos exports)
 # =========================================================
@@ -93,6 +104,93 @@ def fetch_history(
     ).fetchall()
 
 
+# =========================================================
+# FUNIL DE CONVERSÃO E CANCELAMENTOS
+# =========================================================
+#
+# Usa leads_history para responder "quantos leads JÁ
+# PASSARAM por este estágio", em vez de só "quantos estão
+# neste estágio agora" — isso é o que torna um funil de
+# verdade (não-decrescente a cada etapa anterior), já que
+# um lead pode ter passado por NEGOCIAÇÃO mesmo estando
+# FECHADO agora.
+
+def fetch_funnel_and_cancellations(connection, lead_ids):
+
+    if not lead_ids:
+
+        funnel = [
+            {
+                "status": status,
+                "label": label,
+                "count": 0,
+                "percent": 0
+            }
+            for status, label in FUNNEL_STAGES
+        ]
+
+        return funnel, 0
+
+    placeholders = ",".join("?" for _ in lead_ids)
+
+    rows = connection.execute(
+        f"""
+        SELECT new_status, COUNT(DISTINCT lead_id) AS total
+        FROM leads_history
+        WHERE lead_id IN ({placeholders})
+        GROUP BY new_status
+        """,
+        lead_ids
+    ).fetchall()
+
+    counts_by_status = {
+        row["new_status"]: row["total"]
+        for row in rows
+    }
+
+    # Base do percentual: total de leads no período (todo
+    # lead passa por NOVO, então esse é o teto do funil).
+
+    total_leads = len(lead_ids)
+
+    funnel = []
+
+    for status, label in FUNNEL_STAGES:
+
+        count = counts_by_status.get(status, 0)
+
+        percent = round(
+            (count / total_leads) * 100,
+            1
+        ) if total_leads else 0
+
+        funnel.append({
+            "status": status,
+            "label": label,
+            "count": count,
+            "percent": percent
+        })
+
+    # Cancelamentos: leads que SAÍRAM de FECHADO depois de
+    # já terem sido fechados — diferente de um lead que
+    # nunca chegou a fechar e foi para SEM INTERESSE.
+
+    cancel_row = connection.execute(
+        f"""
+        SELECT COUNT(DISTINCT lead_id) AS total
+        FROM leads_history
+        WHERE lead_id IN ({placeholders})
+          AND old_status = 'FECHADO'
+          AND new_status != 'FECHADO'
+        """,
+        lead_ids
+    ).fetchone()
+
+    cancellations = cancel_row["total"]
+
+    return funnel, cancellations
+
+
 @reports_bp.route("/")
 @login_required
 def reports():
@@ -114,6 +212,11 @@ def reports():
         "fechados": 0,
         "sem_interesse": 0,
         "eventos_confirmados": 0,
+        "eventos_realizados": 0,
+        "eventos_a_realizar": 0,
+        "perdas": 0,
+        "taxa_perda": 0,
+        "cancelamentos": 0,
         "horarios_disponiveis": 0,
         "horarios_ocupados": 0,
         "horarios_bloqueados": 0,
@@ -160,6 +263,8 @@ def reports():
     ).fetchall()
 
     stats["total_leads"] = len(leads)
+
+    lead_ids = [lead["id"] for lead in leads]
 
     # -------------------------
     # STATUS DOS LEADS
@@ -242,6 +347,62 @@ def reports():
     )
 
     # -------------------------
+    # EVENTOS REALIZADOS x A REALIZAR x CANCELADOS
+    # -------------------------
+    #
+    # "Realizado" = fechado com data no passado.
+    # "A realizar" = fechado com data futura (ou hoje).
+    # "Cancelado" = já foi FECHADO em algum momento e
+    # depois saiu desse status (via leads_history) —
+    # diferente de um lead que nunca fechou.
+
+    today = datetime.date.today().isoformat()
+
+    eventos_realizados = 0
+    eventos_a_realizar = 0
+
+    for lead in leads:
+
+        if lead["status"] != "FECHADO":
+            continue
+
+        if lead["event_date"] and lead["event_date"] < today:
+            eventos_realizados += 1
+
+        else:
+            eventos_a_realizar += 1
+
+    stats["eventos_realizados"] = eventos_realizados
+    stats["eventos_a_realizar"] = eventos_a_realizar
+
+    # -------------------------
+    # PERDAS (leads SEM INTERESSE)
+    # -------------------------
+
+    perdas = [
+        lead for lead in leads
+        if lead["status"] == "SEM INTERESSE"
+    ]
+
+    stats["perdas"] = len(perdas)
+
+    stats["taxa_perda"] = round(
+        (len(perdas) / stats["total_leads"]) * 100,
+        1
+    ) if stats["total_leads"] else 0
+
+    # -------------------------
+    # FUNIL DE CONVERSÃO E CANCELAMENTOS
+    # -------------------------
+
+    funnel, cancelamentos = fetch_funnel_and_cancellations(
+        connection,
+        lead_ids
+    )
+
+    stats["cancelamentos"] = cancelamentos
+
+    # -------------------------
     # HISTÓRICO DA AGENDA
     # -------------------------
     #
@@ -277,6 +438,9 @@ def reports():
         stats=stats,
         leads=leads,
         slots=slots,
+
+        funnel=funnel,
+        perdas=perdas,
 
         start_date=start_date,
         end_date=end_date,
