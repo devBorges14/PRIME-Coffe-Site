@@ -6,6 +6,9 @@ from database.database import get_connection
 from database.database import init_db, migrate_db
 
 
+MIN_PASSWORD_LENGTH = 10
+
+
 init_db()
 migrate_db()
 
@@ -27,9 +30,9 @@ if not username:
     )
 
 
-if not password:
+if len(password) < MIN_PASSWORD_LENGTH:
     raise SystemExit(
-        "A senha não pode ficar vazia."
+        f"A senha precisa ter pelo menos {MIN_PASSWORD_LENGTH} caracteres."
     )
 
 

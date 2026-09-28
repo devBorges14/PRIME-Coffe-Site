@@ -5,7 +5,8 @@ from flask import (
     redirect,
     url_for,
     flash,
-    session
+    session,
+    current_app
 )
 
 import datetime
@@ -739,6 +740,17 @@ def delete_lead(lead_id):
         """, (lead_id,))
 
         connection.commit()
+
+        # A exclusão é permanente e não deixa rastro no banco,
+        # então registramos no log quem excluiu e qual lead era.
+
+        current_app.logger.warning(
+            "Lead excluido: id=%s nome=%r status=%s por=%r",
+            lead_id,
+            lead["name"],
+            lead["status"],
+            session.get("username")
+        )
 
     except Exception:
 

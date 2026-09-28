@@ -1,14 +1,69 @@
-from flask import Blueprint, request, jsonify
+import re
+
+from flask import (
+    Blueprint,
+    request,
+    jsonify,
+    current_app
+)
 
 from database.database import get_connection
 from database.history import register_lead_history
+from extensions import limiter
 
 
 contact_bp = Blueprint("contact", __name__)
 
 
+# =====================================================
+# LIMITES E FORMATOS ACEITOS
+# =====================================================
+
+MAX_LENGTHS = {
+    "nome": 120,
+    "email": 254,
+    "telefone": 30,
+    "tipo_evento": 80,
+    "local_evento": 200,
+    "detalhes": 2000,
+}
+
+MAX_GUESTS = 100000
+
+EMAIL_PATTERN = re.compile(
+    r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+)
+
+# Telefone: dígitos, espaço, +, -, ( ) — entre 10 e 15 dígitos
+PHONE_ALLOWED = re.compile(
+    r"^[\d\s+\-()]+$"
+)
+
+
 @contact_bp.route("/contato", methods=["POST"])
+@limiter.limit("5 per minute; 20 per hour")
 def create_contact():
+
+    # -------------------------------------------------
+    # CAMPO-ARMADILHA ANTI-SPAM (honeypot)
+    # -------------------------------------------------
+    #
+    # O formulário tem um campo "website" escondido do
+    # usuário humano. Robôs costumam preencher todos os
+    # campos; se veio preenchido, descartamos em silêncio
+    # e respondemos "sucesso" para o robô não tentar de novo.
+
+    if request.form.get("website", "").strip():
+
+        current_app.logger.warning(
+            "Honeypot acionado em /contato: ip=%s",
+            request.remote_addr
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Solicitação enviada com sucesso!"
+        }), 201
 
     name = request.form.get("nome", "").strip()
     email = request.form.get("email", "").strip()
@@ -30,17 +85,34 @@ def create_contact():
 
     if not name:
         errors.append("Nome é obrigatório.")
+    elif len(name) > MAX_LENGTHS["nome"]:
+        errors.append("Nome muito longo.")
 
     if not email:
         errors.append("E-mail é obrigatório.")
-    elif "@" not in email:
+    elif len(email) > MAX_LENGTHS["email"]:
+        errors.append("E-mail muito longo.")
+    elif not EMAIL_PATTERN.match(email):
         errors.append("E-mail inválido.")
 
     if not phone:
         errors.append("Telefone é obrigatório.")
+    elif len(phone) > MAX_LENGTHS["telefone"]:
+        errors.append("Telefone inválido.")
+    else:
+
+        digits = re.sub(r"\D", "", phone)
+
+        if (
+            not PHONE_ALLOWED.match(phone)
+            or not 10 <= len(digits) <= 15
+        ):
+            errors.append("Telefone inválido.")
 
     if not event_type:
         errors.append("Tipo de evento é obrigatório.")
+    elif len(event_type) > MAX_LENGTHS["tipo_evento"]:
+        errors.append("Tipo de evento inválido.")
 
     if not event_date:
         errors.append("Data do evento é obrigatória.")
@@ -48,12 +120,21 @@ def create_contact():
     if not event_time:
         errors.append("Horário do evento é obrigatório.")
 
+    if len(event_location) > MAX_LENGTHS["local_evento"]:
+        errors.append("Local do evento muito longo.")
+
+    if len(details) > MAX_LENGTHS["detalhes"]:
+        errors.append(
+            "Detalhes muito longos "
+            f"(máximo {MAX_LENGTHS['detalhes']} caracteres)."
+        )
+
     if guest_count:
 
         try:
             guest_count = int(guest_count)
 
-            if guest_count <= 0:
+            if guest_count <= 0 or guest_count > MAX_GUESTS:
                 errors.append(
                     "Número de convidados inválido."
                 )
@@ -185,6 +266,12 @@ def create_contact():
 
         connection.commit()
 
+        current_app.logger.info(
+            "Novo lead: id=%s ip=%s",
+            lead_id,
+            request.remote_addr
+        )
+
         return jsonify({
             "success": True,
             "message": "Solicitação enviada com sucesso!",
@@ -194,6 +281,10 @@ def create_contact():
     except Exception:
 
         connection.rollback()
+
+        current_app.logger.exception(
+            "Erro ao registrar lead"
+        )
 
         return jsonify({
             "success": False,

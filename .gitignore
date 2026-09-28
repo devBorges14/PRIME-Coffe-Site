@@ -1,0 +1,15 @@
+# Ambiente virtual e caches
+.venv/
+__pycache__/
+*.pyc
+
+# Segredos
+.env
+
+# Dados dos clientes (leads, senhas com hash) e backups
+database/site.db
+database/*.db
+backups/
+
+# Logs
+logs/

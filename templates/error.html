@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ title }} | PRIME</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+</head>
+
+<body class="login-page">
+
+    <main class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-header">
+
+                <span class="login-label">
+                    ERRO {{ code }}
+                </span>
+
+                <h1>
+                    {{ title }}
+                </h1>
+
+                <p>
+                    {{ message }}
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('main.index') }}" class="back-home">
+                ← Página inicial
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
