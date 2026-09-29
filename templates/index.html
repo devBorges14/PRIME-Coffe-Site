@@ -268,16 +268,6 @@ Prime Cafés | Experiências Premium em Café
 
             <div class="feature-card">
 
-                <!--
-
-                Quando tivermos a foto real, podemos colocar:
-
-                background-image:
-                url("{{ url_for('static',
-                filename='img/equipe.jpg') }}");
-
-                -->
-
                 <h3>
                     Do primeiro contato
                     ao último detalhe.
@@ -423,10 +413,6 @@ Prime Cafés | Experiências Premium em Café
         </h2>
 
 
-        <!-- =================================================
-             GRUPO 1
-        ================================================== -->
-
         <div class="services-group">
 
             <h3 class="services-group-title">
@@ -434,8 +420,6 @@ Prime Cafés | Experiências Premium em Café
             </h3>
 
             <div class="services-grid">
-
-                <!-- SERVIÇO 1 -->
 
                 <article class="service-card">
 
@@ -457,8 +441,6 @@ Prime Cafés | Experiências Premium em Café
                 </article>
 
 
-                <!-- SERVIÇO 2 -->
-
                 <article class="service-card">
 
                     <div class="service-icon">
@@ -477,8 +459,6 @@ Prime Cafés | Experiências Premium em Café
 
                 </article>
 
-
-                <!-- SERVIÇO 3 -->
 
                 <article class="service-card">
 
@@ -500,8 +480,6 @@ Prime Cafés | Experiências Premium em Café
                 </article>
 
 
-                <!-- SERVIÇO 4 -->
-
                 <article class="service-card">
 
                     <div class="service-icon">
@@ -522,8 +500,6 @@ Prime Cafés | Experiências Premium em Café
                 </article>
 
 
-                <!-- SERVIÇO 5 -->
-
                 <article class="service-card">
 
                     <div class="service-icon">
@@ -542,8 +518,6 @@ Prime Cafés | Experiências Premium em Café
 
                 </article>
 
-
-                <!-- SERVIÇO 6 -->
 
                 <article class="service-card">
 
@@ -568,10 +542,6 @@ Prime Cafés | Experiências Premium em Café
         </div>
 
 
-        <!-- =================================================
-             GRUPO 2
-        ================================================== -->
-
         <div class="services-group services-group-secondary">
 
             <div class="section-label">
@@ -584,8 +554,6 @@ Prime Cafés | Experiências Premium em Café
 
 
             <div class="services-grid">
-
-                <!-- SERVIÇO 1 -->
 
                 <article class="service-card">
 
@@ -607,8 +575,6 @@ Prime Cafés | Experiências Premium em Café
                 </article>
 
 
-                <!-- SERVIÇO 2 -->
-
                 <article class="service-card">
 
                     <div class="service-icon">
@@ -627,8 +593,6 @@ Prime Cafés | Experiências Premium em Café
 
                 </article>
 
-
-                <!-- SERVIÇO 3 -->
 
                 <article class="service-card">
 
@@ -842,16 +806,10 @@ Prime Cafés | Experiências Premium em Café
 
     <div class="contact-modal-content">
 
-        <!-- BOTÃO FECHAR -->
-
         <button class="contact-close" id="closeContact" aria-label="Fechar contato">
             ×
         </button>
 
-
-        <!-- =================================================
-             CABEÇALHO
-        ================================================== -->
 
         <div class="contact-header">
 
@@ -871,13 +829,7 @@ Prime Cafés | Experiências Premium em Café
 
         </div>
 
-        <!-- =================================================
-            CONTEÚDO
-================================================== -->
-
         <div class="contact-grid">
-
-            <!-- INFORMAÇÕES -->
 
             <div class="contact-info">
 
@@ -933,8 +885,6 @@ Prime Cafés | Experiências Premium em Café
 
             </div>
 
-
-            <!-- FORMULÁRIO -->
 
             <form class="contact-form" id="contactForm" method="POST" action="{{ url_for('contact.create_contact') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -1005,21 +955,13 @@ Prime Cafés | Experiências Premium em Café
                 </div>
 
 
-                <div class="form-group">
-
-                    <!-- =====================================================
-     CALENDÁRIO DE AGENDAMENTO
-===================================================== -->
-
-                    <div class="form-group booking-group">
+                <div class="form-group booking-group">
 
                         <label>
                             Data e horário do evento
                         </label>
 
                         <div class="booking-picker">
-
-                            <!-- CALENDÁRIO -->
 
                             <div class="calendar-panel">
 
@@ -1056,8 +998,6 @@ Prime Cafés | Experiências Premium em Café
                             </div>
 
 
-                            <!-- HORÁRIOS -->
-
                             <div class="time-panel">
 
                                 <div class="time-panel-header">
@@ -1092,8 +1032,6 @@ Prime Cafés | Experiências Premium em Café
 
                         </div>
 
-
-                        <!-- CAMPOS REAIS ENVIADOS AO FLASK -->
 
                         <input type="hidden" id="data_evento" name="data_evento" required>
 
@@ -1144,15 +1082,20 @@ Prime Cafés | Experiências Premium em Café
 
                     <div id="formMessage" class="form-message"></div>
 
-            </form>
+                </form>
+
+            </div>
 
         </div>
 
-        <!-- =====================================================
+    </div>
+
+
+<!-- =====================================================
      FOOTER
 ===================================================== -->
 
-        <footer>
+<footer>
 
             <div class="container">
 

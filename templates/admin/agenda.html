@@ -264,6 +264,41 @@
                             Ocupado
                         </span>
 
+                        <!--
+                            CLIENTE VINCULADO
+                            Mostra direto na lista quem está associado
+                            a este horário, sem precisar abrir o modal
+                            de impacto só para saber quem é.
+                        -->
+
+                        {% set slot_clients = clients_by_slot.get(slot["id"], []) %}
+
+                        {% if slot_clients %}
+
+                            <div class="agenda-slot-client">
+
+                                {% for client in slot_clients %}
+
+                                    <a
+                                        href="{{ url_for('admin.lead_detail', lead_id=client['id']) }}"
+                                        class="agenda-slot-client-link"
+                                        title="Ver lead #{{ client['id'] }}"
+                                    >
+                                        {{ client["name"] }}
+                                    </a>
+
+                                    {% if client["event_type"] %}
+                                        <span class="agenda-slot-client-event">
+                                            {{ client["event_type"] }}
+                                        </span>
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endif %}
+
 
                         {% elif slot["status"] == "BLOCKED" %}
 
@@ -354,6 +389,14 @@
         slot_id=slot['id']
     ) }}" class="agenda-delete-form" data-slot-id="{{ slot['id'] }}" data-slot-date="{{ slot['date'] }}"
                             data-slot-start="{{ slot['start_time'] }}" data-slot-end="{{ slot['end_time'] }}">
+
+                            <!--
+                                CSRF TOKEN — estava faltando nesta versão.
+                                Sem isso, o Flask-WTF rejeita o POST com
+                                "The CSRF token is missing." e a exclusão
+                                não funciona (nem avisa por quê).
+                            -->
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                             <button type="submit" class="agenda-delete-button">
                                 Excluir

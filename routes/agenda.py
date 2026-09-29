@@ -33,6 +33,48 @@ def get_affected_leads(connection, slot_id):
     """, (slot_id,)).fetchall()
 
 
+def get_slot_clients(connection, slot_ids):
+    """
+    Para uma lista de ids de horário, retorna um dicionário
+    {availability_id: [leads FECHADO daquele horário]}.
+
+    Usado para mostrar, direto na lista da agenda, qual
+    cliente está associado a cada horário ocupado — sem
+    precisar abrir o modal de impacto para saber.
+    """
+
+    if not slot_ids:
+        return {}
+
+    placeholders = ",".join("?" for _ in slot_ids)
+
+    rows = connection.execute(
+        f"""
+        SELECT
+            id,
+            availability_id,
+            name,
+            event_type
+        FROM leads
+        WHERE availability_id IN ({placeholders})
+          AND status = 'FECHADO'
+        ORDER BY id ASC
+        """,
+        slot_ids
+    ).fetchall()
+
+    clients_by_slot = {}
+
+    for row in rows:
+
+        clients_by_slot.setdefault(
+            row["availability_id"],
+            []
+        ).append(row)
+
+    return clients_by_slot
+
+
 def register_history(
     connection,
     slot,
@@ -91,12 +133,27 @@ def agenda():
         ORDER BY date ASC, start_time ASC
     """).fetchall()
 
+    # Busca, de uma vez só, os clientes de todos os horários
+    # ocupados desta página (evita 1 consulta por card).
+
+    booked_slot_ids = [
+        slot["id"]
+        for slot in slots
+        if slot["status"] == "BOOKED"
+    ]
+
+    clients_by_slot = get_slot_clients(
+        connection,
+        booked_slot_ids
+    )
+
     connection.close()
 
     return render_template(
         "admin/agenda.html",
         slots=slots,
-        status_labels=STATUS_LABELS
+        status_labels=STATUS_LABELS,
+        clients_by_slot=clients_by_slot
     )
 
 
