@@ -999,6 +999,17 @@ footer {
     position: relative;
     z-index: 2;
 
+    /*
+    CONTAINER QUERY: a partir daqui, qualquer elemento
+    dentro do modal pode perguntar "quanto espaço EU
+    realmente tenho?" em vez de "qual o tamanho da tela?".
+    É isso que mantém as quebras de linha do .contact-grid
+    e do .booking-picker sempre sincronizadas entre si,
+    não importa a largura da janela.
+    */
+    container-type: inline-size;
+    container-name: contact-modal;
+
     width: min(1100px, 100%);
 
     max-height: 90vh;
@@ -1186,6 +1197,14 @@ footer {
 ========================================================= */
 
 .contact-form {
+    /*
+    Este também vira um "container": o calendário lá
+    dentro (.booking-picker) vai reagir ao espaço real
+    desta coluna, não ao tamanho da janela.
+    */
+    container-type: inline-size;
+    container-name: contact-form;
+
     padding: 32px;
 
     border: 1px solid rgba(201, 150, 69, 0.25);
@@ -1291,6 +1310,35 @@ footer {
    RESPONSIVIDADE
 ========================================================= */
 
+/*
+CONTAINER QUERY: o .contact-grid empilha quando o
+PRÓPRIO MODAL (não a tela) fica estreito demais para
+caber as duas colunas (Informações | Formulário) com
+conforto. Isso é o que garante que, quando o formulário
+ainda estiver ao lado das informações, ele sempre saiba
+exatamente quanto espaço sobrou pra si mesmo — e é esse
+espaço (não a tela) que o .booking-picker também consulta
+logo abaixo.
+*/
+
+@container contact-modal (max-width: 800px) {
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+
+        gap: 40px;
+    }
+
+}
+
+
+/*
+Estes três ajustes continuam ligados à TELA de propósito:
+são sobre o quanto de respiro faz sentido num dispositivo
+pequeno (menos preciosismo de espaço em celular), não sobre
+o layout interno do formulário.
+*/
+
 @media (max-width: 800px) {
 
     .contact-modal {
@@ -1301,12 +1349,6 @@ footer {
         padding: 40px 25px;
 
         max-height: 92vh;
-    }
-
-    .contact-grid {
-        grid-template-columns: 1fr;
-
-        gap: 40px;
     }
 
     .contact-header {
@@ -2616,7 +2658,7 @@ footer {
 ========================================================= */
 
 .calendar-panel {
-    padding: 25px;
+    padding: 28px;
 
     border-right: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -2629,14 +2671,14 @@ footer {
 
     justify-content: space-between;
 
-    margin-bottom: 25px;
+    margin-bottom: 28px;
 }
 
 
 .calendar-month {
     color: var(--white);
 
-    font-size: 16px;
+    font-size: 17px;
 
     font-weight: 600;
 
@@ -2692,9 +2734,9 @@ footer {
 
     grid-template-columns: repeat(7, 1fr);
 
-    gap: 6px;
+    gap: 8px;
 
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 
@@ -2704,11 +2746,11 @@ footer {
     align-items: center;
     justify-content: center;
 
-    min-height: 30px;
+    min-height: 32px;
 
     color: #777;
 
-    font-size: 9px;
+    font-size: 10px;
 
     font-weight: 700;
 
@@ -2725,7 +2767,7 @@ footer {
 
     grid-template-columns: repeat(7, 1fr);
 
-    gap: 6px;
+    gap: 10px;
 }
 
 
@@ -2749,7 +2791,7 @@ footer {
 
     font-family: inherit;
 
-    font-size: 13px;
+    font-size: 14px;
 
     cursor: pointer;
 
@@ -2841,7 +2883,7 @@ footer {
 
     flex-direction: column;
 
-    padding: 28px 24px;
+    padding: 30px 26px;
 
     background:
         radial-gradient(
@@ -2853,7 +2895,7 @@ footer {
 
 
 .time-panel-header {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 
@@ -2903,7 +2945,7 @@ footer {
 
     flex-direction: column;
 
-    gap: 9px;
+    gap: 10px;
 
     max-height: 280px;
 
@@ -2933,7 +2975,7 @@ footer {
 .time-slot {
     width: 100%;
 
-    min-height: 48px;
+    min-height: 50px;
 
     padding: 0 15px;
 
@@ -2947,7 +2989,7 @@ footer {
 
     font-family: inherit;
 
-    font-size: 13px;
+    font-size: 13.5px;
 
     font-weight: 600;
 
@@ -3050,7 +3092,20 @@ footer {
    RESPONSIVIDADE
 ========================================================= */
 
-@media (max-width: 700px) {
+/*
+   CONTAINER QUERY (não depende do tamanho da tela):
+   o .booking-picker empilha (calendário em cima, horários
+   embaixo) quando a COLUNA do formulário (.contact-form)
+   fica estreita demais para caber as duas colunas com
+   conforto — não importa se isso acontece porque a janela
+   é pequena, porque o .contact-grid ainda está lado a lado,
+   ou por qualquer outro motivo que reduza esse espaço no
+   futuro. Como essa regra e a do .contact-grid acima reagem
+   ao espaço real (não a dois números de tela escolhidos à
+   mão), elas nunca ficam fora de sincronia uma com a outra.
+*/
+
+@container contact-form (max-width: 560px) {
 
     .booking-picker {
         grid-template-columns: 1fr;
@@ -3061,6 +3116,11 @@ footer {
 
         border-bottom: 1px solid rgba(255, 255, 255, .07);
     }
+
+}
+
+
+@media (max-width: 700px) {
 
     .time-panel {
         padding-top: 24px;
