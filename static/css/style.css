@@ -3171,14 +3171,15 @@ o layout interno do formulário.
     z-index: 2;
 }
 
+/* Grão de café (Fica na frente da folha) */
 .coffee-beans-falling {
     position: absolute;
-    right: -95px; /* Ajuste se precisar reposicionar horizontalmente */
+    right: -95px; 
     top: 30px;
-    width: 490px;  /* ⬅️ Aumentado de 210px para 300px (exemplo) */
-    height: 990px; /* ⬅️ Aumentado proporcionalmente de 560px para 800px */
+    width: 490px; 
+    height: 990px; 
     pointer-events: none;
-    z-index: 1;
+    z-index: 2; /* ⬅️ Aumentado para ficar na frente */
     overflow: visible;
 }
 
@@ -3189,6 +3190,28 @@ o layout interno do formulário.
     display: block;
     animation: coffeeBeansFloat 5s ease-in-out infinite;
     filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .45));
+}
+
+/* Nova classe para a Folha de Hortelã (Fica atrás do grão de café) */
+.mint-leaf {
+    position: absolute;
+    right: -150px; /* Ajuste a posição horizontal conforme necessário */
+    top: 60px;    /* Ajuste a posição vertical conforme necessário */
+    width: 600px; /* Defina a largura da imagem da folha */
+    height: 1000px; /* Mantém a proporção */
+    pointer-events: none;
+    z-index: 1;   /* ⬅️ Menor que o grão de café (2), logo fica ATRÁS */
+    overflow: visible;
+}
+
+.mint-leaf img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    /* Se quiser adicionar uma animação sutil parecida, descomente a linha abaixo: */
+    /* animation: coffeeBeansFloat 6s ease-in-out infinite reverse; */
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .3));
 }
 /* 
 @keyframes coffeeBeansFloat {
