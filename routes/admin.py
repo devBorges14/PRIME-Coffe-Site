@@ -5,8 +5,7 @@ from flask import (
     redirect,
     url_for,
     flash,
-    session,
-    current_app
+    session
 )
 
 import datetime
@@ -257,6 +256,25 @@ def lead_detail(lead_id):
             WHERE id = ?
         """, (lead_id,)).fetchone()
 
+        # ------------------------------------------------
+        # HORÁRIOS DISPONÍVEIS PARA REAGENDAMENTO
+        # ------------------------------------------------
+        #
+        # Só entram aqui horários realmente AVAILABLE, a
+        # partir de hoje. O backend confere de novo no
+        # momento do envio (outro admin pode ter ocupado
+        # esse horário nesse meio tempo).
+
+        today = datetime.date.today().isoformat()
+
+        available_slots = connection.execute("""
+            SELECT *
+            FROM availability
+            WHERE status = 'AVAILABLE'
+              AND date >= ?
+            ORDER BY date ASC, start_time ASC
+        """, (today,)).fetchall()
+
     finally:
         connection.close()
 
@@ -273,10 +291,30 @@ def lead_detail(lead_id):
 
     lead_history = get_lead_history(lead_id)
 
+    # Monta o texto já formatado (DD/MM/AAAA) para o select,
+    # pra não precisar de filtro Jinja customizado.
+
+    available_slots_options = []
+
+    for slot in available_slots:
+
+        year, month, day = slot["date"].split("-")
+
+        label = (
+            f'{day}/{month}/{year} — '
+            f'{slot["start_time"]} às {slot["end_time"]}'
+        )
+
+        available_slots_options.append({
+            "id": slot["id"],
+            "label": label
+        })
+
     return render_template(
         "admin/lead.html",
         lead=lead,
-        lead_history=lead_history
+        lead_history=lead_history,
+        available_slots=available_slots_options
     )
 
 
@@ -605,6 +643,255 @@ def update_status(lead_id):
 
 
 # ============================================================
+# REAGENDAR
+# ============================================================
+
+@admin_bp.route(
+    "/leads/<int:lead_id>/reagendar",
+    methods=["POST"]
+)
+@login_required
+def reschedule_lead(lead_id):
+
+    new_slot_id = request.form.get(
+        "new_availability_id",
+        ""
+    ).strip()
+
+    if not new_slot_id:
+
+        flash(
+            "Selecione um novo horário.",
+            "error"
+        )
+
+        return redirect(
+            url_for(
+                "admin.lead_detail",
+                lead_id=lead_id
+            )
+        )
+
+    connection = get_connection()
+
+    try:
+
+        # ----------------------------------------------------
+        # BUSCAR LEAD
+        # ----------------------------------------------------
+
+        lead = connection.execute("""
+            SELECT *
+            FROM leads
+            WHERE id = ?
+        """, (lead_id,)).fetchone()
+
+        if not lead:
+
+            flash(
+                "Lead não encontrado.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin.dashboard")
+            )
+
+        # ----------------------------------------------------
+        # BUSCAR NOVO HORÁRIO
+        # ----------------------------------------------------
+
+        new_slot = connection.execute("""
+            SELECT *
+            FROM availability
+            WHERE id = ?
+        """, (new_slot_id,)).fetchone()
+
+        if not new_slot:
+
+            flash(
+                "Horário selecionado não foi encontrado.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "admin.lead_detail",
+                    lead_id=lead_id
+                )
+            )
+
+        # Confere de novo (pode ter sido ocupado por outro
+        # admin entre a página carregar e o envio do form).
+
+        if new_slot["status"] != "AVAILABLE":
+
+            flash(
+                "Este horário não está mais disponível. "
+                "Escolha outro e tente novamente.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "admin.lead_detail",
+                    lead_id=lead_id
+                )
+            )
+
+        if lead["availability_id"] == new_slot["id"]:
+
+            flash(
+                "Este já é o horário atual deste lead.",
+                "error"
+            )
+
+            return redirect(
+                url_for(
+                    "admin.lead_detail",
+                    lead_id=lead_id
+                )
+            )
+
+        # ----------------------------------------------------
+        # HORÁRIO ANTIGO (pode não existir)
+        # ----------------------------------------------------
+
+        old_slot = None
+
+        if lead["availability_id"]:
+
+            old_slot = connection.execute("""
+                SELECT *
+                FROM availability
+                WHERE id = ?
+            """, (
+                lead["availability_id"],
+            )).fetchone()
+
+        old_label = (
+            f'{old_slot["date"]} {old_slot["start_time"]}'
+            if old_slot else "nenhum horário"
+        )
+
+        new_label = (
+            f'{new_slot["date"]} {new_slot["start_time"]}'
+        )
+
+        # ----------------------------------------------------
+        # SE O LEAD JÁ ESTÁ FECHADO: libera o slot antigo
+        # (que estava BOOKED por causa dele) e reserva o novo.
+        # Se o lead ainda não fechou, nenhum dos dois slots
+        # precisa mudar de status — só o ponteiro do lead muda.
+        # ----------------------------------------------------
+
+        if lead["status"] == "FECHADO":
+
+            if old_slot and old_slot["status"] == "BOOKED":
+
+                connection.execute("""
+                    UPDATE availability
+                    SET status = 'AVAILABLE',
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?
+                      AND status = 'BOOKED'
+                """, (
+                    old_slot["id"],
+                ))
+
+                register_history(
+                    connection=connection,
+                    slot=old_slot,
+                    action="LIBERACAO_AUTOMATICA",
+                    old_status="BOOKED",
+                    new_status="AVAILABLE",
+                    affected_lead=lead,
+                    description=(
+                        f"Horário liberado por reagendamento "
+                        f"(novo horário: {new_label})."
+                    )
+                )
+
+            connection.execute("""
+                UPDATE availability
+                SET status = 'BOOKED',
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            """, (
+                new_slot["id"],
+            ))
+
+            register_history(
+                connection=connection,
+                slot=new_slot,
+                action="RESERVA_AUTOMATICA",
+                old_status="AVAILABLE",
+                new_status="BOOKED",
+                affected_lead=lead,
+                description=(
+                    f"Horário reservado por reagendamento "
+                    f"(horário anterior: {old_label})."
+                )
+            )
+
+        # ----------------------------------------------------
+        # ATUALIZA O LEAD
+        # ----------------------------------------------------
+        #
+        # event_date/event_time também são atualizados para
+        # continuarem batendo com o novo horário (são usados
+        # no dashboard, relatórios etc. sem precisar de JOIN
+        # com availability toda hora).
+
+        connection.execute("""
+            UPDATE leads
+            SET availability_id = ?,
+                event_date = ?,
+                event_time = ?
+            WHERE id = ?
+        """, (
+            new_slot["id"],
+            new_slot["date"],
+            new_slot["start_time"],
+            lead_id
+        ))
+
+        register_lead_history(
+            connection=connection,
+            lead_id=lead_id,
+            old_status=lead["status"],
+            new_status=lead["status"],
+            changed_by=session.get("username", "desconhecido"),
+            description=(
+                f"Reagendado de {old_label} para {new_label}."
+            )
+        )
+
+        connection.commit()
+
+    except Exception:
+
+        connection.rollback()
+        raise
+
+    finally:
+
+        connection.close()
+
+    flash(
+        "Lead reagendado com sucesso.",
+        "success"
+    )
+
+    return redirect(
+        url_for(
+            "admin.lead_detail",
+            lead_id=lead_id
+        )
+    )
+
+
+# ============================================================
 # ATUALIZAR OBSERVAÇÕES
 # ============================================================
 
@@ -740,17 +1027,6 @@ def delete_lead(lead_id):
         """, (lead_id,))
 
         connection.commit()
-
-        # A exclusão é permanente e não deixa rastro no banco,
-        # então registramos no log quem excluiu e qual lead era.
-
-        current_app.logger.warning(
-            "Lead excluido: id=%s nome=%r status=%s por=%r",
-            lead_id,
-            lead["name"],
-            lead["status"],
-            session.get("username")
-        )
 
     except Exception:
 

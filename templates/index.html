@@ -163,7 +163,14 @@ Prime Cafés | Experiências Premium em Café
 ===================================================== -->
 
 <section class="about" id="sobre">
-
+    <!-- GRÃOS DE CAFÉ CAINDO -->
+    <div class="coffee-beans-falling" aria-hidden="true">
+        <img src="/static/img/graos-caindo-prime-cafe.png" alt="" loading="lazy">
+    </div>
+    <!-- FOLHA DE HORTELÃ -->
+    <div class="coffee-beans-falling" aria-hidden="true">
+        <img src="/static/img/folhas-hortelaã.png" alt="" loading="lazy">
+    </div>
     <div class="container">
 
         <div class="section-label">
@@ -267,6 +274,7 @@ Prime Cafés | Experiências Premium em Café
             <!-- CARD VISUAL -->
 
             <div class="feature-card">
+                <img src="/static/img/fotoCopoPRIME1.png" alt="Copo PRIME">
 
                 <h3>
                     Do primeiro contato
@@ -858,6 +866,19 @@ Prime Cafés | Experiências Premium em Café
 
                 </div>
 
+                <div class="contact-info-item">
+
+                    <strong>
+                        Email
+                    </strong>
+
+                    <span href="contato@primecafes.com.br">
+                        contato@primecafes.com.br
+                    </span>
+
+                </div>
+
+
 
                 <div class="contact-info-item">
 
@@ -957,138 +978,135 @@ Prime Cafés | Experiências Premium em Café
 
                 <div class="form-group booking-group">
 
-                        <label>
-                            Data e horário do evento
-                        </label>
+                    <label>
+                        Data e horário do evento
+                    </label>
 
-                        <div class="booking-picker">
+                    <div class="booking-picker">
 
-                            <div class="calendar-panel">
+                        <div class="calendar-panel">
 
-                                <div class="calendar-header">
+                            <div class="calendar-header">
 
-                                    <button type="button" class="calendar-nav" id="calendarPrev"
-                                        aria-label="Mês anterior">
-                                        ‹
-                                    </button>
+                                <button type="button" class="calendar-nav" id="calendarPrev" aria-label="Mês anterior">
+                                    ‹
+                                </button>
 
-                                    <div class="calendar-month" id="calendarMonth">
-                                        Setembro 2026
-                                    </div>
-
-                                    <button type="button" class="calendar-nav" id="calendarNext"
-                                        aria-label="Próximo mês">
-                                        ›
-                                    </button>
-
+                                <div class="calendar-month" id="calendarMonth">
+                                    Setembro 2026
                                 </div>
 
-                                <div class="calendar-weekdays">
-                                    <span>DOM</span>
-                                    <span>SEG</span>
-                                    <span>TER</span>
-                                    <span>QUA</span>
-                                    <span>QUI</span>
-                                    <span>SEX</span>
-                                    <span>SÁB</span>
-                                </div>
-
-                                <div class="calendar-days" id="calendarDays"></div>
+                                <button type="button" class="calendar-nav" id="calendarNext" aria-label="Próximo mês">
+                                    ›
+                                </button>
 
                             </div>
 
+                            <div class="calendar-weekdays">
+                                <span>DOM</span>
+                                <span>SEG</span>
+                                <span>TER</span>
+                                <span>QUA</span>
+                                <span>QUI</span>
+                                <span>SEX</span>
+                                <span>SÁB</span>
+                            </div>
 
-                            <div class="time-panel">
+                            <div class="calendar-days" id="calendarDays"></div>
 
-                                <div class="time-panel-header">
+                        </div>
 
-                                    <span class="booking-label">
-                                        HORÁRIOS DISPONÍVEIS
-                                    </span>
 
-                                    <h3 id="selectedDateLabel">
-                                        Selecione uma data
-                                    </h3>
+                        <div class="time-panel">
 
-                                    <p id="timePanelMessage">
-                                        Escolha um dia para visualizar os horários.
+                            <div class="time-panel-header">
+
+                                <span class="booking-label">
+                                    HORÁRIOS DISPONÍVEIS
+                                </span>
+
+                                <h3 id="selectedDateLabel">
+                                    Selecione uma data
+                                </h3>
+
+                                <p id="timePanelMessage">
+                                    Escolha um dia para visualizar os horários.
+                                </p>
+
+                            </div>
+
+                            <div class="time-slots" id="timeSlots">
+
+                                <div class="time-empty">
+                                    <span>◷</span>
+
+                                    <p>
+                                        Nenhum horário selecionado
                                     </p>
-
-                                </div>
-
-                                <div class="time-slots" id="timeSlots">
-
-                                    <div class="time-empty">
-                                        <span>◷</span>
-
-                                        <p>
-                                            Nenhum horário selecionado
-                                        </p>
-                                    </div>
-
                                 </div>
 
                             </div>
 
                         </div>
 
-
-                        <input type="hidden" id="data_evento" name="data_evento" required>
-
-                        <input type="hidden" id="horario_evento" name="horario_evento" required>
-
                     </div>
 
 
-                    <div class="form-group">
+                    <input type="hidden" id="data_evento" name="data_evento" required>
 
-                        <label for="local_evento">
-                            Local do evento
-                        </label>
+                    <input type="hidden" id="horario_evento" name="horario_evento" required>
 
-
-                        <input type="text" id="local_evento" name="local_evento" placeholder="Cidade / Estado">
-
-                    </div>
+                </div>
 
 
-                    <div class="form-group">
+                <div class="form-group">
 
-                        <label for="convidados">
-                            Número de convidados
-                        </label>
-
-                        <input type="number" id="convidados" name="convidados" min="1" placeholder="Ex.: 150">
-
-                    </div>
+                    <label for="local_evento">
+                        Local do evento
+                    </label>
 
 
-                    <div class="form-group">
+                    <input type="text" id="local_evento" name="local_evento" placeholder="Cidade / Estado">
 
-                        <label for="detalhes">
-                            Conte mais sobre o evento
-                        </label>
-
-                        <textarea id="detalhes" name="detalhes"
-                            placeholder="Conte um pouco sobre o evento..."></textarea>
-
-                    </div>
+                </div>
 
 
-                    <button type="submit" class="btn btn-primary form-submit">
-                        Enviar solicitação →
-                    </button>
+                <div class="form-group">
+
+                    <label for="convidados">
+                        Número de convidados
+                    </label>
+
+                    <input type="number" id="convidados" name="convidados" min="1" placeholder="Ex.: 150">
+
+                </div>
 
 
-                    <div id="formMessage" class="form-message"></div>
+                <div class="form-group">
 
-                </form>
+                    <label for="detalhes">
+                        Conte mais sobre o evento
+                    </label>
 
-            </div>
+                    <textarea id="detalhes" name="detalhes" placeholder="Conte um pouco sobre o evento..."></textarea>
+
+                </div>
+
+
+                <button type="submit" class="btn btn-primary form-submit">
+                    Enviar solicitação →
+                </button>
+
+
+                <div id="formMessage" class="form-message"></div>
+
+            </form>
 
         </div>
 
     </div>
+
+</div>
 
 
 <!-- =====================================================
@@ -1097,51 +1115,51 @@ Prime Cafés | Experiências Premium em Café
 
 <footer>
 
-            <div class="container">
+    <div class="container">
 
-                <div class="footer-container">
+        <div class="footer-container">
 
-                    <div class="footer-logo">
-                        PRIME CAFÉS
-                    </div>
-
-
-                    <div class="footer-links">
-
-                        <a href="#inicio">
-                            Início
-                        </a>
-
-                        <a href="#sobre">
-                            Quem Somos
-                        </a>
-
-                        <a href="#servicos">
-                            Serviços
-                        </a>
-
-                        <a href="#momentos">
-                            Momentos
-                        </a>
-
-                        <a href="#contato">
-                            Contato
-                        </a>
-
-                    </div>
-
-                </div>
+            <div class="footer-logo" href="#inicio">
+                PRIME CAFÉS
+            </div>
 
 
-                <div class="footer-bottom">
+            <div class="footer-links">
 
-                    © 2026 PRIME café. Todos os direitos reservados.
+                <a href="#inicio">
+                    Início
+                </a>
 
-                </div>
+                <a href="#sobre">
+                    Quem Somos
+                </a>
+
+                <a href="#servicos">
+                    Serviços
+                </a>
+
+                <a href="#momentos">
+                    Momentos
+                </a>
+
+                <a href="#contato">
+                    Contato
+                </a>
 
             </div>
 
-        </footer>
+        </div>
 
 
-        {% endblock %}
+        <div class="footer-bottom">
+
+            © 2026 PRIME café. Todos os direitos reservados.
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+{% endblock %}

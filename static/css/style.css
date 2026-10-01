@@ -3153,4 +3153,49 @@ o layout interno do formulário.
     }
 
 }
-.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.hp-field { 
+    position: absolute; 
+    left: 19999px; 
+    width: 1px; 
+    height: 1px; 
+    overflow: hidden; 
+}
+
+.about-grid {
+    position: relative;
+    overflow: visible;
+}
+
+.feature-card {
+    position: relative;
+    z-index: 2;
+}
+
+.coffee-beans-falling {
+    position: absolute;
+    right: -95px; /* Ajuste se precisar reposicionar horizontalmente */
+    top: 30px;
+    width: 490px;  /* ⬅️ Aumentado de 210px para 300px (exemplo) */
+    height: 990px; /* ⬅️ Aumentado proporcionalmente de 560px para 800px */
+    pointer-events: none;
+    z-index: 1;
+    overflow: visible;
+}
+
+.coffee-beans-falling img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    animation: coffeeBeansFloat 5s ease-in-out infinite;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .45));
+}
+/* 
+@keyframes coffeeBeansFloat {
+    0%, 59% {
+        transform: translateY(-8px) rotate(-1deg);
+    }
+    27% {
+        transform: translateY(12px) rotate(1deg);
+    }
+} */
