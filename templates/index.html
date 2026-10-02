@@ -360,53 +360,80 @@ Prime Cafés | Experiências Premium em Café
 <!-- MARCAS ATENDIDAS -->
 <section class="brands" id="marcas">
 
-    <div class="container">
+    {% set marcas = [
+        ('lacta.png', 'Lacta'),
+        ('hbo.png', 'HBO'),
+        ('santander.png', 'Santander'),
+        ('g30.png', 'G30 Educação Automotiva'),
+        ('capim.png', 'Capim'),
+        ('kedu.png', 'Kedu'),
+        ('nutrify.png', 'Nutrify'),
+        ('caffeine-army.png', 'Caffeine Army'),
+        ('serasa-experian.png', 'Serasa Experian'),
+        ('fiamma.png', 'Fiamma'),
+        ('o-novo-mercado.png', 'O Novo Mercado'),
+        ('latam.png', 'LATAM'),
+        ('delta.png', 'Delta Airlines'),
+        ('prefeitura-sp.png', 'Prefeitura de São Paulo'),
+        ('mccafe.png', 'McCafé'),
+        ('formula-e.png', 'Fórmula E')
+    ] %}
 
-        <div class="section-label">
-            Marcas que confiam
-        </div>
+       <div class="brands-band">
 
-        <h2 class="section-title">
-            Marcas <span>Atendidas</span>
-        </h2>
+        <h2 class="brands-title">Marcas que já viveram essa experiência</h2>
 
-        <p class="brands-description">
-            Grandes marcas que confiam em nossas experiências
-            para representar sua imagem em eventos estratégicos.
-        </p>
+        <div class="brands-carousel">
 
-        <div class="brands-logos">
+            <button type="button" class="brands-arrow" id="brandsPrev" aria-label="Marcas anteriores">‹</button>
 
-            <div class="brand-logo">Lacta</div>
-            <div class="brand-logo">HBO</div>
-            <div class="brand-logo">Santander</div>
-            <div class="brand-logo">Kedu</div>
+            <div class="brands-viewport" id="brandsViewport">
+                <div class="brands-group">
+                    {% for arquivo, nome in marcas %}
+                    <div class="brands-item">
+                        <img src="/static/img/marcas/{{ arquivo }}"
+                             alt="{{ nome }}"
+                             onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'{{ nome }}'}))">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
 
-            <div class="brand-logo">Nutrify</div>
-            <div class="brand-logo">Caffeine Army</div>
-            <div class="brand-logo">Serasa Experian</div>
-            <div class="brand-logo">Fiamma</div>
+            <button type="button" class="brands-arrow" id="brandsNext" aria-label="Próximas marcas">›</button>
 
-            <div class="brand-logo">O Novo Mercado</div>
-            <div class="brand-logo">LATAM</div>
-            <div class="brand-logo">Delta Airlines</div>
-            <div class="brand-logo">McCafé</div>
-
-            <div class="brand-logo">Fórmula E</div>
-            <div class="brand-logo">Capim</div>
-            <div class="brand-logo">G30 Educação Automotiva</div>
-            <div class="brand-logo">Prefeitura de São Paulo</div>
-
-        </div>
-
-        <div class="brands-more">
-            Entre outras grandes marcas...
         </div>
 
     </div>
 
-</section>
+    <script>
+    (function () {
+        const viewport = document.getElementById('brandsViewport');
+        const prev = document.getElementById('brandsPrev');
+        const next = document.getElementById('brandsNext');
+        if (!viewport) return;
 
+        const step = () => viewport.clientWidth * 0.8;
+
+        prev.addEventListener('click', () =>
+            viewport.scrollBy({ left: -step(), behavior: 'smooth' }));
+
+        next.addEventListener('click', () =>
+            viewport.scrollBy({ left: step(), behavior: 'smooth' }));
+
+        function update() {
+            prev.disabled = viewport.scrollLeft <= 2;
+            next.disabled =
+                viewport.scrollLeft + viewport.clientWidth >= viewport.scrollWidth - 2;
+        }
+
+        viewport.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        window.addEventListener('load', update);
+        update();
+    })();
+    </script>
+
+</section>
 
 <!-- =====================================================
      SERVIÇOS

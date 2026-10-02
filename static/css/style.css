@@ -2377,236 +2377,257 @@ o layout interno do formulário.
     }
 
 }
+
 /* =========================
-   MARCAS ATENDIDAS
+   MARCAS (FAIXA DE LOGOS)
 ========================= */
 
 .brands {
-    padding: 140px 0;
+    padding: 80px 0;
+    background: var(--black);
+}
+
+.brands-band {
+    padding: 48px 0 52px;
+
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-image: linear-gradient(
+        90deg,
+        transparent,
+        var(--gold) 20%,
+        var(--gold-light) 50%,
+        var(--gold) 80%,
+        transparent
+    ) 1;
+
     background:
         radial-gradient(
-            circle at 50% 0%,
-            rgba(201, 164, 92, 0.08),
-            transparent 45%
+            ellipse at 50% 0%,
+            rgba(201, 150, 69, 0.10),
+            transparent 60%
         ),
-        var(--black);
+        #070605;
 }
 
-.brands-description {
-    max-width: 680px;
-    margin: 25px auto 70px;
-
-    color: var(--text-muted);
-    text-align: center;
-
-    font-size: 17px;
-    line-height: 1.8;
-}
-
-.brands-grid {
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 16px;
-
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.brand-item {
-    min-height: 100px;
-
+.brands-title {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 28px;
 
-    padding: 20px;
+    margin: 0 0 44px;
+    padding: 0 20px;
 
-    text-align: center;
+    color: var(--gold-light);
 
-    color: rgba(255, 255, 255, 0.78);
-
-    background: rgba(255, 255, 255, 0.025);
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    border-radius: 16px;
-
-    font-size: 15px;
-    font-weight: 500;
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        background 0.25s ease,
-        color 0.25s ease;
-}
-
-.brand-item:hover {
-    transform: translateY(-4px);
-
-    color: var(--gold);
-
-    border-color: rgba(201, 164, 92, 0.45);
-
-    background: rgba(201, 164, 92, 0.06);
-}
-
-.brand-more {
-    color: var(--gold);
-
-    border-color: rgba(201, 164, 92, 0.25);
-
-    background: rgba(201, 164, 92, 0.04);
-}
-
-
-/* =========================
-   RESPONSIVIDADE
-========================= */
-
-@media (max-width: 900px) {
-
-    .brands-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-}
-
-
-@media (max-width: 550px) {
-
-    .brands {
-        padding: 100px 0;
-    }
-
-    .brands-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .brands-description {
-        font-size: 15px;
-        margin-bottom: 45px;
-    }
-
-}
-/* =========================
-   MARCAS ATENDIDAS
-========================= */
-
-.brands {
-    padding: 140px 0;
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(201, 164, 92, 0.07),
-            transparent 45%
-        ),
-        var(--black);
-}
-
-.brands-description {
-    max-width: 680px;
-    margin: 25px auto 75px;
-
-    color: var(--text-muted);
-    text-align: center;
-
-    font-size: 17px;
-    line-height: 1.8;
-}
-
-.brands-logos {
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    max-width: 1100px;
-    margin: 0 auto;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.brand-logo {
-    min-height: 115px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px;
-
-    text-align: center;
-
-    color: rgba(255, 255, 255, 0.48);
-
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-
-    transition:
-        color 0.3s ease,
-        background 0.3s ease,
-        transform 0.3s ease;
-}
-
-.brand-logo:hover {
-    color: var(--gold);
-
-    background: rgba(201, 164, 92, 0.04);
-
-    transform: scale(1.02);
-
-    z-index: 2;
-}
-
-.brands-more {
-    margin-top: 45px;
-
+    line-height: 1.4;
+    letter-spacing: 0.45em;
     text-align: center;
-
-    color: var(--gold);
-
-    font-size: 14px;
-    font-weight: 600;
-
-    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
+.brands-title::before,
+.brands-title::after {
+    content: "";
 
-/* RESPONSIVO */
+    flex: 0 0 60px;
+    height: 1px;
 
-@media (max-width: 900px) {
-
-    .brands-logos {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
+    background: var(--gold);
 }
 
 
-@media (max-width: 550px) {
+/* ---------- CARROSSEL ---------- */
+
+.brands-carousel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.brands-viewport {
+    flex: 1;
+    min-width: 0;
+
+    overflow-x: auto;
+    scroll-behavior: smooth;
+
+    /* esconde a barra de rolagem em todos os navegadores */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    -webkit-mask-image: linear-gradient(
+        90deg, transparent, #000 5%, #000 95%, transparent
+    );
+    mask-image: linear-gradient(
+        90deg, transparent, #000 5%, #000 95%, transparent
+    );
+}
+
+.brands-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.brands-group {
+    display: flex;
+    align-items: center;
+
+    width: max-content;
+}
+
+
+/* ---------- ITENS ---------- */
+
+.brands-item {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 72px;
+    padding: 0 52px;
+
+    border-right: 1px solid rgba(201, 150, 69, 0.3);
+
+    color: rgba(255, 255, 255, 0.85);
+
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.brands-item:last-child {
+    border-right: none;
+}
+
+.brands-item img {
+    width: auto;
+    max-width: 200px;
+    height: 54px;
+
+    object-fit: contain;
+
+    /* deixa qualquer logo branco, como na referência */
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+
+    transition: opacity 0.3s ease;
+}
+
+.brands-item:hover img {
+    opacity: 1;
+}
+
+/* ajuste individual de logos que ficam pequenas
+   (cada linha pega o logo pelo nome do arquivo) */
+.brands-item img[src$="santander.png"] { height: 70px; max-width: 240px; }
+.brands-item img[src$="hbo.png"]       { height: 66px; }
+.brands-item img[src$="g30.png"]       { height: 66px; }
+.brands-item img[src$="kedu.png"]      { height: 60px; }
+
+
+/* ---------- SETAS ---------- */
+
+.brands-arrow {
+    flex: 0 0 auto;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(201, 150, 69, 0.4);
+    border-radius: 50%;
+
+    background: transparent;
+    color: var(--gold-light);
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        opacity 0.25s ease;
+}
+
+.brands-arrow:hover:not(:disabled) {
+    background: rgba(201, 150, 69, 0.1);
+    border-color: var(--gold);
+}
+
+.brands-arrow:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 700px) {
 
     .brands {
-        padding: 100px 0;
+        padding: 50px 0;
     }
 
-    .brands-description {
-        font-size: 15px;
-        margin-bottom: 50px;
+    .brands-title {
+        gap: 14px;
+
+        font-size: 10px;
+        letter-spacing: 0.3em;
     }
 
-    .brands-logos {
-        grid-template-columns: 1fr;
+    .brands-title::before,
+    .brands-title::after {
+        flex-basis: 24px;
     }
 
+    .brands-carousel {
+        gap: 6px;
+        padding: 0 10px;
+    }
+
+    .brands-arrow {
+        width: 34px;
+        height: 34px;
+
+        font-size: 20px;
+    }
+
+    .brands-item {
+        height: 58px;
+        padding: 0 32px;
+
+        font-size: 14px;
+    }
+
+    .brands-item img {
+        height: 40px;
+        max-width: 150px;
+    }
+
+    .brands-item img[src$="santander.png"] { height: 52px; max-width: 180px; }
+    .brands-item img[src$="hbo.png"]       { height: 50px; }
+    .brands-item img[src$="g30.png"]       { height: 50px; }
+    .brands-item img[src$="kedu.png"]      { height: 46px; }
+    .brands-item img[src$="prefeitura-sp.png"] { height: 90px; max-width: 250px; }
+   
 }
+
 /* =========================================================
    CALENDÁRIO DE AGENDAMENTO
 ========================================================= */
