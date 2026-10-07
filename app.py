@@ -6,7 +6,8 @@ from flask_wtf.csrf import CSRFProtect
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
-from database.database import init_db, migrate_db
+from database.database import get_connection, init_db, migrate_db
+from werkzeug.security import generate_password_hash
 
 from extensions import limiter
 from logging_config import configure_logging
@@ -98,6 +99,52 @@ register_error_handlers(app)
 
 init_db()
 migrate_db()
+
+
+# =====================================================
+# ADMIN AUTOMÁTICO (hospedagens sem terminal, ex.: Render)
+# =====================================================
+#
+# Se ADMIN_USERNAME e ADMIN_PASSWORD existirem nas variáveis
+# de ambiente e esse usuário ainda não existir no banco, ele
+# é criado ao iniciar. Útil quando o banco é recriado a cada
+# deploy e não há como rodar o create_admin.py.
+
+def ensure_admin_from_env():
+
+    username = os.environ.get("ADMIN_USERNAME", "").strip()
+    password = os.environ.get("ADMIN_PASSWORD", "")
+
+    if not username or not password:
+        return
+
+    if len(password) < 10:
+        app.logger.warning(
+            "ADMIN_PASSWORD com menos de 10 caracteres; admin não criado."
+        )
+        return
+
+    connection = get_connection()
+
+    try:
+        exists = connection.execute(
+            "SELECT 1 FROM users WHERE username = ?",
+            (username,)
+        ).fetchone()
+
+        if not exists:
+            connection.execute(
+                "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+                (username, generate_password_hash(password))
+            )
+            connection.commit()
+            app.logger.info("Admin '%s' criado a partir do ambiente.", username)
+
+    finally:
+        connection.close()
+
+
+ensure_admin_from_env()
 
 
 # =====================================================
