@@ -1,6 +1,9 @@
+import os
+
 from flask import Flask
 
 from flask_wtf.csrf import CSRFProtect
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
 from database.database import init_db, migrate_db
@@ -23,6 +26,20 @@ from routes.auth import auth_bp
 app = Flask(__name__)
 
 app.config.from_object(Config)
+
+
+# =====================================================
+# PROXY (PythonAnywhere e similares)
+# =====================================================
+#
+# Atrás de um proxy, request.remote_addr seria o IP do proxy
+# para TODOS os visitantes (e o limite anti-spam valeria para
+# todo mundo junto). Com BEHIND_PROXY=1 no .env, o Flask passa
+# a usar o IP real enviado pelo proxy. Não ligar localmente:
+# sem proxy, qualquer um poderia forjar esse cabeçalho.
+
+if os.environ.get("BEHIND_PROXY") == "1":
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
 
 # =====================================================

@@ -49,6 +49,10 @@ Prime Cafés | Experiências Premium em Café
                 </li>
 
                 <li>
+                    <a href="#avaliacoes">Avaliações</a>
+                </li>
+
+                <li>
                     <button type="button" class="btn btn-outline contact-trigger">
                         Fale Conosco
                     </button>
@@ -168,7 +172,7 @@ Prime Cafés | Experiências Premium em Café
     </div>
     <!-- FOLHA DE HORTELÃ -->
     <div class="mint-leaf" aria-hidden="true">
-        <img src="/static/img/folhas-hortelaã.png" alt="" loading="lazy">
+        <img src="/static/img/folhas-hortela.png" alt="" loading="lazy">
     </div>
     <div class="container">
 
@@ -374,7 +378,7 @@ Prime Cafés | Experiências Premium em Café
         ('o-novo-mercado.png', 'O Novo Mercado'),
         ('latam.png', 'LATAM'),
         ('delta.png', 'Delta Airlines'),
-        ('prefeitura-sp.png', 'Prefeitura de São Paulo'),
+        ('prefeitura-sp-recortada.png', 'Prefeitura de São Paulo'),
         ('mccafe.png', 'McCafé'),
         ('formula-e.png', 'Fórmula E')
     ] %}
@@ -441,17 +445,107 @@ Prime Cafés | Experiências Premium em Café
 
 <section class="services" id="servicos">
 
+    {# Cada serviço: (arquivo da foto, título, texto, ícone, foto de exemplo)
+       Para usar a foto real, salve em static/img/servicos/ com o nome indicado.
+       Enquanto o arquivo não existir, aparece a foto de exemplo. #}
+
+    {% set icones = {
+        'xicara':  '<path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.5c0 1.5 1 1.5 1 3M12 2.5c0 1.5 1 1.5 1 3"/>',
+        'grao':    '<ellipse cx="12" cy="12" rx="6" ry="9" transform="rotate(45 12 12)"/><path d="M8 16c3-1 5-5 8-8"/>',
+        'estrela': '<path d="M12 3l2.3 5.6 6 .5-4.6 3.9 1.4 5.9L12 15.8 6.9 18.9l1.4-5.9L3.7 9.1l6-.5z"/>',
+        'bike':    '<circle cx="6" cy="16.5" r="3.5"/><circle cx="18" cy="16.5" r="3.5"/><path d="M6 16.5l4-7h6l2 7M10 9.5L8.5 6H6M14 6h3"/>',
+        'pizza':   '<path d="M3 6c6-3.5 12-3.5 18 0L12 21z"/><circle cx="9" cy="9" r="1"/><circle cx="14.5" cy="10" r="1"/><circle cx="11.5" cy="14" r="1"/>',
+        'doce':    '<path d="M5 11h14l-2 9H7z"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M12 4V2.5"/>',
+        'copo':    '<path d="M6 8h12l-1.5 13h-9z"/><path d="M5 5h14v3H5z"/><path d="M9 13h6"/>',
+        'brilho':  '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
+        'check':   '<path d="M9 3.5h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M8.5 13.5l2.5 2.5 5-5"/>'
+    } %}
+
+    {% set servicos_eventos = [
+        ('baristas.jpg', 'Eventos com Baristas',
+         'Cafés especiais preparados ao vivo, com estrutura completa e atendimento refinado.',
+         'xicara', '1442512595331-e89e73853f31'),
+        ('cafes-especiais.jpg', 'Cafés Especiais',
+         'Grãos selecionados e extração perfeita para surpreender seus convidados.',
+         'grao', '1447933601403-0c6688de566e'),
+        ('ativacoes.jpg', 'Ativações de Marca',
+         'Degustações, collabs e experiências que criam conexão real com o público.',
+         'estrela', '1505373877841-8d25f7d46678'),
+        ('food-bike.jpg', 'Food Bikes Personalizadas',
+         'Estruturas exclusivas com visual premium que reforçam a presença da sua marca.',
+         'bike', '1521017432531-fbd92d768814'),
+        ('mini-pizzas.jpg', 'Mini Pizzas Especiais',
+         'Mini pizzas artesanais preparadas ao vivo, com sabor e praticidade.',
+         'pizza', '1513104890138-7c749659a591'),
+        ('doces.jpg', 'Doces Especiais',
+         'Brigadeiros gourmet e sobremesas exclusivas para experiências premium.',
+         'doce', '1551024601-bec78aea704b')
+    ] %}
+
+    {% set servicos_exclusivos = [
+        ('cafes-personalizados.jpg', 'Cafés Personalizados',
+         'Drinks autorais, copos personalizados e latte art com a identidade da sua marca.',
+         'copo', '1541167760496-1628856ab772'),
+        ('experiencias-tematicas.jpg', 'Experiências Temáticas',
+         'Estações temáticas, menus exclusivos e ativações sazonais para cada campanha.',
+         'brilho', '1495474472287-4d71bcdd2085'),
+        ('solucoes-completas.jpg', 'Soluções Completas',
+         'Do conceito à execução: estrutura, equipe, cardápio e operação completa.',
+         'check', '1501339847302-ac426a4a7cbb')
+    ] %}
+
+    {% macro service_card(arquivo, titulo, texto, icone, exemplo) %}
+    <article class="service-card">
+
+        <div class="service-photo">
+            <img src="/static/img/servicos/{{ arquivo }}"
+                 alt="{{ titulo }}"
+                 loading="lazy"
+                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-{{ exemplo }}?auto=format&fit=crop&w=800&q=75'">
+        </div>
+
+        <div class="service-body">
+
+            <div class="service-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{{ icone | safe }}</svg>
+            </div>
+
+            <h3>{{ titulo }}</h3>
+
+            <p>{{ texto }}</p>
+
+        </div>
+
+    </article>
+    {% endmacro %}
+
     <div class="container">
 
         <!-- CABEÇALHO -->
 
-        <div class="section-label">
-            O QUE FAZEMOS
-        </div>
+        <div class="services-header">
 
-        <h2 class="section-title">
-            Nossos <span>Serviços</span>
-        </h2>
+            <div>
+                <div class="section-label">
+                    NOSSOS SERVIÇOS
+                </div>
+
+                <h2 class="section-title">
+                    Soluções completas
+                    <span>para o seu evento</span>
+                </h2>
+
+                <p class="services-intro">
+                    Oferecemos diferentes tipos de serviços para atender
+                    desde pequenos encontros até grandes eventos corporativos.
+                </p>
+            </div>
+
+            <button type="button" class="btn btn-primary contact-trigger">
+                Solicitar Orçamento →
+            </button>
+
+        </div>
 
 
         <div class="services-group">
@@ -461,123 +555,9 @@ Prime Cafés | Experiências Premium em Café
             </h3>
 
             <div class="services-grid">
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ✦
-                    </div>
-
-                    <h3>
-                        Eventos com Baristas
-                    </h3>
-
-                    <p>
-                        Estrutura completa, atendimento refinado e
-                        cafés especiais preparados ao vivo. Ideal para
-                        convenções, feiras, lançamentos, eventos
-                        corporativos e experiências VIP.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ◇
-                    </div>
-
-                    <h3>
-                        Cafés Especiais
-                    </h3>
-
-                    <p>
-                        Grãos selecionados, extração perfeita e
-                        apresentação impecável. Cada xícara é pensada
-                        para surpreender e encantar seus convidados.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ☆
-                    </div>
-
-                    <h3>
-                        Ativações de Marca
-                    </h3>
-
-                    <p>
-                        Criamos experiências completas para marcas:
-                        degustações, ações promocionais, collabs,
-                        ativações sensoriais e experiências que geram
-                        conexão real com o público.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ◉
-                    </div>
-
-                    <h3>
-                        Food Bikes Personalizadas
-                    </h3>
-
-                    <p>
-                        Estruturas exclusivas e personalizadas para
-                        cafés, doces, mini pizzas e produtos especiais.
-                        Visual premium que atrai, encanta e reforça a
-                        presença da sua marca.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ✧
-                    </div>
-
-                    <h3>
-                        Mini Pizzas Especiais
-                    </h3>
-
-                    <p>
-                        Mini pizzas artesanais preparadas ao vivo,
-                        perfeitas para eventos que exigem sabor,
-                        praticidade e sofisticação.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        +
-                    </div>
-
-                    <h3>
-                        Doces Especiais
-                    </h3>
-
-                    <p>
-                        Brigadeiros gourmet, sobremesas exclusivas e
-                        doces personalizados para ativações, eventos
-                        corporativos e experiências premium.
-                    </p>
-
-                </article>
-
+                {% for s in servicos_eventos %}
+                    {{ service_card(s[0], s[1], s[2], icones[s[3]], s[4]) }}
+                {% endfor %}
             </div>
 
         </div>
@@ -595,64 +575,9 @@ Prime Cafés | Experiências Premium em Café
 
 
             <div class="services-grid">
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ✦
-                    </div>
-
-                    <h3>
-                        Cafés Personalizados
-                    </h3>
-
-                    <p>
-                        Drinks autorais, copos personalizados, latte art
-                        temática e grãos selecionados. Cada detalhe é
-                        pensado para traduzir a identidade da sua marca
-                        em forma de café.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ✦
-                    </div>
-
-                    <h3>
-                        Experiências Temáticas
-                    </h3>
-
-                    <p>
-                        Estações de café temáticas, menus exclusivos,
-                        ativações sazonais e experiências criadas para
-                        campanhas específicas.
-                    </p>
-
-                </article>
-
-
-                <article class="service-card">
-
-                    <div class="service-icon">
-                        ✦
-                    </div>
-
-                    <h3>
-                        Soluções Completas
-                    </h3>
-
-                    <p>
-                        Do conceito à execução: estrutura, equipe,
-                        cardápio, personalização e operação completa
-                        para o seu evento.
-                    </p>
-
-                </article>
-
+                {% for s in servicos_exclusivos %}
+                    {{ service_card(s[0], s[1], s[2], icones[s[3]], s[4]) }}
+                {% endfor %}
             </div>
 
         </div>
@@ -794,6 +719,131 @@ Prime Cafés | Experiências Premium em Café
         </div>
 
     </div>
+
+</section>
+
+
+<!-- =====================================================
+     AVALIAÇÃO DOS CONTRATANTES
+===================================================== -->
+
+<section class="testimonials" id="avaliacoes">
+
+    {# EXEMPLOS — substitua pelos depoimentos reais dos clientes.
+       Campos: (texto, nome, cargo/evento, nota de 1 a 5) #}
+    {% set avaliacoes = [
+        ('O atendimento dos baristas foi impecável do início ao fim. Os convidados não paravam de elogiar o café e a apresentação da estação.',
+         'Mariana S.', 'Evento corporativo · São Paulo', 5),
+        ('Organização perfeita, equipe pontual e muito simpática. A ativação da nossa marca ficou linda e gerou muita conversa no evento.',
+         'Ricardo A.', 'Ativação de marca', 5),
+        ('Contratamos para uma feira de três dias e a fila no estande era constante. Profissionalismo raro de encontrar.',
+         'Fernanda L.', 'Feira de negócios', 5),
+        ('Os copos personalizados e o menu exclusivo deixaram tudo com a cara da empresa. Já estamos planejando o próximo.',
+         'Paulo M.', 'Lançamento de produto', 5),
+        ('Do orçamento à execução, tudo muito transparente e bem cuidado. As mini pizzas fizeram sucesso absoluto.',
+         'Juliana R.', 'Confraternização de fim de ano', 5),
+        ('Experiência premium de verdade. A equipe entendeu exatamente o que queríamos e entregou além do esperado.',
+         'Carlos E.', 'Convenção de vendas', 5)
+    ] %}
+
+    <div class="container">
+
+        <div class="testimonials-header">
+
+            <div>
+                <div class="section-label">
+                    DEPOIMENTOS
+                </div>
+
+                <h2 class="section-title">
+                    Avaliação dos <span>Contratantes</span>
+                </h2>
+
+                <p class="testimonials-intro">
+                    O que dizem as empresas e pessoas que confiaram
+                    na Prime Cafés para os seus eventos.
+                </p>
+            </div>
+
+            <div class="testimonials-score" aria-label="Nota média 5 de 5">
+                <strong>5,0</strong>
+                <div>
+                    <div class="stars" aria-hidden="true">★★★★★</div>
+                    <span>Satisfação dos clientes</span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="testimonials-track" id="testimonialsTrack">
+
+            {% for texto, nome, cargo, nota in avaliacoes %}
+            <article class="testimonial-card">
+
+                <div class="testimonial-quote" aria-hidden="true">“</div>
+
+                <div class="stars" aria-label="Nota {{ nota }} de 5">
+                    {{ '★' * nota }}<span class="stars-empty">{{ '★' * (5 - nota) }}</span>
+                </div>
+
+                <p class="testimonial-text">
+                    {{ texto }}
+                </p>
+
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar" aria-hidden="true">
+                        {{ nome[0] }}
+                    </div>
+                    <div>
+                        <strong>{{ nome }}</strong>
+                        <small>{{ cargo }}</small>
+                    </div>
+                </div>
+
+            </article>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="testimonials-controls">
+            <button type="button" class="brands-arrow" id="testimonialsPrev" aria-label="Avaliações anteriores">‹</button>
+            <button type="button" class="brands-arrow" id="testimonialsNext" aria-label="Próximas avaliações">›</button>
+        </div>
+
+    </div>
+
+    <script>
+    (function () {
+        const track = document.getElementById('testimonialsTrack');
+        const prev = document.getElementById('testimonialsPrev');
+        const next = document.getElementById('testimonialsNext');
+        if (!track) return;
+
+        const step = () => {
+            const card = track.querySelector('.testimonial-card');
+            return card ? card.offsetWidth + 22 : track.clientWidth;
+        };
+
+        prev.addEventListener('click', () =>
+            track.scrollBy({ left: -step(), behavior: 'smooth' }));
+
+        next.addEventListener('click', () =>
+            track.scrollBy({ left: step(), behavior: 'smooth' }));
+
+        function update() {
+            prev.disabled = track.scrollLeft <= 2;
+            next.disabled =
+                track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+        }
+
+        track.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        window.addEventListener('load', update);
+        update();
+    })();
+    </script>
 
 </section>
 
@@ -1140,37 +1190,143 @@ Prime Cafés | Experiências Premium em Café
      FOOTER
 ===================================================== -->
 
-<footer>
+<footer class="site-footer">
+
+    <!-- grãos de café decorativos nas laterais -->
+    <div class="footer-beans footer-beans-left" aria-hidden="true">
+        <img src="/static/img/graos-caindo-prime-cafe.png" alt="" loading="lazy">
+    </div>
+    <div class="footer-beans footer-beans-right" aria-hidden="true">
+        <img src="/static/img/graos-caindo-prime-cafe.png" alt="" loading="lazy">
+    </div>
 
     <div class="container">
 
-        <div class="footer-container">
+        <div class="footer-grid">
 
-            <div class="footer-logo" href="#inicio">
-                PRIME CAFÉS
+            <!-- MARCA -->
+
+            <div class="footer-brand">
+
+                <a href="#inicio" class="footer-logo">
+                    PRIME CAFÉS
+                </a>
+
+                <p class="footer-tagline">
+                    Mais que café, conexões que permanecem.
+                </p>
+
+                <span class="footer-divider" aria-hidden="true"></span>
+
+                <p class="footer-about">
+                    Levamos experiências únicas para eventos
+                    corporativos e especiais, com cafés de alta
+                    qualidade, atendimento personalizado e
+                    atenção a cada detalhe.
+                </p>
+
+                <div class="footer-social">
+
+                    <a href="https://instagram.com/primecafes" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>
+                    </a>
+
+                    <a href="https://wa.me/5511965490000" target="_blank" rel="noopener" aria-label="WhatsApp">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.5c0 3.5 2.8 6.5 6.5 6.5l1-1.6-2-1-1 .9c-1.2-.5-2.2-1.5-2.8-2.8l.9-1-1-2z" stroke-width="1.2"/></svg>
+                    </a>
+
+                    <a href="mailto:contato@primecafes.com.br" aria-label="E-mail">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></svg>
+                    </a>
+
+                </div>
+
             </div>
 
 
-            <div class="footer-links">
+            <!-- NAVEGAÇÃO -->
 
-                <a href="#inicio">
-                    Início
-                </a>
+            <nav class="footer-col" aria-label="Rodapé">
 
-                <a href="#sobre">
-                    Quem Somos
-                </a>
+                <h4 class="footer-heading">Navegação</h4>
 
-                <a href="#servicos">
-                    Serviços
-                </a>
+                <ul class="footer-nav">
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#sobre">Quem Somos</a></li>
+                    <li><a href="#marcas">Marcas</a></li>
+                    <li><a href="#historia">Nossa História</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#personalizados">Personalizados</a></li>
+                    <li><a href="#momentos">Momentos</a></li>
+                    <li><a href="#avaliacoes">Avaliações</a></li>
+                    <li><button type="button" class="contact-trigger">Fale Conosco</button></li>
+                </ul>
 
-                <a href="#momentos">
-                    Momentos
-                </a>
+            </nav>
 
-                <a href="#contato">
-                    Contato
+
+            <!-- CONTATO -->
+
+            <div class="footer-col">
+
+                <h4 class="footer-heading">Contato</h4>
+
+                <ul class="footer-contact">
+
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>
+                        <div>
+                            <a href="https://wa.me/5511965490000" target="_blank" rel="noopener">+55 (11) 96549-0000</a>
+                            <small>WhatsApp</small>
+                        </div>
+                    </li>
+
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6l8.5 7 8.5-7"/></svg>
+                        <div>
+                            <a href="mailto:contato@primecafes.com.br">contato@primecafes.com.br</a>
+                            <small>Envie os detalhes do seu evento</small>
+                        </div>
+                    </li>
+
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                        <div>
+                            <span>São Paulo - SP</span>
+                            <small>Atuamos no Brasil, Portugal e Espanha</small>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <div class="footer-quality">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9 3l3 18 3-18M6 3l3 6M18 3l-3 6"/></svg>
+                    <div>
+                        <strong>Qualidade Premium</strong>
+                        <small>Cafés especiais em cada detalhe</small>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- FALE CONOSCO -->
+
+            <div class="footer-col footer-cta">
+
+                <h4 class="footer-heading">Fale Conosco</h4>
+
+                <p>
+                    Solicite um orçamento e viva uma
+                    experiência personalizada.
+                </p>
+
+                <button type="button" class="btn btn-primary contact-trigger footer-btn">
+                    Solicitar Orçamento →
+                </button>
+
+                <a href="https://wa.me/5511965490000" target="_blank" rel="noopener" class="btn btn-outline footer-btn">
+                    Tirar Dúvidas
                 </a>
 
             </div>
@@ -1179,9 +1335,7 @@ Prime Cafés | Experiências Premium em Café
 
 
         <div class="footer-bottom">
-
-            © 2026 PRIME café. Todos os direitos reservados.
-
+            © 2026 Prime Cafés. Todos os direitos reservados.
         </div>
 
     </div>

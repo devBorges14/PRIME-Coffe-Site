@@ -13,3 +13,6 @@ backups/
 
 # Logs
 logs/
+
+# Pacote de deploy gerado
+deploy/site.zip
