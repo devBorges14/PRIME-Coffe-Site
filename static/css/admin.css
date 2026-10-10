@@ -774,6 +774,38 @@ a {
     gap: 18px;
 }
 
+/* data do cliente fica apagada quando há reagendamento */
+.lead-info .lead-date-old {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.lead-rescheduled {
+    margin-top: 12px;
+    padding: 10px 12px;
+
+    border: 1px solid rgba(201, 150, 69, 0.45);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+
+    background: rgba(201, 150, 69, 0.08);
+}
+
+.lead-info .lead-rescheduled span {
+    margin-bottom: 4px;
+
+    color: var(--gold-light);
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.lead-info .lead-rescheduled strong {
+    color: var(--white);
+}
+
 
 .lead-field {
     padding: 17px;

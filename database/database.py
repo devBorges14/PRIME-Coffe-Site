@@ -1,3 +1,4 @@
+import re
 import sqlite3
 from pathlib import Path
 
@@ -142,5 +143,70 @@ def migrate_db():
         ADD COLUMN availability_id INTEGER
     """)
 
+    # Data/horário que o CLIENTE escolheu no formulário.
+    # event_date/event_time passam a ser a data atual (que muda
+    # quando o admin reagenda); estas guardam a original.
+    # Ficam NULL enquanto o lead nunca foi reagendado.
+
+    if "original_event_date" not in columns:
+        cursor.execute("""
+            ALTER TABLE leads
+            ADD COLUMN original_event_date TEXT
+        """)
+
+    if "original_event_time" not in columns:
+        cursor.execute("""
+            ALTER TABLE leads
+            ADD COLUMN original_event_time TEXT
+        """)
+
+    backfill_original_dates(cursor)
+
     connection.commit()
     connection.close()
+
+
+def backfill_original_dates(cursor):
+    """
+    Leads reagendados ANTES de existirem as colunas original_*
+    perderam a data escolhida pelo cliente. Ela é recuperada do
+    primeiro registro "Reagendado de AAAA-MM-DD HH:MM para ..."
+    do histórico do lead.
+    """
+
+    rows = cursor.execute("""
+        SELECT h.lead_id, h.description
+        FROM leads_history h
+        JOIN leads l ON l.id = h.lead_id
+        WHERE l.original_event_date IS NULL
+          AND h.description LIKE 'Reagendado de %'
+        ORDER BY h.lead_id, h.created_at ASC, h.id ASC
+    """).fetchall()
+
+    done = set()
+
+    for row in rows:
+
+        lead_id = row["lead_id"]
+
+        if lead_id in done:
+            continue
+
+        done.add(lead_id)
+
+        match = re.match(
+            r"Reagendado de (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})",
+            row["description"] or ""
+        )
+
+        # "Reagendado de nenhum horário ..." -> não há o que recuperar
+        if not match:
+            continue
+
+        cursor.execute("""
+            UPDATE leads
+            SET original_event_date = ?,
+                original_event_time = ?
+            WHERE id = ?
+              AND original_event_date IS NULL
+        """, (match.group(1), match.group(2), lead_id))

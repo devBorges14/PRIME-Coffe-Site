@@ -310,12 +310,56 @@ def lead_detail(lead_id):
             "label": label
         })
 
+    # ----------------------------------------------------
+    # DATAS: escolhida pelo cliente x reagendada
+    # ----------------------------------------------------
+    #
+    # original_event_date só existe depois do 1º reagendamento.
+    # Se foi reagendado de volta para a mesma data/hora do
+    # cliente, mostra só a do cliente.
+
+    client_date = format_date_time(
+        lead["original_event_date"] or lead["event_date"],
+        lead["original_event_time"] if lead["original_event_date"] else lead["event_time"]
+    )
+
+    rescheduled_date = None
+
+    if lead["original_event_date"] and (
+        lead["original_event_date"], lead["original_event_time"]
+    ) != (lead["event_date"], lead["event_time"]):
+
+        rescheduled_date = format_date_time(
+            lead["event_date"],
+            lead["event_time"]
+        )
+
     return render_template(
         "admin/lead.html",
         lead=lead,
         lead_history=lead_history,
-        available_slots=available_slots_options
+        available_slots=available_slots_options,
+        client_date=client_date,
+        rescheduled_date=rescheduled_date
     )
+
+
+def format_date_time(date, time=None):
+    """'2026-10-13', '14:00' -> '13/10/2026 às 14:00'."""
+
+    if not date:
+        return None
+
+    try:
+        year, month, day = date.split("-")
+        text = f"{day}/{month}/{year}"
+    except ValueError:
+        text = date
+
+    if time:
+        text += f" às {time}"
+
+    return text
 
 
 # ============================================================
@@ -842,10 +886,17 @@ def reschedule_lead(lead_id):
         # continuarem batendo com o novo horário (são usados
         # no dashboard, relatórios etc. sem precisar de JOIN
         # com availability toda hora).
+        #
+        # No PRIMEIRO reagendamento, a data escolhida pelo
+        # cliente é guardada em original_event_date/time
+        # (COALESCE mantém a original nos reagendamentos
+        # seguintes).
 
         connection.execute("""
             UPDATE leads
-            SET availability_id = ?,
+            SET original_event_date = COALESCE(original_event_date, event_date),
+                original_event_time = COALESCE(original_event_time, event_time),
+                availability_id = ?,
                 event_date = ?,
                 event_time = ?
             WHERE id = ?

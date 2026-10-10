@@ -101,10 +101,17 @@
                     </div>
 
                     <div>
-                        <span>Data</span>
-                        <strong>
-                            {{ lead["event_date"] or "Não informado" }}
+                        <span>Data escolhida pelo cliente</span>
+                        <strong {% if rescheduled_date %}class="lead-date-old"{% endif %}>
+                            {{ client_date or "Não informado" }}
                         </strong>
+
+                        {% if rescheduled_date %}
+                            <div class="lead-rescheduled">
+                                <span>↻ Reagendado para</span>
+                                <strong>{{ rescheduled_date }}</strong>
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div>
