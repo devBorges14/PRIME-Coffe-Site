@@ -779,53 +779,425 @@ section {
     background: var(--black-soft);
 }
 
-.moments-grid {
-    display: grid;
+/* ---------- CARROSSEL ---------- */
 
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 18px;
-}
-
-.moment {
+.gallery {
     position: relative;
-
-    height: 320px;
 
     overflow: hidden;
 
-    border-radius: 18px;
-
     border: 1px solid var(--border);
+    border-radius: 22px;
 
     background: #111;
+
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
 }
 
-.moment img {
+.gallery-track {
+    display: flex;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+
+    scrollbar-width: none;
+}
+
+.gallery-track::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery-slide {
+    position: relative;
+
+    flex: 0 0 100%;
+
+    aspect-ratio: 16 / 8;
+
+    scroll-snap-align: start;
+}
+
+.gallery-slide img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+/* sombra embaixo para o contador ficar legível */
+.gallery-slide::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.55),
+        transparent 35%
+    );
+
+    pointer-events: none;
+}
+
+.gallery-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    border: 1px solid rgba(232, 189, 114, 0.5);
+    border-radius: 50%;
+
+    background: rgba(5, 5, 5, 0.55);
+    backdrop-filter: blur(6px);
+
+    color: var(--gold-light);
+
+    font-size: 30px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.gallery-arrow:hover {
+    border-color: var(--gold);
+
+    background: rgba(201, 150, 69, 0.25);
+}
+
+.gallery-prev {
+    left: 20px;
+}
+
+.gallery-next {
+    right: 20px;
+}
+
+.gallery-counter {
+    position: absolute;
+    right: 24px;
+    bottom: 18px;
+    z-index: 2;
+
+    padding: 5px 14px;
+
+    border-radius: 30px;
+
+    background: rgba(5, 5, 5, 0.6);
+
+    color: var(--white);
+
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.gallery-counter span {
+    color: var(--gold-light);
+    font-weight: 700;
+}
+
+.gallery-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.gallery-dot {
+    width: 9px;
+    height: 9px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 10px;
+
+    background: rgba(201, 150, 69, 0.3);
+
+    cursor: pointer;
+
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.gallery-dot.active {
+    width: 28px;
+
+    background: var(--gold-light);
+}
+
+
+/* ---------- VÍDEO ---------- */
+
+.moments-video {
+    display: grid;
+    grid-template-columns: 0.8fr 1.4fr;
+    align-items: center;
+    gap: 50px;
+
+    margin-top: 90px;
+}
+
+.moments-video-text h3 {
+    margin-bottom: 15px;
+
+    font-size: clamp(28px, 3.5vw, 40px);
+    line-height: 1.15;
+}
+
+.moments-video-text h3 span {
+    color: var(--gold-light);
+}
+
+.moments-video-text p {
+    color: var(--text-muted);
+}
+
+.video-player {
+    position: relative;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+    border-radius: 22px;
+
+    background:
+        radial-gradient(circle, rgba(201, 150, 69, 0.15), transparent 60%),
+        #0b0a08;
+}
+
+.video-player video {
     width: 100%;
     height: 100%;
 
     object-fit: cover;
 
-    transition: transform 0.6s ease;
+    background: #000;
 }
 
-.moment:hover img {
-    transform: scale(1.06);
+.video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    width: 86px;
+    height: 86px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translate(-50%, -50%);
+
+    border: none;
+    border-radius: 50%;
+
+    background: var(--gold);
+    color: #050505;
+
+    cursor: pointer;
+
+    box-shadow: 0 0 0 0 rgba(201, 150, 69, 0.55);
+
+    animation: playPulse 2.2s ease-out infinite;
+
+    transition: transform 0.25s ease, background 0.25s ease;
 }
 
-.moment::after {
+.video-play:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+
+    background: var(--gold-light);
+}
+
+.video-play svg {
+    width: 34px;
+    height: 34px;
+
+    margin-left: 4px;
+}
+
+.video-player.playing .video-play {
+    display: none;
+}
+
+@keyframes playPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(201, 150, 69, 0.55); }
+    70%  { box-shadow: 0 0 0 26px rgba(201, 150, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(201, 150, 69, 0); }
+}
+
+.video-placeholder p {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
+    right: 0;
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+    text-align: center;
+}
+
+.video-placeholder code {
+    color: var(--gold-light);
+}
+
+
+/* ---------- WHATSAPP FLUTUANTE ---------- */
+
+.whatsapp-float {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    animation: waIn 0.6s ease 1s both;
+}
+
+.whatsapp-float-label {
+    padding: 9px 16px;
+
+    border-radius: 30px;
+
+    background: #fff;
+    color: #1fa855;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+
+    transition: transform 0.25s ease;
+}
+
+.whatsapp-float-icon {
+    position: relative;
+
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #25d366;
+    color: #fff;
+
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+
+    transition: transform 0.25s ease;
+
+    animation: waBeat 2.4s ease-in-out infinite;
+}
+
+/* ondas verdes saindo do botão */
+.whatsapp-float-icon::before,
+.whatsapp-float-icon::after {
     content: "";
 
     position: absolute;
-
     inset: 0;
+    z-index: -1;
 
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.8),
-        transparent 60%
-    );
+    border-radius: 50%;
+
+    background: #25d366;
+
+    animation: waRipple 2.4s ease-out infinite;
+}
+
+.whatsapp-float-icon::after {
+    animation-delay: 1.2s;
+}
+
+@keyframes waRipple {
+    0%   { transform: scale(1);   opacity: 0.55; }
+    100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* leve "batida" do botão */
+@keyframes waBeat {
+    0%, 100% { transform: scale(1); }
+    12%      { transform: scale(1.1); }
+    24%      { transform: scale(1); }
+    36%      { transform: scale(1.06); }
+    48%      { transform: scale(1); }
+}
+
+.whatsapp-float-icon svg {
+    width: 34px;
+    height: 34px;
+}
+
+.whatsapp-float-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #fff;
+    border-radius: 50%;
+
+    background: #e53935;
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.whatsapp-float.seen .whatsapp-float-badge {
+    display: none;
+}
+
+.whatsapp-float:hover .whatsapp-float-icon {
+    animation: none;
+
+    transform: scale(1.08);
+}
+
+.whatsapp-float:hover .whatsapp-float-label {
+    transform: translateX(-4px);
+}
+
+@keyframes waIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .video-play,
+    .whatsapp-float,
+    .whatsapp-float-icon,
+    .whatsapp-float-icon::before,
+    .whatsapp-float-icon::after {
+        animation: none;
+    }
 }
 
 
@@ -923,8 +1295,9 @@ section {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .moments-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .moments-video {
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
 }
 
@@ -1002,8 +1375,46 @@ section {
         margin-top: 60px;
     }
 
-    .moments-grid {
-        grid-template-columns: 1fr;
+    .gallery-slide {
+        aspect-ratio: 4 / 3;
+    }
+
+    .gallery-arrow {
+        width: 40px;
+        height: 40px;
+
+        font-size: 24px;
+    }
+
+    .gallery-prev {
+        left: 10px;
+    }
+
+    .gallery-next {
+        right: 10px;
+    }
+
+    .moments-video {
+        margin-top: 60px;
+    }
+
+    .video-play {
+        width: 68px;
+        height: 68px;
+    }
+
+    .whatsapp-float {
+        right: 16px;
+        bottom: 16px;
+    }
+
+    .whatsapp-float-label {
+        display: none;
+    }
+
+    .whatsapp-float-icon {
+        width: 56px;
+        height: 56px;
     }
 
 }

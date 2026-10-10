@@ -665,60 +665,144 @@ Prime Cafés | Experiências Premium em Café
         </h2>
 
 
-        <div class="moments-grid">
+        {# As fotos vêm de static/img/momentos/ (ver routes/main.py) #}
 
+        <div class="gallery" id="gallery" aria-roledescription="carrossel" aria-label="Galeria de eventos">
 
-            <div class="moment">
-
-                <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=900&q=80"
-                    alt="Evento corporativo">
-
+            <div class="gallery-track" id="galleryTrack">
+                {% for foto in fotos_momentos %}
+                <figure class="gallery-slide" aria-label="Foto {{ loop.index }} de {{ fotos_momentos|length }}">
+                    <img src="{{ foto }}"
+                         alt="Evento Prime Cafés {{ loop.index }}"
+                         {% if not loop.first %}loading="lazy"{% endif %}>
+                </figure>
+                {% endfor %}
             </div>
 
+            <button type="button" class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Foto anterior">‹</button>
+            <button type="button" class="gallery-arrow gallery-next" id="galleryNext" aria-label="Próxima foto">›</button>
 
-            <div class="moment">
-
-                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80"
-                    alt="Evento">
-
+            <div class="gallery-counter" aria-hidden="true">
+                <span id="galleryCurrent">1</span> / {{ fotos_momentos|length }}
             </div>
-
-
-            <div class="moment">
-
-                <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80"
-                    alt="Evento empresarial">
-
-            </div>
-
-
-            <div class="moment">
-
-                <img src="https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=900&q=80"
-                    alt="Celebração">
-
-            </div>
-
-
-            <div class="moment">
-
-                <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=80"
-                    alt="Evento elegante">
-
-            </div>
-
-
-            <div class="moment">
-
-                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=900&q=80"
-                    alt="Evento corporativo">
-
-            </div>
-
 
         </div>
 
+        <div class="gallery-dots" id="galleryDots">
+            {% for foto in fotos_momentos %}
+            <button type="button" class="gallery-dot{% if loop.first %} active{% endif %}" aria-label="Ir para a foto {{ loop.index }}"></button>
+            {% endfor %}
+        </div>
+
+
+        <!-- VÍDEO -->
+
+        {% if video or mostrar_aviso_video %}
+        <div class="moments-video">
+
+            <div class="moments-video-text">
+                <div class="section-label">
+                    EM AÇÃO
+                </div>
+
+                <h3>
+                    Veja a <span>experiência</span> acontecendo
+                </h3>
+
+                <p>
+                    Um pouco do clima, do cuidado e da energia
+                    que levamos para cada evento.
+                </p>
+            </div>
+
+            {% if video %}
+            <div class="video-player" id="videoPlayer">
+
+                <video id="momentsVideo"
+                       src="{{ video.src }}"
+                       {% if video.poster %}poster="{{ video.poster }}"{% endif %}
+                       preload="metadata"
+                       playsinline></video>
+
+                <button type="button" class="video-play" id="videoPlay" aria-label="Assistir ao vídeo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+                </button>
+
+            </div>
+            {% else %}
+            {# Só aparece abrindo pelo localhost (seu computador) #}
+            <div class="video-player video-placeholder">
+                <div class="video-play" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+                </div>
+                <p>
+                    Coloque o vídeo em <code>static/video/apresentacao.mp4</code><br>
+                    <small>(este aviso não aparece no site publicado)</small>
+                </p>
+            </div>
+            {% endif %}
+
+        </div>
+        {% endif %}
+
     </div>
+
+    <script>
+    (function () {
+        /* ---------- CARROSSEL ---------- */
+
+        const track = document.getElementById('galleryTrack');
+        if (track) {
+            const slides = track.children;
+            const dots = document.querySelectorAll('#galleryDots .gallery-dot');
+            const current = document.getElementById('galleryCurrent');
+            const gallery = document.getElementById('gallery');
+            let index = 0;
+            let timer = null;
+
+            const goTo = (i) => {
+                index = (i + slides.length) % slides.length;
+                track.scrollTo({ left: slides[index].offsetLeft, behavior: 'smooth' });
+            };
+
+            // atualiza bolinhas/contador quando o usuário arrasta
+            track.addEventListener('scroll', () => {
+                const i = Math.round(track.scrollLeft / track.clientWidth);
+                if (i === index && current.textContent == i + 1) return;
+                index = i;
+                current.textContent = i + 1;
+                dots.forEach((d, n) => d.classList.toggle('active', n === i));
+            }, { passive: true });
+
+            document.getElementById('galleryPrev').addEventListener('click', () => { goTo(index - 1); restart(); });
+            document.getElementById('galleryNext').addEventListener('click', () => { goTo(index + 1); restart(); });
+            dots.forEach((d, n) => d.addEventListener('click', () => { goTo(n); restart(); }));
+
+            // troca sozinho a cada 5s; pausa com o mouse em cima
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            function start() { if (!reduceMotion && slides.length > 1) timer = setInterval(() => goTo(index + 1), 5000); }
+            function stop() { clearInterval(timer); }
+            function restart() { stop(); start(); }
+
+            gallery.addEventListener('mouseenter', stop);
+            gallery.addEventListener('mouseleave', start);
+            track.addEventListener('touchstart', stop, { passive: true });
+            start();
+        }
+
+        /* ---------- VÍDEO ---------- */
+
+        const video = document.getElementById('momentsVideo');
+        const play = document.getElementById('videoPlay');
+        if (video && play) {
+            play.addEventListener('click', () => {
+                video.controls = true;
+                video.play();
+            });
+            video.addEventListener('play', () => document.getElementById('videoPlayer').classList.add('playing'));
+        }
+    })();
+    </script>
 
 </section>
 
@@ -1341,6 +1425,41 @@ Prime Cafés | Experiências Premium em Café
     </div>
 
 </footer>
+
+
+<!-- =====================================================
+     BOTÃO FLUTUANTE DO WHATSAPP
+===================================================== -->
+
+<a href="https://wa.me/5511965490000?text={{ 'Olá! Vim pelo site da Prime Cafés e gostaria de um orçamento.' | urlencode }}"
+   class="whatsapp-float"
+   id="whatsappFloat"
+   target="_blank"
+   rel="noopener"
+   aria-label="Falar com a Prime Cafés no WhatsApp">
+
+    <span class="whatsapp-float-label">Fale Conosco</span>
+
+    <span class="whatsapp-float-icon">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.3.6 4.5 1.8 6.5L3 29l6.9-1.8c1.9 1 4 1.6 6.1 1.6 7.2 0 13-5.7 13-12.9S23.2 3 16 3zm0 23.6c-1.9 0-3.8-.5-5.5-1.5l-.4-.2-4.1 1.1 1.1-4-.3-.4c-1.1-1.7-1.6-3.7-1.6-5.7C5.2 10 10 5.3 16 5.3S26.8 10 26.8 15.8 22 26.6 16 26.6zm5.9-8.1c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.8 5 .8.3 1.4.5 1.9.7.8.3 1.6.2 2.2.1.7-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+        <span class="whatsapp-float-badge" aria-hidden="true">1</span>
+    </span>
+
+</a>
+
+<script>
+(function () {
+    // a bolinha vermelha some depois que a pessoa clica uma vez
+    const btn = document.getElementById('whatsappFloat');
+    try {
+        if (sessionStorage.getItem('waClicked')) btn.classList.add('seen');
+        btn.addEventListener('click', () => {
+            btn.classList.add('seen');
+            sessionStorage.setItem('waClicked', '1');
+        });
+    } catch (e) {}
+})();
+</script>
 
 
 {% endblock %}
